@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EletroGestão | Sistema de Ordens de Manutenção</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        amber: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Status Cards Borders */
+        .status-card-pendente { border-left-width: 5px; border-left-color: #ef4444; }
+        .status-card-programado { border-left-width: 5px; border-left-color: #3b82f6; }
+        .status-card-parcial { border-left-width: 5px; border-left-color: #f59e0b; }
+        .status-card-concluido { border-left-width: 5px; border-left-color: #10b981; }
+        
+        /* Map Config */
+        #map { height: calc(100vh - 220px); min-height: 500px; border-radius: 1rem; z-index: 10; }
+        
+        /* Nav Tabs - Active style with orange background and black text */
+        .nav-tab.active { background-color: #f59e0b !important; color: #020617 !important; font-weight: 900 !important; }
+        
+        /* Scrollbar styles */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        /* Fix Leaflet Popup Dark Mode contrast */
+        .dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border: 1px solid #334155;
+        }
+        .dark .leaflet-popup-content {
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-x-hidden flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg leading-tight text-slate-900 dark:text-slate-100">EletroGestão</h1>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest" id="syncStatusBadge">⚡ Inicializando...</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="window.toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+                <div id="googleUserProfile" class="hidden items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 pr-3 rounded-full">
+                    <img id="userAvatar" src="" alt="User" class="w-8 h-8 rounded-full border-2 border-amber-500">
+                    <span id="userName" class="text-xs font-bold text-slate-200 hidden sm:block">Usuário</span>
+                    <button onclick="window.handleGoogleLogout()" class="ml-2 text-red-400 hover:text-red-300 text-xs font-bold">Sair</button>
+                </div>
+                <button id="googleLoginBtn" onclick="window.handleGoogleLogin()" class="flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    <span>Entrar com Google</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto no-scrollbar gap-2 py-3">
+            <button id="navTabDash" onclick="window.switchTab('tabDash')" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap transition-colors">
+                📊 Dashboard
+            </button>
+            <button id="navTabList" onclick="window.switchTab('tabList')" class="nav-tab active px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap transition-colors flex items-center gap-2">
+                📋 Demandas <span id="tabBadgeCount" class="bg-amber-500 text-slate-950 font-black px-1.5 py-0.5 rounded text-[10px]">0</span>
+            </button>
+            <button id="navTabMap" onclick="window.switchTab('tabMap')" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap transition-colors">
+                🗺️ Mapa Interativo
+            </button>
+            <button id="navTabRegister" onclick="window.switchTab('tabRegister')" class="nav-tab px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap transition-colors">
+                ➕ Nova Ordem
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Tab: DASHBOARD -->
+        <div id="tabDash" class="tab-content hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-end">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Categoria</label>
+                    <select id="dashFilterCategory" onchange="window.renderDashboard()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-xs font-medium w-36">
+                        <option value="">Todas</option>
+                        <option value="POSTE">Poste</option>
+                        <option value="PODA">Poda</option>
+                        <option value="CONEXÕES">Conexões</option>
+                        <option value="BYPASS">Bypass</option>
+                        <option value="CONDUTOR">Condutor</option>
+                        <option value="ESTRUTURA">Estrutura</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Status</label>
+                    <select id="dashFilterStatus" onchange="window.renderDashboard()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-xs font-medium w-36">
+                        <option value="">Todos</option>
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="PROGRAMADO">Programado</option>
+                        <option value="PARCIAL">Parcial</option>
+                        <option value="CONCLUÍDO">Concluído</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-500 dark:text-slate-300 font-bold uppercase">Total</p>
+                    <p id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white">0</p>
+                </div>
+                <div class="bg-red-50 dark:bg-red-950/30 p-4 rounded-2xl border border-red-100 dark:border-red-900/50">
+                    <p class="text-xs text-red-600 dark:text-red-300 font-bold uppercase">Pendentes</p>
+                    <p id="dashPending" class="text-3xl font-black text-red-600 dark:text-red-300">0</p>
+                </div>
+                <div class="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/50">
+                    <p class="text-xs text-blue-600 dark:text-blue-300 font-bold uppercase">Programados</p>
+                    <p id="dashProgrammed" class="text-3xl font-black text-blue-600 dark:text-blue-300">0</p>
+                </div>
+                <div class="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-2xl border border-amber-100 dark:border-amber-900/50">
+                    <p class="text-xs text-amber-600 dark:text-amber-300 font-bold uppercase">Parciais</p>
+                    <p id="dashPartial" class="text-3xl font-black text-amber-600 dark:text-amber-300">0</p>
+                </div>
+                <div class="bg-emerald-50 dark:bg-emerald-950/30 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/50">
+                    <p class="text-xs text-emerald-600 dark:text-emerald-300 font-bold uppercase">Concluídas</p>
+                    <p id="dashDone" class="text-3xl font-black text-emerald-600 dark:text-emerald-300">0</p>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-4 text-center">Status Geral</h3>
+                    <div class="h-48 relative"><canvas id="statusChart"></canvas></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 md:col-span-2">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-4">Volume por Categoria</h3>
+                    <div class="h-48 relative"><canvas id="categoryChart"></canvas></div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <h3 class="text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-4">Últimas Listadas (Filtro Atual)</h3>
+                <div id="dashFilteredList" class="space-y-2 max-h-64 overflow-y-auto pr-2 text-slate-200"></div>
+            </div>
+        </div>
+
+        <!-- Tab: CADASTRO -->
+        <div id="tabRegister" class="tab-content hidden max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                <div class="bg-amber-500 p-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-950">Nova Ordem de Serviço</h2>
+                        <p class="text-slate-950 text-sm font-semibold opacity-90">Preencha os dados da demanda de campo</p>
+                    </div>
+                </div>
+                
+                <form id="orderForm" class="p-6 sm:p-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Nº OS / Projeto *</label>
+                            <input type="text" id="osProject" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Ex: OS-2024-001">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Origem *</label>
+                            <select id="origem" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="OSM">OSM</option>
+                                <option value="PAI">PAI</option>
+                                <option value="Pedido Interno">Pedido Interno</option>
+                                <option value="Aneel">Aneel</option>
+                                <option value="Juizado/Ouvidoria">Juizado/Ouvidoria</option>
+                                <option value="Órgão Público">Órgão Público</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Categoria *</label>
+                            <select id="category" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="POSTE">Poste</option>
+                                <option value="PODA">Poda</option>
+                                <option value="CONEXÕES">Conexões</option>
+                                <option value="BYPASS">Bypass</option>
+                                <option value="CONDUTOR">Condutor</option>
+                                <option value="ESTRUTURA">Estrutura</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Status Inicial *</label>
+                            <select id="status" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="PENDENTE">Pendente</option>
+                                <option value="PROGRAMADO">Programado</option>
+                                <option value="PARCIAL">Parcial</option>
+                                <option value="CONCLUÍDO">Concluído</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Data da Ordem *</label>
+                            <input type="date" id="orderDate" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Ponto Elétrico</label>
+                            <input type="text" id="pontoEletrico" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Ex: PT-9901">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Alimentador</label>
+                            <input type="text" id="alimentador" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Ex: ALT-01">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 dark:border-slate-800 pt-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-200">Localização (GPS)</h3>
+                            <button type="button" onclick="window.fetchCurrentPosition()" class="text-xs bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 px-3 py-1.5 rounded-lg font-bold transition-colors">
+                                📍 Usar Minha Localização
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Latitude</label>
+                                <input type="number" step="any" id="latitude" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="-22.9193">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Longitude</label>
+                                <input type="number" step="any" id="longitude" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="-42.8186">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 dark:border-slate-800 pt-6">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Descrição do Problema / Detalhes</label>
+                        <textarea id="description" rows="3" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Descreva os serviços necessários..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-8 py-3.5 rounded-xl shadow-lg shadow-amber-500/30 transition-all text-sm">
+                            💾 Salvar Ordem de Serviço
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- CSV Import Area inside Register -->
+            <div class="mt-8 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200">Importação em Lote via Planilha</h3>
+                    <p class="text-xs text-slate-300 mt-1">Selecione um arquivo CSV com as ordens para importar todas de uma só vez.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <button onclick="window.downloadCSVTemplate()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Baixar Modelo
+                    </button>
+                    <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-colors">
+                        Selecionar CSV
+                        <input type="file" accept=".csv" class="hidden" onchange="window.handleCSVImport(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: MAP -->
+        <div id="tabMap" class="tab-content hidden space-y-4">
+            <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <input type="text" id="mapSearchInput" onkeyup="window.renderMapMarkers()" placeholder="Buscar OS..." class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-xs w-40">
+                    <select id="mapFilterCategory" onchange="window.renderMapMarkers()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-xs w-32">
+                        <option value="">Todas Categorias</option>
+                        <option value="POSTE">Poste</option>
+                        <option value="PODA">Poda</option>
+                        <option value="CONEXÕES">Conexões</option>
+                        <option value="BYPASS">Bypass</option>
+                        <option value="CONDUTOR">Condutor</option>
+                        <option value="ESTRUTURA">Estrutura</option>
+                    </select>
+                    <select id="mapFilterStatus" onchange="window.renderMapMarkers()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-xs w-32">
+                        <option value="">Todos Status</option>
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="PROGRAMADO">Programado</option>
+                        <option value="PARCIAL">Parcial</option>
+                        <option value="CONCLUÍDO">Concluído</option>
+                    </select>
+                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg"><span id="mapFilteredCount">0</span> no mapa</span>
+                </div>
+                <div>
+                    <button id="missingCoordsBtn" onclick="window.openMissingCoordsModal()" class="hidden px-3 py-1.5 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-lg text-xs font-bold animate-pulse">
+                        ⚠️ <span id="missingCoordsCountBadge">0</span> sem Coordenadas
+                    </button>
+                </div>
+            </div>
+            <div id="map" class="shadow-xl border-4 border-white dark:border-slate-800"></div>
+        </div>
+
+        <!-- Tab: LIST (DEMANDAS) -->
+        <div id="tabList" class="tab-content block">
+            
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <input type="text" id="searchInput" onkeyup="window.renderListView()" placeholder="Buscar OS, Ponto..." class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-4 py-2.5 text-sm font-medium w-full sm:w-60 focus:ring-2 focus:ring-amber-500 outline-none">
+                    
+                    <select id="listFilterCategory" onchange="window.renderListView()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2.5 text-sm font-medium">
+                        <option value="">Categorias</option>
+                        <option value="POSTE">Poste</option>
+                        <option value="PODA">Poda</option>
+                        <option value="CONEXÕES">Conexões</option>
+                        <option value="BYPASS">Bypass</option>
+                        <option value="CONDUTOR">Condutor</option>
+                        <option value="ESTRUTURA">Estrutura</option>
+                    </select>
+
+                    <select id="listFilterStatus" onchange="window.renderListView()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2.5 text-sm font-medium">
+                        <option value="">Status</option>
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="PROGRAMADO">Programado</option>
+                        <option value="PARCIAL">Parcial</option>
+                        <option value="CONCLUÍDO">Concluído</option>
+                    </select>
+
+                    <select id="listSortBy" onchange="window.renderListView()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-sm font-medium text-amber-600 dark:text-amber-400">
+                        <option value="newest">Mais Recentes</option>
+                        <option value="oldest">Mais Antigas</option>
+                        <option value="days_desc">Dias em Aberto (Maior)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                    <button onclick="window.generateRoute()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2">
+                        🗺️ Traçar Rota (<span id="selectedCountBadge">0</span>)
+                    </button>
+                    <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center">
+                        <button id="viewModeCardsBtn" onclick="window.setViewMode('cards')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm">Cards</button>
+                        <button id="viewModeListBtn" onclick="window.setViewMode('list')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-all">Lista</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="listEmptyState" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-20 h-20 bg-slate-200 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Nenhuma ordem encontrada</h3>
+                <p class="text-slate-300 text-sm mt-1">Ajuste os filtros ou faça login com o Google para carregar suas ordens de serviço.</p>
+            </div>
+
+            <!-- Render Container -->
+            <div id="fullOrderGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Javascript will render items here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Base (Custom Alerts) -->
+    <div id="customModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 text-center transform transition-all">
+            <h3 id="modalTitle" class="text-xl font-black text-slate-900 dark:text-white mb-2">Aviso</h3>
+            <p id="modalMessage" class="text-slate-200 text-sm mb-6"></p>
+            <button onclick="window.closeModal()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl transition-colors">Entendi</button>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 text-center">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-2xl">🗑️</span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">Excluir Demanda?</h3>
+            <p class="text-slate-200 text-sm mb-6">Esta ação removerá a ordem de serviço do sistema. Deseja continuar?</p>
+            <div class="flex gap-3">
+                <button onclick="window.closeConfirmModal()" class="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-200 font-bold py-3 rounded-xl transition-colors">Cancelar</button>
+                <button id="btnConfirmDelete" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Order Modal -->
+    <div id="confirmEditModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-2xl w-full border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-amber-500 p-4 flex justify-between items-center shrink-0">
+                <h2 class="text-lg font-black text-slate-950">✏️ Editar Ordem de Serviço</h2>
+                <button onclick="window.closeConfirmEditModal()" class="text-slate-950 hover:bg-white/20 p-1.5 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow">
+                <form id="editOrderForm" onsubmit="window.saveEditedOrder(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Origem</label>
+                            <select id="editOrigem" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                                <option value="OSM">OSM</option>
+                                <option value="PAI">PAI</option>
+                                <option value="Pedido Interno">Pedido Interno</option>
+                                <option value="Aneel">Aneel</option>
+                                <option value="Juizado/Ouvidoria">Juizado/Ouvidoria</option>
+                                <option value="Órgão Público">Órgão Público</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Status</label>
+                            <select id="editStatus" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                                <option value="PENDENTE">Pendente</option>
+                                <option value="PROGRAMADO">Programado</option>
+                                <option value="PARCIAL">Parcial</option>
+                                <option value="CONCLUÍDO">Concluído</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Ponto Elétrico</label>
+                            <input type="text" id="editPontoEletrico" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Alimentador</label>
+                            <input type="text" id="editAlimentador" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-slate-200 dark:border-slate-800 pt-4 mt-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-bold text-slate-300 uppercase">Coordenadas</label>
+                            <button type="button" onclick="window.fetchEditCurrentPosition()" class="text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-200 px-2 py-1 rounded font-bold">📍 Pegar Atual</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="number" step="any" id="editLatitude" placeholder="Latitude" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                            <input type="number" step="any" id="editLongitude" placeholder="Longitude" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Descrição</label>
+                        <textarea id="editDescription" rows="3" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+                        <button type="button" onclick="window.closeConfirmEditModal()" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-200 font-bold rounded-xl text-sm">Cancelar</button>
+                        <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-sm shadow-md">💾 Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Missing Coords Modal -->
+    <div id="missingCoordsModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black text-red-400">⚠️ Sem Coordenadas</h3>
+                <button onclick="window.closeMissingCoordsModal()" class="text-slate-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <p class="text-xs text-slate-200 mb-4">As seguintes ordens não possuem GPS e não aparecem no mapa:</p>
+            <div id="missingCoordsListContent" class="space-y-2 max-h-60 overflow-y-auto pr-2 text-slate-200"></div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="bg-slate-800 p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span id="detCategory" class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-1 rounded uppercase">CAT</span>
+                    <h2 id="detTitle" class="text-lg font-black text-white">OS-DETALHE</h2>
+                </div>
+                <button onclick="window.closeDetailsModal()" class="text-slate-300 hover:text-white p-1 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-slate-200">
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Origem</span>
+                        <span id="detOrigem" class="font-semibold text-slate-100">N/D</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Status</span>
+                        <span id="detStatus" class="font-bold text-slate-100">PENDENTE</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Ponto Elétrico</span>
+                        <span id="detPonto" class="font-semibold text-slate-100">N/D</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Alimentador</span>
+                        <span id="detAlim" class="font-semibold text-slate-100">N/D</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <div>
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Data da Ordem</span>
+                        <span id="detDate" class="text-sm font-semibold text-slate-100">00/00/0000</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] font-bold text-slate-400 uppercase">Em Aberto</span>
+                        <span id="detDays" class="text-sm font-black text-amber-400">0 dias</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descrição</span>
+                    <p id="detDescription" class="text-sm text-slate-200 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800"></p>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Coordenada GPS</span>
+                    <p id="detCoords" class="text-xs font-mono text-slate-200 bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fiscalizar Modal -->
+    <div id="fiscalizarModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="bg-amber-500 p-4 flex justify-between items-center">
+                <h2 id="fiscalizarModalTitle" class="text-base font-black text-slate-950">Fiscalizar: OS</h2>
+                <button onclick="window.closeFiscalizarModal()" class="text-slate-950 hover:bg-white/20 p-1 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Novo Status</label>
+                    <select id="fiscalizarStatusSelect" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-amber-500">
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="PROGRAMADO">Programado</option>
+                        <option value="PARCIAL">Parcial</option>
+                        <option value="CONCLUÍDO">Concluído</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Observação (Opcional)</label>
+                    <textarea id="fiscalizarObsInput" rows="2" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-amber-500" placeholder="Anotações da vistoria..."></textarea>
+                </div>
+                <button onclick="window.saveFiscalizarChanges()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl shadow-md transition-colors">
+                    Gravar Fiscalização
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[80vh]">
+            <div class="bg-slate-800 p-4 flex justify-between items-center shrink-0">
+                <h2 id="historyModalTitle" class="text-base font-black text-white">Histórico: OS</h2>
+                <button onclick="window.closeHistoryModal()" class="text-slate-300 hover:text-white p-1 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div id="historyModalContent" class="p-5 overflow-y-auto flex-grow space-y-3 text-slate-200">
+                <!-- Logs rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports & Main Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'eletrogestao-app';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
+            authDomain: "eletrogestao-38596.firebaseapp.com",
+            projectId: "eletrogestao-38596",
+            storageBucket: "eletrogestao-38596.firebasestorage.app",
+            messagingSenderId: "505140333342",
+            appId: "1:505140333342:web:7b24bd715fc8417e98570f"
+        };
+
+        let app, db, auth;
+        let ordersData = [];
+        let authUser = null;
+        let map = null;
+        let markersGroup = null;
+        let pendingDeleteId = null;
+        let pendingEditId = null;
+        let currentFiscalizarId = null;
+        let unsubscribeRealtime = null;
+        let statusChartInstance = null;
+        let categoryChartInstance = null;
+        let selectedRouteIds = new Set();
+        let currentViewMode = 'cards';
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            const syncBadge = document.getElementById('syncStatusBadge');
+            if (syncBadge) syncBadge.innerText = "⚡ Sincronizado com Nuvem";
+        } catch (e) {
+            const syncBadge = document.getElementById('syncStatusBadge');
+            if (syncBadge) syncBadge.innerText = "💾 Modo Local";
+        }
+
+        window.toggleTheme = function() {
+            const htmlEl = document.documentElement;
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                localStorage.setItem('eletrogestao_theme', 'light');
+            } else {
+                htmlEl.classList.add('dark');
+                localStorage.setItem('eletrogestao_theme', 'dark');
+            }
+        };
+
+        const savedTheme = localStorage.getItem('eletrogestao_theme');
+        if (savedTheme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        window.showModal = function(title, message) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const customModal = document.getElementById('customModal');
+            if (modalTitle) modalTitle.innerText = title;
+            if (modalMessage) modalMessage.innerText = message;
+            if (customModal) customModal.classList.remove('hidden');
+        };
+        window.closeModal = function() { 
+            const customModal = document.getElementById('customModal');
+            if (customModal) customModal.classList.add('hidden'); 
+        };
+
+        window.openMissingCoordsModal = function() {
+            const missing = ordersData.filter(o => o.lat === undefined || o.lat === null || isNaN(o.lat) || o.lng === undefined || o.lng === null || isNaN(o.lng));
+            const container = document.getElementById('missingCoordsListContent');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (missing.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-300 text-center py-4">Todas as ordens possuem coordenadas cadastradas!</p>';
+            } else {
+                missing.forEach(order => {
+                    const row = document.createElement('div');
+                    row.className = "bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl flex items-center justify-between text-xs";
+                    row.innerHTML = `
+                        <div>
+                            <span class="font-bold text-amber-500 block">${order.osProject}</span>
+                            <span class="text-slate-300 text-[10px]">Cat: ${order.category} | PT: ${order.pontoEletrico || 'N/D'}</span>
+                        </div>
+                        <button onclick="window.closeMissingCoordsModal(); window.openConfirmEdit('${order.id}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-[10px]">
+                            ✏️ Adicionar Coordenada
+                        </button>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+            const missingModal = document.getElementById('missingCoordsModal');
+            if (missingModal) missingModal.classList.remove('hidden');
+        };
+
+        window.closeMissingCoordsModal = function() {
+            const missingModal = document.getElementById('missingCoordsModal');
+            if (missingModal) missingModal.classList.add('hidden');
+        };
+
+        window.openConfirmDelete = function(docId) {
+            if (!authUser || authUser.isAnonymous) {
+                window.showModal("Acesso Restrito", "Para excluir ordens de serviço, é necessário fazer login com sua conta do Google.");
+                return;
+            }
+            pendingDeleteId = docId;
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal) confirmModal.classList.remove('hidden');
+        };
+        window.closeConfirmModal = function() {
+            pendingDeleteId = null;
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal) confirmModal.classList.add('hidden');
+        };
+
+        const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+        if (btnConfirmDelete) {
+            btnConfirmDelete.addEventListener('click', async () => {
+                if (pendingDeleteId) {
+                    const target = ordersData.find(o => o.id === pendingDeleteId);
+                    ordersData = ordersData.filter(o => o.id !== pendingDeleteId);
+                    selectedRouteIds.delete(pendingDeleteId);
+
+                    if (authUser && !authUser.isAnonymous && db && target && target.firebaseId) {
+                        try {
+                            await deleteDoc(doc(db, 'artifacts', currentAppId, 'users', authUser.email.replace(/[@.]/g, '_'), 'electrical_orders', target.firebaseId));
+                        } catch(err) {}
+                    }
+                    closeConfirmModal();
+                    refreshAllViews();
+                }
+            });
+        }
+
+        window.openConfirmEdit = function(docId) {
+            if (!authUser || authUser.isAnonymous) {
+                window.showModal("Acesso Restrito", "Para editar ordens de serviço, é necessário fazer login com sua conta do Google.");
+                return;
+            }
+            pendingEditId = docId;
+            const order = ordersData.find(o => o.id === docId);
+            if(!order) return;
+            
+            const elOrigem = document.getElementById('editOrigem');
+            const elStatus = document.getElementById('editStatus');
+            const elPonto = document.getElementById('editPontoEletrico');
+            const elAlim = document.getElementById('editAlimentador');
+            const elLat = document.getElementById('editLatitude');
+            const elLng = document.getElementById('editLongitude');
+            const elDesc = document.getElementById('editDescription');
+            
+            if(elOrigem) elOrigem.value = order.origem || 'OSM';
+            if(elStatus) elStatus.value = order.status || 'PENDENTE';
+            if(elPonto) elPonto.value = order.pontoEletrico || '';
+            if(elAlim) elAlim.value = order.alimentador || '';
+            if(elLat) elLat.value = (order.lat !== undefined && order.lat !== null && !isNaN(order.lat)) ? order.lat : '';
+            if(elLng) elLng.value = (order.lng !== undefined && order.lng !== null && !isNaN(order.lng)) ? order.lng : '';
+            if(elDesc) elDesc.value = order.description || '';
+
+            const confirmEditModal = document.getElementById('confirmEditModal');
+            if (confirmEditModal) confirmEditModal.classList.remove('hidden');
+        };
+        window.closeConfirmEditModal = function() {
+            pendingEditId = null;
+            const confirmEditModal = document.getElementById('confirmEditModal');
+            if (confirmEditModal) confirmEditModal.classList.add('hidden');
+        };
+
+        window.saveEditedOrder = async function(e) {
+            e.preventDefault();
+            if (!pendingEditId) return;
+
+            const order = ordersData.find(o => o.id === pendingEditId);
+            if (!order) return;
+
+            const newOrigem = document.getElementById('editOrigem')?.value || 'OSM';
+            const newStatus = document.getElementById('editStatus')?.value || 'PENDENTE';
+            const newPonto = (document.getElementById('editPontoEletrico')?.value || '').trim().toUpperCase();
+            const newAlim = (document.getElementById('editAlimentador')?.value || '').trim().toUpperCase();
+            
+            const latInputVal = (document.getElementById('editLatitude')?.value || '').trim();
+            const lngInputVal = (document.getElementById('editLongitude')?.value || '').trim();
+            const newLat = latInputVal !== '' ? parseFloat(latInputVal) : null;
+            const newLng = lngInputVal !== '' ? parseFloat(lngInputVal) : null;
+            const newDesc = (document.getElementById('editDescription')?.value || '').trim();
+
+            const timestampStr = new Date().toLocaleString('pt-BR');
+            if (!order.history) order.history = [];
+
+            let changesDesc = [];
+            if (order.origem !== newOrigem) changesDesc.push(`Origem: ${order.origem} ➔ ${newOrigem}`);
+            if (order.status !== newStatus) changesDesc.push(`Status: ${order.status} ➔ ${newStatus}`);
+            if (order.pontoEletrico !== newPonto) changesDesc.push(`Ponto: ${order.pontoEletrico} ➔ ${newPonto}`);
+            if (order.alimentador !== newAlim) changesDesc.push(`Alimentador: ${order.alimentador} ➔ ${newAlim}`);
+            if (order.lat !== newLat || order.lng !== newLng) changesDesc.push(`Coordenadas alteradas`);
+            if (order.description !== newDesc) changesDesc.push(`Descrição atualizada`);
+
+            const logMsg = changesDesc.length > 0 ? `Ordem editada: ${changesDesc.join(', ')}` : `Ordem editada (sem alterações críticas)`;
+            order.history.unshift({ date: timestampStr, message: logMsg });
+
+            order.origem = newOrigem;
+            order.status = newStatus;
+            order.pontoEletrico = newPonto;
+            order.alimentador = newAlim;
+            order.lat = newLat;
+            order.lng = newLng;
+            order.description = newDesc;
+
+            if (authUser && !authUser.isAnonymous && db && order.firebaseId) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', currentAppId, 'users', authUser.email.replace(/[@.]/g, '_'), 'electrical_orders', order.firebaseId), {
+                        origem: order.origem,
+                        status: order.status,
+                        pontoEletrico: order.pontoEletrico,
+                        alimentador: order.alimentador,
+                        lat: order.lat,
+                        lng: order.lng,
+                        description: order.description,
+                        history: order.history
+                    });
+                } catch(err) {}
+            }
+
+            window.closeConfirmEditModal();
+            refreshAllViews();
+            window.showModal("Sucesso", "Ordem de serviço atualizada com sucesso e registrada no histórico!");
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            const tabEl = document.getElementById(tabId);
+            if (tabEl) tabEl.classList.remove('hidden');
+
+            if (tabId === 'tabRegister') {
+                const el = document.getElementById('navTabRegister');
+                if (el) el.classList.add('active');
+            }
+            if (tabId === 'tabMap') {
+                const el = document.getElementById('navTabMap');
+                if (el) el.classList.add('active');
+                if (map) setTimeout(() => map.invalidateSize(), 150);
+            }
+            if (tabId === 'tabList') {
+                const el = document.getElementById('navTabList');
+                if (el) el.classList.add('active');
+            }
+            if (tabId === 'tabDash') {
+                const el = document.getElementById('navTabDash');
+                if (el) el.classList.add('active');
+                renderDashboard();
+            }
+            if (tabId === 'tabMap') renderMapMarkers();
+            if (tabId === 'tabList') renderListView();
+        };
+
+        window.setViewMode = function(mode) {
+            currentViewMode = mode;
+            const btnCards = document.getElementById('viewModeCardsBtn');
+            const btnList = document.getElementById('viewModeListBtn');
+            if (mode === 'cards') {
+                if (btnCards) btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm";
+                if (btnList) btnList.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 hover:text-white transition-all";
+            } else {
+                if (btnList) btnList.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm";
+                if (btnCards) btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 hover:text-white transition-all";
+            }
+            renderListView();
+        };
+
+        window.fetchCurrentPosition = function() {
+            if (!navigator.geolocation) {
+                window.showModal("Aviso", "Geolocalização não suportada pelo seu navegador.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latEl = document.getElementById('latitude');
+                const lngEl = document.getElementById('longitude');
+                if (latEl) latEl.value = position.coords.latitude;
+                if (lngEl) lngEl.value = position.coords.longitude;
+            }, () => {
+                window.showModal("Aviso", "Não foi possível obter sua localização atual.");
+            });
+        };
+
+        window.fetchEditCurrentPosition = function() {
+            if (!navigator.geolocation) {
+                window.showModal("Aviso", "Geolocalização não suportada pelo seu navegador.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latEl = document.getElementById('editLatitude');
+                const lngEl = document.getElementById('editLongitude');
+                if (latEl) latEl.value = position.coords.latitude;
+                if (lngEl) lngEl.value = position.coords.longitude;
+            }, () => {
+                window.showModal("Aviso", "Não foi possível obter sua localização atual.");
+            });
+        };
+
+        window.downloadCSVTemplate = function() {
+            const csvContent = "\uFEFFosProject;origem;category;status;alimentador;orderDate;pontoEletrico;description;lat;lng\n" +
+                               "OSM-99101;OSM;POSTE;PENDENTE;ALT-01;2026-01-20;PT-101;Troca de cruzeta danificada;-22.9193;-42.8186\n" +
+                               "PAI-88202;PAI;PODA;PROGRAMADO;ALT-02;2026-02-10;PT-102;Poda preventiva de galhos na rede;;";
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', 'modelo_importacao_eletrogestao.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        window.handleCSVImport = async function(event) {
+            if (!authUser || authUser.isAnonymous) {
+                window.showModal("Acesso Restrito", "Para importar ordens em lote, é necessário fazer login com sua conta do Google.");
+                event.target.value = '';
+                return;
+            }
+
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/);
+                let newOrdersBatch = [];
+                const timestampNow = Date.now();
+
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    const delimiter = line.includes(';') ? ';' : ',';
+                    const cols = line.split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
+                    
+                    if (cols.length >= 1) {
+                        const [osProject, origem, category, status, alimentador, orderDate, pontoEletrico, description, lat, lng] = cols;
+                        
+                        const osVal = (osProject || `OS-${Math.floor(Math.random() * 90000) + 10000}`).toUpperCase();
+                        const existsInLocal = ordersData.some(o => (o.osProject || '').toUpperCase() === osVal);
+                        const existsInBatch = newOrdersBatch.some(o => (o.osProject || '').toUpperCase() === osVal);
+                        
+                        if (!existsInLocal && !existsInBatch && osVal) {
+                            const timestampStr = new Date().toLocaleString('pt-BR');
+                            
+                            const parsedLat = lat !== undefined && lat !== '' && !isNaN(parseFloat(lat)) ? parseFloat(lat) : null;
+                            const parsedLng = lng !== undefined && lng !== '' && !isNaN(parseFloat(lng)) ? parseFloat(lng) : null;
+                            
+                            let parsedDate = orderDate || new Date().toISOString().split('T')[0];
+                            if (parsedDate.includes('/')) {
+                                const pts = parsedDate.split('/');
+                                if(pts.length === 3) parsedDate = `${pts[2]}-${pts[1].padStart(2, '0')}-${pts[0].padStart(2, '0')}`;
+                            }
+
+                            const newObj = {
+                                id: 'ord_' + Math.random().toString(36).substr(2, 9),
+                                osProject: osVal,
+                                origem: origem || 'OSM',
+                                category: category || 'POSTE',
+                                status: status || 'PENDENTE',
+                                alimentador: (alimentador || 'GERAL').toUpperCase(),
+                                orderDate: parsedDate,
+                                pontoEletrico: (pontoEletrico || 'P-01').toUpperCase(),
+                                description: description || 'Importado via planilha (sem descrição detalhada)',
+                                lat: parsedLat,
+                                lng: parsedLng,
+                                timestamp: timestampNow + i,
+                                history: [
+                                    { date: timestampStr, message: `Ordem importada via planilha em lote` }
+                                ]
+                            };
+
+                            newOrdersBatch.push(newObj);
+                        }
+                    }
+                }
+
+                if (newOrdersBatch.length > 0) {
+                    ordersData = [...newOrdersBatch, ...ordersData];
+
+                    if (authUser && !authUser.isAnonymous && db) {
+                        for (const ord of newOrdersBatch) {
+                            try {
+                                const docRef = await addDoc(collection(db, 'artifacts', currentAppId, 'users', authUser.email.replace(/[@.]/g, '_'), 'electrical_orders'), ord);
+                                ord.firebaseId = docRef.id;
+                            } catch(err) {}
+                        }
+                    }
+                }
+
+                event.target.value = '';
+                refreshAllViews();
+                window.showModal("Importação Concluída", `${newOrdersBatch.length} ordens de serviço foram importadas com sucesso!`);
+            };
+            reader.readAsText(file, 'UTF-8');
+        };
+
+        function initMap() {
+            if (map) return;
+            const mapEl = document.getElementById('map');
+            if (!mapEl) return;
+            if (typeof L === 'undefined') return;
+            map = L.map('map', { zoomControl: true, attributionControl: false, tap: true }).setView([-22.9193, -42.8186], 13);
+            L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
+            markersGroup = L.featureGroup().addTo(map);
+        }
+
+        window.handleGoogleLogin = async function() {
+            if (!auth) return;
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                window.showModal("Aviso", "Não foi possível concluir o login com o Google.");
+            }
+        };
+
+        window.handleGoogleLogout = async function() {
+            if (auth) {
+                try {
+                    await signOut(auth);
+                } catch (e) {}
+            }
+            authUser = null;
+            ordersData = [];
+            if (unsubscribeRealtime) unsubscribeRealtime();
+            updateUIAuthStatus(null);
+            refreshAllViews();
+            window.showModal("Aviso", "Você saiu da conta com sucesso.");
+        };
+
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user && !user.isAnonymous) {
+                    authUser = user;
+                    updateUIAuthStatus(user);
+                    setupRealtimeListener(user.email.replace(/[@.]/g, '_'));
+                } else {
+                    authUser = null;
+                    updateUIAuthStatus(null);
+                    ordersData = [];
+                    refreshAllViews();
+                }
+            });
+        } else {
+            authUser = null;
+            refreshAllViews();
+        }
+
+        function refreshAllViews() {
+            renderMapMarkers();
+            renderListView();
+            const badge = document.getElementById('tabBadgeCount');
+            if (badge) badge.innerText = ordersData.length;
+        }
+
+        function updateUIAuthStatus(user) {
+            const btn = document.getElementById('googleLoginBtn');
+            const profile = document.getElementById('googleUserProfile');
+            if (user && !user.isAnonymous) {
+                if (btn) btn.classList.add('hidden');
+                if (profile) {
+                    profile.classList.remove('hidden');
+                    profile.classList.add('flex');
+                }
+                const avatar = document.getElementById('userAvatar');
+                if (avatar) avatar.src = user.photoURL || `https://placehold.co/100x100/f59e0b/0f172a?text=U`;
+                const nameEl = document.getElementById('userName');
+                if (nameEl) nameEl.innerText = user.displayName || 'Usuário';
+            } else {
+                if (btn) btn.classList.remove('hidden');
+                if (profile) {
+                    profile.classList.add('hidden');
+                    profile.classList.remove('flex');
+                }
+            }
+        }
+
+        function setupRealtimeListener(userId) {
+            if (!db) return;
+            if (unsubscribeRealtime) unsubscribeRealtime();
+            try {
+                const ordersRef = collection(db, 'artifacts', currentAppId, 'users', userId, 'electrical_orders');
+                unsubscribeRealtime = onSnapshot(ordersRef, (snapshot) => {
+                    const cloudOrders = snapshot.docs.map(doc => ({ id: doc.id, firebaseId: doc.id, ...doc.data() }));
+                    ordersData = cloudOrders;
+                    ordersData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    refreshAllViews();
+                }, (error) => {});
+            } catch(e) {}
+        }
+
+        window.toggleRouteSelection = function(docId, event) {
+            if (event) event.stopPropagation();
+            if (selectedRouteIds.has(docId)) {
+                selectedRouteIds.delete(docId);
+            } else {
+                selectedRouteIds.add(docId);
+            }
+            const badge = document.getElementById('selectedCountBadge');
+            if (badge) badge.innerText = selectedRouteIds.size;
+            
+            const card = document.getElementById(`order_card_${docId}`);
+            if (card) {
+                if (selectedRouteIds.has(docId)) {
+                    card.classList.add('ring-2', 'ring-amber-400');
+                } else {
+                    card.classList.remove('ring-2', 'ring-amber-400');
+                }
+            }
+        };
+
+        window.generateRoute = function() {
+            let targetIds = Array.from(selectedRouteIds);
+            if (targetIds.length === 0) {
+                targetIds = ordersData.filter(o => o.lat !== undefined && o.lat !== null && !isNaN(o.lat) && o.lng !== undefined && o.lng !== null && !isNaN(o.lng)).map(o => o.id);
+            }
+
+            if (targetIds.length === 0) {
+                window.showModal("Aviso", "Não há ordens de serviço com coordenadas GPS válidas cadastradas para traçar a rota.");
+                return;
+            }
+
+            const selectedOrders = ordersData.filter(o => targetIds.includes(o.id) && o.lat !== undefined && o.lat !== null && !isNaN(o.lat) && o.lng !== undefined && o.lng !== null && !isNaN(o.lng));
+            const latLngs = selectedOrders.map(o => `${o.lat},${o.lng}`);
+            let mapsUrl = "";
+            if (latLngs.length === 1) {
+                mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latLngs[0]}`;
+            } else {
+                const origin = latLngs[0];
+                const destination = latLngs[latLngs.length - 1];
+                const waypoints = latLngs.slice(1, latLngs.length - 1).join('|');
+                mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
+                if (waypoints) {
+                    mapsUrl += `&waypoints=${encodeURIComponent(waypoints)}`;
+                }
+            }
+
+            window.open(mapsUrl, '_blank');
+        };
+
+        window.traceRouteForSingle = function(docId, event) {
+            if (event) event.stopPropagation();
+            const order = ordersData.find(o => o.id === docId);
+            if (!order || order.lat === undefined || order.lat === null || isNaN(order.lat) || order.lng === undefined || order.lng === null || isNaN(order.lng)) {
+                window.showModal("Aviso", "Esta ordem não possui coordenadas GPS válidas cadastradas.");
+                return;
+            }
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${order.lat},${order.lng}`;
+            window.open(mapsUrl, '_blank');
+        };
+
+        window.openDetailsModal = function(docId, event) {
+            if (event) event.stopPropagation();
+            const order = ordersData.find(o => o.id === docId);
+            if (!order) return;
+
+            const elCat = document.getElementById('detCategory');
+            const elTitle = document.getElementById('detTitle');
+            const elOrigem = document.getElementById('detOrigem');
+            const stEl = document.getElementById('detStatus');
+            const elPonto = document.getElementById('detPonto');
+            const elAlim = document.getElementById('detAlim');
+            const elDate = document.getElementById('detDate');
+            const elDays = document.getElementById('detDays');
+            const elDesc = document.getElementById('detDescription');
+            const elCoords = document.getElementById('detCoords');
+
+            if (elCat) elCat.innerText = order.category || 'POSTE';
+            if (elTitle) elTitle.innerText = order.osProject || 'Detalhes';
+            if (elOrigem) elOrigem.innerText = order.origem || 'N/D';
+            
+            if (stEl) {
+                stEl.innerText = order.status || 'PENDENTE';
+                stEl.className = "font-bold " + (order.status === 'CONCLUÍDO' ? 'text-emerald-400' : (order.status === 'PROGRAMADO' ? 'text-blue-400' : (order.status === 'PARCIAL' ? 'text-amber-400' : 'text-red-400')));
+            }
+
+            if (elPonto) elPonto.innerText = order.pontoEletrico || 'N/D';
+            if (elAlim) elAlim.innerText = order.alimentador || 'N/D';
+            if (elDate) elDate.innerText = order.orderDate ? (order.orderDate.includes('-') ? order.orderDate.split('-').reverse().join('/') : order.orderDate) : 'N/D';
+            if (elDays) elDays.innerText = `${window.calculateDaysOpen(order.orderDate)} dias`;
+            if (elDesc) elDesc.innerText = order.description || 'Nenhuma descrição detalhada informada.';
+            if (elCoords) elCoords.innerText = (order.lat !== undefined && order.lat !== null && !isNaN(order.lat)) ? `Lat: ${order.lat}, Lng: ${order.lng}` : 'Nenhuma coordenada cadastrada';
+
+            const detailsModal = document.getElementById('detailsModal');
+            if (detailsModal) detailsModal.classList.remove('hidden');
+            if (map) map.closePopup();
+        };
+
+        window.closeDetailsModal = function() {
+            const detailsModal = document.getElementById('detailsModal');
+            if (detailsModal) detailsModal.classList.add('hidden');
+        };
+
+        function createStatusMarker(status) {
+            let colorHex = status === 'PROGRAMADO' ? '#3b82f6' : (status === 'PARCIAL' ? '#f59e0b' : (status === 'CONCLUÍDO' ? '#10b981' : '#ef4444'));
+            
+            let iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-950 font-bold" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd" />
+            </svg>`;
+
+            if (typeof L === 'undefined') return null;
+            return L.divIcon({
+                html: `<div style="background-color: ${colorHex};" class="w-8 h-8 rounded-full flex items-center justify-center border-2 border-slate-900 shadow-xl">
+                        ${iconSvg}
+                       </div>`,
+                className: '', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+            });
+        }
+
+        window.renderMapMarkers = function() {
+            if (!markersGroup || typeof L === 'undefined') return;
+            markersGroup.clearLayers();
+
+            const missingCount = ordersData.filter(o => o.lat === undefined || o.lat === null || isNaN(o.lat) || o.lng === undefined || o.lng === null || isNaN(o.lng)).length;
+            const missingBtn = document.getElementById('missingCoordsBtn');
+            const missingBadge = document.getElementById('missingCoordsCountBadge');
+            if (missingBtn) {
+                if (missingCount > 0) {
+                    missingBtn.classList.remove('hidden');
+                    if (missingBadge) missingBadge.innerText = missingCount;
+                } else {
+                    missingBtn.classList.add('hidden');
+                }
+            }
+
+            const fCat = document.getElementById('mapFilterCategory')?.value || '';
+            const fStatus = document.getElementById('mapFilterStatus')?.value || '';
+            const searchVal = (document.getElementById('mapSearchInput')?.value || '').toLowerCase().trim();
+
+            const filtered = ordersData.filter(order => {
+                if (fCat && order.category !== fCat) return false;
+                if (fStatus && order.status !== fStatus) return false;
+                if (order.lat === undefined || order.lat === null || isNaN(order.lat) || order.lng === undefined || order.lng === null || isNaN(order.lng)) return false;
+
+                if (searchVal) {
+                    const osp = (order.osProject || '').toLowerCase();
+                    const alt = (order.alimentador || '').toLowerCase();
+                    const d = (order.description || '').toLowerCase();
+                    const p = (order.pontoEletrico || '').toLowerCase();
+                    if (!osp.includes(searchVal) && !alt.includes(searchVal) && !d.includes(searchVal) && !p.includes(searchVal)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            const countEl = document.getElementById('mapFilteredCount');
+            if (countEl) countEl.innerText = filtered.length;
+
+            filtered.forEach(order => {
+                const markerIcon = createStatusMarker(order.status);
+                if (!markerIcon) return;
+                const marker = L.marker([order.lat, order.lng], { icon: markerIcon });
+                marker.options.orderId = order.id;
+                
+                const popupHtml = `
+                    <div class="p-2 min-w-[210px] space-y-2 text-slate-900 dark:text-slate-100">
+                        <div>
+                            <span class="text-[10px] text-amber-500 font-bold uppercase">⚡ PT: ${order.pontoEletrico || 'GERAL'} | Alt: ${order.alimentador || 'N/D'}</span>
+                            <h3 class="font-black text-sm leading-tight mt-1">${order.osProject}</h3>
+                            <span class="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded font-bold inline-block mt-1">${order.category}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 pt-1 border-t border-slate-300 dark:border-slate-700">
+                            <button onclick="window.openFiscalizarModal('${order.id}')" class="py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] font-extrabold rounded shadow text-center transition-colors">Fiscar</button>
+                            <button onclick="window.traceRouteForSingle('${order.id}', event)" class="py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded shadow text-center transition-colors">Rota</button>
+                            <button onclick="window.openDetailsModal('${order.id}', event)" class="py-2 bg-slate-700 hover:bg-slate-800 text-white text-[10px] font-bold rounded shadow text-center transition-colors">Info</button>
+                        </div>
+                    </div>`;
+                marker.bindPopup(popupHtml);
+                markersGroup.addLayer(marker);
+            });
+        };
+
+        window.showOnMap = function(docId, event) {
+            if (event) event.stopPropagation();
+            const order = ordersData.find(o => o.id === docId);
+            if (!order || order.lat === undefined || order.lat === null || isNaN(order.lat) || order.lng === undefined || order.lng === null || isNaN(order.lng)) {
+                window.showModal("Aviso", "Esta ordem não possui coordenadas GPS válidas cadastradas.");
+                return;
+            }
+
+            window.switchTab('tabMap');
+
+            if (map) {
+                setTimeout(() => {
+                    map.setView([order.lat, order.lng], 16);
+                    markersGroup.eachLayer((layer) => {
+                        if (layer.options && layer.options.orderId === docId) {
+                            layer.openPopup();
+                        }
+                    });
+                }, 200);
+            }
+        };
+
+        window.shareOrderWhatsApp = function(docId) {
+            const order = ordersData.find(o => o.id === docId);
+            if (!order) return;
+
+            let coordText = (order.lat !== undefined && order.lat !== null && !isNaN(order.lat)) ? `https://maps.google.com/?q=${order.lat},${order.lng}` : 'Não informada';
+            const text = 
+`Projeto: ${order.osProject}
+Origem: ${order.origem || 'N/D'}
+Categoria: ${order.category}
+Status: ${order.status}
+Alimentador: ${order.alimentador || 'N/D'}
+Ponto Elétrico: ${order.pontoEletrico || 'N/D'}
+Descrição: ${order.description}
+Coordenada: ${coordText}`;
+
+            const encoded = encodeURIComponent(text);
+            window.open("https://api.whatsapp.com/send?text=" + encoded, '_blank');
+        };
+
+        window.calculateDaysOpen = function(orderDateStr) {
+            if (!orderDateStr) return 0;
+            let year, month, day;
+
+            if (orderDateStr.includes('-')) {
+                const parts = orderDateStr.split('-');
+                if (parts.length === 3) {
+                    if(parts[0].length === 4) {
+                        year = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        day = parseInt(parts[2], 10);
+                    } else {
+                        day = parseInt(parts[0], 10);
+                        month = parseInt(parts[1], 10) - 1;
+                        year = parseInt(parts[2], 10);
+                    }
+                }
+            } else if (orderDateStr.includes('/')) {
+                const parts = orderDateStr.split('/');
+                if (parts.length === 3) {
+                    day = parseInt(parts[0], 10);
+                    month = parseInt(parts[1], 10) - 1;
+                    year = parseInt(parts[2], 10);
+                }
+            }
+
+            if (isNaN(year) || isNaN(month) || isNaN(day)) return 0;
+
+            const orderDate = new Date(year, month, day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            orderDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = today - orderDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays >= 0 ? diffDays : 0;
+        };
+
+        window.renderListView = function() {
+            const grid = document.getElementById('fullOrderGrid');
+            const empty = document.getElementById('listEmptyState');
+            if(!grid || !empty) return;
+            
+            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const fCat = document.getElementById('listFilterCategory')?.value || '';
+            const fStatus = document.getElementById('listFilterStatus')?.value || '';
+            const sortBy = document.getElementById('listSortBy')?.value || 'newest';
+
+            grid.innerHTML = '';
+            
+            let filtered = ordersData.filter(order => {
+                if (fCat && order.category !== fCat) return false;
+                if (fStatus && order.status !== fStatus) return false;
+                const osp = (order.osProject || '').toLowerCase();
+                const alt = (order.alimentador || '').toLowerCase();
+                const d = (order.description || '').toLowerCase();
+                const p = (order.pontoEletrico || '').toLowerCase();
+                return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
+            });
+
+            filtered.sort((a, b) => {
+                const daysA = window.calculateDaysOpen(a.orderDate);
+                const daysB = window.calculateDaysOpen(b.orderDate);
+                const dateA = new Date(a.timestamp || 0);
+                const dateB = new Date(b.timestamp || 0);
+
+                if (sortBy === 'newest') return dateB - dateA;
+                else if (sortBy === 'oldest') return dateA - dateB;
+                else if (sortBy === 'days_desc') return daysB - daysA;
+                return 0;
+            });
+
+            if (filtered.length === 0) { 
+                empty.classList.remove('hidden'); 
+                return; 
+            }
+            empty.classList.add('hidden');
+
+            if (currentViewMode === 'list') {
+                grid.className = "space-y-2";
+                filtered.forEach(order => {
+                    const dateFmt = order.orderDate ? (order.orderDate.includes('-') ? order.orderDate.split('-').reverse().join('/') : order.orderDate) : '';
+                    const isSelected = selectedRouteIds.has(order.id);
+                    const daysOpen = window.calculateDaysOpen(order.orderDate);
+
+                    let cardClassBg = 'status-card-pendente';
+                    if (order.status === 'PROGRAMADO') cardClassBg = 'status-card-programado';
+                    if (order.status === 'PARCIAL') cardClassBg = 'status-card-parcial';
+                    if (order.status === 'CONCLUÍDO') cardClassBg = 'status-card-concluido';
+
+                    let statusColorText = 'text-red-400 bg-red-500/10';
+                    if (order.status === 'PROGRAMADO') statusColorText = 'text-blue-400 bg-blue-500/10';
+                    if (order.status === 'PARCIAL') statusColorText = 'text-amber-400 bg-amber-500/10';
+                    if (order.status === 'CONCLUÍDO') statusColorText = 'text-emerald-400 bg-emerald-500/10';
+
+                    const row = document.createElement('div');
+                    row.id = `order_card_${order.id}`;
+                    row.className = `border ${cardClassBg} ${isSelected ? 'ring-2 ring-amber-400' : ''} rounded-2xl p-3.5 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all cursor-pointer bg-white dark:bg-slate-900`;
+                    row.onclick = (e) => window.toggleRouteSelection(order.id, e);
+
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${order.id}', event)" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="text-xs font-black text-slate-900 dark:text-slate-100">${order.osProject}</span>
+                                    <span class="bg-slate-100 dark:bg-slate-800 text-amber-500 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">${order.category}</span>
+                                    <span class="bg-slate-100 dark:bg-slate-800 text-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Origem: ${order.origem || 'N/D'}</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${statusColorText}">${order.status}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-200 font-medium">PT: ${order.pontoEletrico || 'N/D'} | Alt: ${order.alimentador || 'N/D'} | 📅 ${dateFmt} (<span class="text-amber-400 font-bold">${daysOpen} dias</span> em aberto)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                            <button onclick="window.showOnMap('${order.id}', event)" class="p-1.5 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors" title="Mostrar no Mapa">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.openDetailsModal('${order.id}', event)" class="p-1.5 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors" title="Detalhes Completos">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.openHistoryModal('${order.id}')" class="p-1.5 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors" title="Histórico">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.openConfirmEdit('${order.id}')" class="p-1.5 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors" title="Editar Ordem">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.shareOrderWhatsApp('${order.id}')" class="p-1.5 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-colors" title="Compartilhar">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.openFiscalizarModal('${order.id}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-extrabold rounded-xl shadow-md">
+                                Fiscalizar
+                            </button>
+                            <button onclick="event.stopPropagation(); window.openConfirmDelete('${order.id}')" class="p-1.5 bg-slate-100 dark:bg-slate-800 text-red-400 hover:bg-red-900/40 text-[11px] rounded-xl border border-slate-200 dark:border-slate-700" title="Excluir">🗑️</button>
+                        </div>
+                    `;
+                    grid.appendChild(row);
+                });
+            } else {
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+                filtered.forEach(order => {
+                    const dateFmt = order.orderDate ? (order.orderDate.includes('-') ? order.orderDate.split('-').reverse().join('/') : order.orderDate) : '';
+                    const isSelected = selectedRouteIds.has(order.id);
+                    const daysOpen = window.calculateDaysOpen(order.orderDate);
+                    
+                    let cardClassBg = 'status-card-pendente';
+                    if (order.status === 'PROGRAMADO') cardClassBg = 'status-card-programado';
+                    if (order.status === 'PARCIAL') cardClassBg = 'status-card-parcial';
+                    if (order.status === 'CONCLUÍDO') cardClassBg = 'status-card-concluido';
+
+                    let statusColorText = 'text-red-400 bg-red-500/10';
+                    if (order.status === 'PROGRAMADO') statusColorText = 'text-blue-400 bg-blue-500/10';
+                    if (order.status === 'PARCIAL') statusColorText = 'text-amber-400 bg-amber-500/10';
+                    if (order.status === 'CONCLUÍDO') statusColorText = 'text-emerald-400 bg-emerald-500/10';
+
+                    const card = document.createElement('div');
+                    card.id = `order_card_${order.id}`;
+                    card.className = `border ${cardClassBg} ${isSelected ? 'ring-2 ring-amber-400' : ''} rounded-2xl p-4 shadow-lg flex flex-col justify-between transition-all cursor-pointer relative bg-white dark:bg-slate-900`;
+                    card.onclick = (e) => window.toggleRouteSelection(order.id, e);
+
+                    card.innerHTML = `
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${order.id}', event)" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                                    <span class="bg-slate-100 dark:bg-slate-800 text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase">${order.category}</span>
+                                    <span class="bg-slate-100 dark:bg-slate-800 text-slate-200 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Origem: ${order.origem || 'N/D'}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="window.showOnMap('${order.id}', event)" class="p-1 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Mostrar no Mapa">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); window.openDetailsModal('${order.id}', event)" class="p-1 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Detalhes Completos">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); window.openHistoryModal('${order.id}')" class="p-1 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Histórico de Alterações">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); window.openConfirmEdit('${order.id}')" class="p-1 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Editar Ordem">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); window.shareOrderWhatsApp('${order.id}')" class="p-1 text-slate-200 hover:text-amber-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Compartilhar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                                    </button>
+                                    <span class="text-[10px] font-black px-2 py-0.5 rounded ${statusColorText}">${order.status}</span>
+                                </div>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-100 mb-1">${order.osProject}</h3>
+                            <p class="text-xs text-slate-200 mb-4 line-clamp-3 font-medium">${order.description}</p>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-1 text-[11px] text-slate-200 mb-3 font-medium">
+                                <div class="flex justify-between">
+                                    <span>⚡ PT: ${order.pontoEletrico || 'N/D'} | Alt: ${order.alimentador || 'N/D'}</span>
+                                </div>
+                                <div class="flex justify-between font-medium">
+                                    <span>📅 ${dateFmt}</span>
+                                    <span class="text-amber-400 font-bold">⏳ ${daysOpen} dias em aberto</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <button onclick="event.stopPropagation(); window.openFiscalizarModal('${order.id}')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all">
+                                    <span>🔍 Fiscalizar / Status</span>
+                                </button>
+                                <button onclick="event.stopPropagation(); window.openConfirmDelete('${order.id}')" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-red-900/40 text-red-400 text-xs font-semibold rounded-xl transition-all border border-slate-200 dark:border-slate-700">
+                                    🗑️ Excluir Demanda
+                                </button>
+                            </div>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+            }
+        };
+
+        window.renderDashboard = function() {
+            const fCat = document.getElementById('dashFilterCategory')?.value || '';
+            const fStatus = document.getElementById('dashFilterStatus')?.value || '';
+
+            const filtered = ordersData.filter(order => {
+                if (fCat && order.category !== fCat) return false;
+                if (fStatus && order.status !== fStatus) return false;
+                return true;
+            });
+
+            const dashTotal = document.getElementById('dashTotal');
+            const dashPending = document.getElementById('dashPending');
+            const dashProgrammed = document.getElementById('dashProgrammed');
+            const dashPartial = document.getElementById('dashPartial');
+            const dashDone = document.getElementById('dashDone');
+
+            if (dashTotal) dashTotal.innerText = filtered.length;
+            const pendingCount = filtered.filter(o => o.status === 'PENDENTE').length;
+            const programmedCount = filtered.filter(o => o.status === 'PROGRAMADO').length;
+            const partialCount = filtered.filter(o => o.status === 'PARCIAL').length;
+            const doneCount = filtered.filter(o => o.status === 'CONCLUÍDO').length;
+
+            if (dashPending) dashPending.innerText = pendingCount;
+            if (dashProgrammed) dashProgrammed.innerText = programmedCount;
+            if (dashPartial) dashPartial.innerText = partialCount;
+            if (dashDone) dashDone.innerText = doneCount;
+
+            const dashList = document.getElementById('dashFilteredList');
+            if (dashList) {
+                dashList.innerHTML = '';
+                if (filtered.length === 0) {
+                    dashList.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Nenhum registro encontrado para este filtro.</p>';
+                } else {
+                    filtered.slice(0, 15).forEach(order => {
+                        const row = document.createElement('div');
+                        row.className = "bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl flex items-center justify-between text-xs";
+                        row.innerHTML = `
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-amber-400">${order.osProject}</span>
+                                <span class="text-slate-300 text-[10px]">(${order.category} - Origem: ${order.origem || 'N/D'} - Alt: ${order.alimentador || 'N/D'})</span>
+                            </div>
+                            <span class="font-semibold text-[10px] px-2 py-0.5 rounded ${order.status === 'CONCLUÍDO' ? 'text-emerald-400 bg-emerald-500/10' : (order.status === 'PROGRAMADO' ? 'text-blue-400 bg-blue-500/10' : (order.status === 'PARCIAL' ? 'text-amber-400 bg-amber-500/10' : 'text-red-400 bg-red-500/10'))}">${order.status}</span>
+                        `;
+                        dashList.appendChild(row);
+                    });
+                }
+            }
+
+            const statusCanvas = document.getElementById('statusChart');
+            if (statusCanvas && typeof Chart !== 'undefined') {
+                const statusCtx = statusCanvas.getContext('2d');
+                if (statusChartInstance) statusChartInstance.destroy();
+                statusChartInstance = new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Pendentes', 'Programados', 'Parciais', 'Concluídas'],
+                        datasets: [{
+                            data: [pendingCount, programmedCount, partialCount, doneCount],
+                            backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b', '#10b981'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#334155', font: { size: 11 } } } } }
+                });
+            }
+
+            const catCounts = {
+                'POSTE': filtered.filter(o => o.category === 'POSTE').length,
+                'PODA': filtered.filter(o => o.category === 'PODA').length,
+                'CONEXÕES': filtered.filter(o => o.category === 'CONEXÕES').length,
+                'BYPASS': filtered.filter(o => o.category === 'BYPASS').length,
+                'CONDUTOR': filtered.filter(o => o.category === 'CONDUTOR').length,
+                'ESTRUTURA': filtered.filter(o => o.category === 'ESTRUTURA').length
+            };
+
+            const catCanvas = document.getElementById('categoryChart');
+            if (catCanvas && typeof Chart !== 'undefined') {
+                const catCtx = catCanvas.getContext('2d');
+                if (categoryChartInstance) categoryChartInstance.destroy();
+                categoryChartInstance = new Chart(catCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Poste', 'Poda', 'Conexões', 'Bypass', 'Condutor', 'Estrutura'],
+                        datasets: [{
+                            label: 'Qtd por Categoria',
+                            data: [catCounts['POSTE'], catCounts['PODA'], catCounts['CONEXÕES'], catCounts['BYPASS'], catCounts['CONDUTOR'], catCounts['ESTRUTURA']],
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#334155' }, grid: { display: false } },
+                            y: { ticks: { color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#334155', stepSize: 1 }, grid: { color: document.documentElement.classList.contains('dark') ? '#334155' : '#e2e8f0' } }
+                        }
+                    }
+                });
+            }
+        };
+
+        const orderFormEl = document.getElementById('orderForm');
+        if (orderFormEl) {
+            orderFormEl.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!authUser || authUser.isAnonymous) {
+                    window.showModal("Acesso Restrito", "Para cadastrar uma nova Ordem de Serviço, é necessário estar conectado com sua conta do Google.");
+                    return;
+                }
+
+                const osProjectVal = (document.getElementById('osProject')?.value.trim() || `OS-${Math.floor(Math.random() * 90000) + 10000}`).toUpperCase();
+
+                const duplicate = ordersData.some(o => (o.osProject || '').toUpperCase() === osProjectVal);
+                if (duplicate) {
+                    window.showModal("Aviso", `Já existe uma Ordem de Serviço ou Projeto cadastrado com o número "${osProjectVal}". Por favor, utilize um número único.`);
+                    return;
+                }
+
+                const latInput = document.getElementById('latitude')?.value.trim() || '';
+                const lngInput = document.getElementById('longitude')?.value.trim() || '';
+                const parsedLat = latInput !== '' ? parseFloat(latInput) : null;
+                const parsedLng = lngInput !== '' ? parseFloat(lngInput) : null;
+
+                const timestampStr = new Date().toLocaleString('pt-BR');
+                const newObj = {
+                    id: 'ord_' + Math.random().toString(36).substr(2, 9),
+                    osProject: osProjectVal,
+                    origem: document.getElementById('origem')?.value || 'OSM',
+                    category: document.getElementById('category')?.value || 'POSTE',
+                    status: document.getElementById('status')?.value || 'PENDENTE',
+                    alimentador: (document.getElementById('alimentador')?.value.trim() || 'GERAL').toUpperCase(),
+                    orderDate: document.getElementById('orderDate')?.value || new Date().toISOString().split('T')[0],
+                    pontoEletrico: (document.getElementById('pontoEletrico')?.value.trim() || 'P-01').toUpperCase(),
+                    description: document.getElementById('description')?.value.trim() || 'Sem descrição informada.',
+                    lat: parsedLat,
+                    lng: parsedLng,
+                    timestamp: Date.now(),
+                    history: [
+                        { date: timestampStr, message: `Ordem cadastrada no sistema` }
+                    ]
+                };
+
+                ordersData.unshift(newObj);
+                refreshAllViews();
+
+                if (authUser && !authUser.isAnonymous && db) {
+                    try {
+                        const docRef = await addDoc(collection(db, 'artifacts', currentAppId, 'users', authUser.email.replace(/[@.]/g, '_'), 'electrical_orders'), newObj);
+                        newObj.firebaseId = docRef.id;
+                    } catch(err) {}
+                }
+
+                orderFormEl.reset();
+                const orderDateEl = document.getElementById('orderDate');
+                if (orderDateEl) orderDateEl.value = new Date().toISOString().split('T')[0];
+                window.showModal("Sucesso", "OS / Projeto salvo com sucesso!");
+            });
+        }
+
+        window.openFiscalizarModal = function(docId) {
+            if (!authUser || authUser.isAnonymous) {
+                window.showModal("Acesso Restrito", "Para fiscalizar ordens de serviço, é necessário fazer login com sua conta do Google.");
+                return;
+            }
+            currentFiscalizarId = docId;
+            const order = ordersData.find(o => o.id === docId);
+            if (!order) return;
+
+            const titleEl = document.getElementById('fiscalizarModalTitle');
+            const statusSel = document.getElementById('fiscalizarStatusSelect');
+            const obsInp = document.getElementById('fiscalizarObsInput');
+            const fiskModal = document.getElementById('fiscalizarModal');
+
+            if (titleEl) titleEl.innerText = `Fiscalizar: ${order.osProject}`;
+            if (statusSel) statusSel.value = order.status || 'PENDENTE';
+            if (obsInp) obsInp.value = '';
+            if (fiskModal) fiskModal.classList.remove('hidden');
+            if (map) map.closePopup();
+        };
+
+        window.closeFiscalizarModal = function() {
+            currentFiscalizarId = null;
+            const fiskModal = document.getElementById('fiscalizarModal');
+            if (fiskModal) fiskModal.classList.add('hidden');
+        };
+
+        window.saveFiscalizarChanges = async function() {
+            if (!currentFiscalizarId) return;
+            const newStatus = document.getElementById('fiscalizarStatusSelect')?.value || 'PENDENTE';
+            const obsText = document.getElementById('fiscalizarObsInput')?.value.trim() || '';
+
+            const order = ordersData.find(o => o.id === currentFiscalizarId);
+            if (!order) return;
+
+            if (!order.history) order.history = [];
+            const timestampStr = new Date().toLocaleString('pt-BR');
+            let logMsg = `Status alterado para ${newStatus}`;
+            if (obsText) logMsg += ` - Obs: ${obsText}`;
+            order.history.unshift({ date: timestampStr, message: logMsg });
+            order.status = newStatus;
+            if (obsText) order.description += `\n[Fiscalização ${timestampStr}]: ${obsText}`;
+
+            if (authUser && !authUser.isAnonymous && db && order.firebaseId) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', currentAppId, 'users', authUser.email.replace(/[@.]/g, '_'), 'electrical_orders', order.firebaseId), {
+                        status: order.status,
+                        description: order.description,
+                        history: order.history
+                    });
+                } catch(e) {}
+            }
+
+            closeFiscalizarModal();
+            refreshAllViews();
+            window.showModal("Sucesso", "Fiscalização registrada com sucesso!");
+        };
+
+        window.openHistoryModal = function(docId) {
+            const order = ordersData.find(o => o.id === docId);
+            if (!order) return;
+
+            const titleEl = document.getElementById('historyModalTitle');
+            const container = document.getElementById('historyModalContent');
+            if (titleEl) titleEl.innerText = `Histórico: ${order.osProject}`;
+            if (!container) return;
+            container.innerHTML = '';
+
+            const historyList = order.history && order.history.length > 0 ? order.history : [{ date: order.orderDate ? (order.orderDate.includes('-') ? order.orderDate.split('-').reverse().join('/') : order.orderDate) : 'Criação', message: `Ordem cadastrada com status ${order.status}` }];
+
+            historyList.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl";
+                row.innerHTML = `
+                    <span class="text-[10px] text-amber-400 font-bold block mb-1">📅 ${item.date}</span>
+                    <p class="text-xs text-slate-200 font-medium">${item.message}</p>
+                `;
+                container.appendChild(row);
+            });
+
+            const historyModal = document.getElementById('historyModal');
+            if (historyModal) historyModal.classList.add('hidden');
+        };
+
+        window.closeHistoryModal = function() {
+            const historyModal = document.getElementById('historyModal');
+            if (historyModal) historyModal.classList.add('hidden');
+        };
+
+        window.onload = function() {
+            const orderDateEl = document.getElementById('orderDate');
+            if (orderDateEl) orderDateEl.value = new Date().toISOString().split('T')[0];
+            
+            const checkLeafletInterval = setInterval(() => {
+                if (typeof L !== 'undefined') {
+                    clearInterval(checkLeafletInterval);
+                    initMap();
+                }
+            }, 100);
+
+            refreshAllViews();
+        };
+    </script>
+</body>
+</html>
