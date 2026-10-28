@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- SheetJS (Excel Export) -->
+    <!-- SheetJS (Excel Export & Import) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <!-- Chart.js (Dashboard Analytics) -->
@@ -193,8 +193,13 @@
                         <option value="CONCLUÍDO">CONCLUÍDO</option>
                     </select>
                 </div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bold">0</span> pontos georreferenciados
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium">
+                        Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bold">0</span> pontos georreferenciados
+                    </span>
+                    <button onclick="window.openUnmappedModal()" id="unmappedBtn" class="hidden px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold transition-all">
+                        ⚠️ <span id="unmappedCountBadge">0</span> sem GPS
+                    </button>
                 </div>
             </div>
 
@@ -344,8 +349,26 @@
 
         </div>
 
-        <!-- TAB 4: NOVA ORDEM DE SERVIÇO -->
-        <div id="tab-new" class="tab-content hidden max-w-2xl mx-auto">
+        <!-- TAB 4: NOVA ORDEM DE SERVIÇO & IMPORTAÇÃO -->
+        <div id="tab-new" class="tab-content hidden max-w-2xl mx-auto space-y-6">
+            
+            <!-- Excel Batch Import Box -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+                <div class="border-b border-slate-200/80 dark:border-slate-800 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-black text-amber-600 dark:text-amber-500">📁 Importar Planilha em Lote (Excel)</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Envie um arquivo .xlsx com várias demandas de uma só vez.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <label id="importBtn" class="w-full sm:w-auto flex-1 text-center py-3 px-4 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 cursor-pointer transition-all flex items-center justify-center gap-2">
+                        <span>📊 Selecionar Planilha Excel (.xlsx)</span>
+                        <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="window.processExcelImport(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Manual Order Form -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6">
                 <div class="border-b border-slate-200/80 dark:border-slate-800 pb-4">
                     <h2 class="text-lg font-black text-amber-600 dark:text-amber-500">➕ Cadastrar Nova Ordem de Manutenção</h2>
@@ -447,6 +470,22 @@
         </div>
 
     </main>
+
+    <!-- MODAL: ORDENS SEM GPS -->
+    <div id="unmappedModal" role="dialog" aria-modal="true" aria-labelledby="unmappedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 id="unmappedModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">⚠️ Ordens Sem Coordenadas GPS</h3>
+                <button onclick="window.closeUnmappedModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+            </div>
+            <div class="p-5 space-y-3 max-h-[65vh] overflow-y-auto" id="unmappedModalList">
+                <!-- Dynamic List of Unmapped Orders -->
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
+                <button onclick="window.closeUnmappedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: FISCALIZAR -->
     <div id="fiscalizarModal" role="dialog" aria-modal="true" aria-labelledby="fiscalizarModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -596,7 +635,6 @@
             if (btnText) btnText.innerText = isDark ? 'Modo Escuro' : 'Modo Claro';
             if (btnIcon) btnIcon.innerText = isDark ? '🌙' : '☀️';
 
-            // Ajusta a cor das fontes dos gráficos no Chart.js
             if (typeof Chart !== 'undefined' && typeof chartInstances !== 'undefined') {
                 const textColor = isDark ? '#94a3b8' : '#475569';
                 Object.values(chartInstances).forEach(chart => {
@@ -614,7 +652,6 @@
             }
         }
 
-        // Inicializa o tema salvo ou padrão escuro ao carregar
         (function initTheme() {
             const savedTheme = localStorage.getItem('eletrogestao_theme');
             if (savedTheme === 'light') {
@@ -639,8 +676,6 @@
 
         window.calculateDaysOpen = function(dateString, status, completionDate) {
             if (!dateString) return 0;
-            
-            // Normalize dates to midnight to prevent timezone offsets
             const parts = dateString.split('-');
             if (parts.length !== 3) return 0;
             const start = new Date(parts[0], parts[1] - 1, parts[2]);
@@ -656,7 +691,7 @@
             start.setHours(0, 0, 0, 0);
             end.setHours(0, 0, 0, 0);
             
-            if (end < start) return 0; // Future date
+            if (end < start) return 0;
             const diffTime = end - start;
             return Math.floor(diffTime / (1000 * 60 * 60 * 24));
         };
@@ -703,10 +738,8 @@
         let isCompressingPhoto = false;
         let unsubscribeSnapshot = null;
 
-        // Firebase Configuration & Initialization
         const appId = 'eletrogestao_v2';
         
-        // SUAS CREDENCIAIS REAIS DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
             authDomain: "eletrogestao-38596.firebaseapp.com",
@@ -731,23 +764,38 @@
             console.warn("Firebase offline/ambiente local sem suporte.", e);
         }
 
-        // --- 3. DATA NORMALIZATION ---
+        // --- 3. DATA NORMALIZATION (SAFE FOR MISSING INFO) ---
         window.normalizeOrder = function(data) {
+            const rawLat = parseFloat(data.lat);
+            const rawLng = parseFloat(data.lng);
+            
+            const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
+            const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
+
+            const validCategories = ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'TRANSFORMADOR', 'BYPASS', 'OUTROS'];
+            const category = validCategories.includes(String(data.category || '').toUpperCase()) ? String(data.category).toUpperCase() : 'OUTROS';
+
+            const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
+            const status = validStatuses.includes(String(data.status || '').toUpperCase()) ? String(data.status).toUpperCase() : 'PENDENTE';
+
+            const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
+            const urgencia = validUrgencies.includes(data.urgencia) ? data.urgencia : 'Não Avaliada';
+
             return {
                 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
-                osProject: String(data.osProject || 'SEM-OS'),
+                osProject: String(data.osProject || data.os || 'SEM-OS').trim(),
                 origem: String(data.origem || 'OSM'),
-                category: ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'TRANSFORMADOR', 'BYPASS'].includes(data.category) ? data.category : 'OUTROS',
-                status: ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'].includes(data.status) ? data.status : 'PENDENTE',
-                urgencia: ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'].includes(data.urgencia) ? data.urgencia : 'Não Avaliada',
+                category: category,
+                status: status,
+                urgencia: urgencia,
                 equipeSugerida: String(data.equipeSugerida || 'Não definida'),
                 alimentador: String(data.alimentador || ''),
                 pontoEletrico: String(data.pontoEletrico || ''),
                 orderDate: data.orderDate || new Date().toISOString().split('T')[0],
                 completionDate: data.completionDate || null,
                 description: String(data.description || ''),
-                lat: (typeof data.lat === 'number' && !isNaN(data.lat) && data.lat >= -90 && data.lat <= 90 && data.lat !== 0) ? data.lat : null,
-                lng: (typeof data.lng === 'number' && !isNaN(data.lng) && data.lng >= -180 && data.lng <= 180 && data.lng !== 0) ? data.lng : null,
+                lat: lat,
+                lng: lng,
                 photo: data.photo || null,
                 history: Array.isArray(data.history) ? data.history : []
             };
@@ -757,12 +805,10 @@
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             
-            // Desktop active state
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
                 btn.classList.add('text-slate-600', 'dark:text-slate-400');
             });
-            // Mobile active state
             document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
                 btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
                 btn.classList.add('text-slate-600', 'dark:text-slate-400');
@@ -799,7 +845,7 @@
             }
         };
 
-        // --- 5. RENDER MAP ---
+        // --- 5. RENDER MAP WITH UNMAPPED COUNTER ---
         window.renderMap = function() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer) return;
@@ -807,7 +853,6 @@
             if (!map) {
                 map = L.map('map').setView([-23.5505, -46.6333], 12);
                 
-                // Camadas do Google Maps (Ruas e Satélite/Híbrido) + Opção Modo Escuro
                 const googleStreets = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
                     attribution: '&copy; Google Maps',
                     maxZoom: 20
@@ -841,6 +886,17 @@
 
             const fCat = document.getElementById('mapFilterCategory')?.value || '';
             const fStatus = document.getElementById('mapFilterStatus')?.value || '';
+
+            const unmappedOrders = ordersData.filter(o => o.lat === null || o.lng === null);
+            const unmappedBtn = document.getElementById('unmappedBtn');
+            const unmappedBadge = document.getElementById('unmappedCountBadge');
+            
+            if (unmappedOrders.length > 0) {
+                unmappedBtn.classList.remove('hidden');
+                unmappedBadge.innerText = unmappedOrders.length;
+            } else {
+                unmappedBtn.classList.add('hidden');
+            }
 
             const filtered = ordersData.filter(o => {
                 if (fCat && o.category !== fCat) return false;
@@ -883,6 +939,35 @@
             if (bounds.length > 0) {
                 map.fitBounds(bounds, { padding: [40, 40] });
             }
+        };
+
+        window.openUnmappedModal = function() {
+            const listContainer = document.getElementById('unmappedModalList');
+            listContainer.innerHTML = '';
+            
+            const unmapped = ordersData.filter(o => o.lat === null || o.lng === null);
+            if (unmapped.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Todas as ordens possuem coordenadas GPS.</p>`;
+            } else {
+                unmapped.forEach(o => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex items-center justify-between gap-2";
+                    item.innerHTML = `
+                        <div>
+                            <strong class="text-amber-600 dark:text-amber-400">${window.escapeHtml(o.osProject)}</strong>
+                            <p class="text-slate-500 dark:text-slate-400 text-[11px]">${window.escapeHtml(o.category)} | ${window.escapeHtml(o.alimentador || 'Sem alimentador')}</p>
+                        </div>
+                        <button onclick="window.openDetailsModal('${window.escapeHtml(o.id)}'); window.closeUnmappedModal();" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold rounded-lg">Ver Detalhes</button>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            }
+
+            document.getElementById('unmappedModal').classList.remove('hidden');
+        };
+
+        window.closeUnmappedModal = function() {
+            document.getElementById('unmappedModal').classList.add('hidden');
         };
 
         // --- 6. RENDER LIST VIEW ---
@@ -1053,29 +1138,20 @@
             }
 
             const dataToExport = ordersData.map(o => ({
-                'OS / Projeto': o.osProject,
-                'Origem': o.origem,
-                'Categoria': o.category,
-                'Urgência': o.urgencia,
-                'Status': o.status,
-                'Equipe Sugerida': o.equipeSugerida,
-                'Alimentador': o.alimentador,
-                'Ponto Elétrico': o.pontoEletrico,
-                'Data da Ordem': o.orderDate,
-                'Data Conclusão': o.completionDate || 'Em aberto',
-                'SLA (Dias)': window.calculateDaysOpen(o.orderDate, o.status, o.completionDate),
-                'Latitude': o.lat !== null ? o.lat : '',
-                'Longitude': o.lng !== null ? o.lng : '',
-                'Descrição': o.description
+                'osProject': o.osProject,
+                'origem': o.origem,
+                'category': o.category,
+                'status': o.status,
+                'urgencia': o.urgencia,
+                'alimentador': o.alimentador,
+                'pontoEletrico': o.pontoEletrico,
+                'orderDate': o.orderDate,
+                'lat': o.lat !== null ? o.lat : '',
+                'lng': o.lng !== null ? o.lng : '',
+                'description': o.description
             }));
 
             const ws = XLSX.utils.json_to_sheet(dataToExport);
-            ws['!cols'] = [
-                {wch: 18}, {wch: 12}, {wch: 15}, {wch: 15}, {wch: 15}, 
-                {wch: 18}, {wch: 14}, {wch: 15}, {wch: 14}, {wch: 14}, 
-                {wch: 10}, {wch: 12}, {wch: 12}, {wch: 45}
-            ];
-
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Demandas");
             XLSX.writeFile(wb, "EletroGestao_Relatorio.xlsx");
@@ -1111,10 +1187,16 @@
             map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
         };
 
-        // --- 10. CREATE ORDER & PERSISTENCE ---
+        // --- 10. CREATE ORDER WITH DUPLICATE PROTECTION ---
         window.handleCreateOrder = async function(e) {
             e.preventDefault();
             
+            const osProjVal = document.getElementById('osProject').value.trim();
+            if (ordersData.some(o => o.osProject.toLowerCase() === osProjVal.toLowerCase())) {
+                window.showModal('Erro de Duplicidade', `Já existe uma ordem cadastrada com o número de projeto/OS "${osProjVal}".`);
+                return;
+            }
+
             const latVal = document.getElementById('lat').value.trim();
             const lngVal = document.getElementById('lng').value.trim();
             
@@ -1132,7 +1214,7 @@
 
             const rawOrder = {
                 id: 'ord_' + Math.random().toString(36).substr(2, 9),
-                osProject: document.getElementById('osProject').value.trim(),
+                osProject: osProjVal,
                 origem: document.getElementById('origem').value,
                 category: document.getElementById('category').value,
                 status: document.getElementById('status').value,
@@ -1170,7 +1252,6 @@
             }
         };
 
-        // GPS Locator
         window.useCurrentLocation = function() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
@@ -1182,15 +1263,14 @@
             }
         };
 
-        // --- EXCEL IMPORT LOGIC ---
+        // --- TOLERANT EXCEL IMPORT LOGIC ---
         window.processExcelImport = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const importBtn = document.getElementById('importBtn');
             const originalHtml = importBtn.innerHTML;
-            importBtn.innerHTML = '⏳ Processando...';
-            importBtn.disabled = true;
+            importBtn.innerHTML = '<span>⏳ Processando planilha...</span>';
 
             const reader = new FileReader();
             reader.onload = async function(evt) {
@@ -1208,17 +1288,13 @@
                     let importedCount = 0;
                     let skippedCount = 0;
                     const newOrders = [];
-                    const userId = auth.currentUser.uid;
-                    const batch = db.batch(); // Processamento em lote para salvar tudo rápido
+                    const userId = auth?.currentUser?.uid || 'local_user';
+                    const batch = db ? db.batch() : null;
 
                     json.forEach(row => {
-                        // Aceita o nome da coluna padrão gerada pelo sistema ou variações
-                        const osProj = row['OS / Projeto'] || row['OS'] || row['Projeto'];
-                        if (!osProj) return; 
-
+                        const osProj = row['osProject'] || row['OS / Projeto'] || row['OS'] || row['Projeto'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
                         const osStr = String(osProj).trim();
                         
-                        // Verifica Duplicidade (no banco atual e nas ordens novas da própria planilha)
                         if (ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase()) || 
                             newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase())) {
                             skippedCount++;
@@ -1228,56 +1304,52 @@
                         const rawOrder = {
                             id: 'ord_' + Math.random().toString(36).substr(2, 9),
                             osProject: osStr,
-                            origem: row['Origem'] || 'OSM',
-                            category: row['Categoria'] || 'OUTROS',
-                            status: row['Status'] || 'PENDENTE',
-                            urgencia: row['Urgência'] || 'Não Avaliada',
-                            equipeSugerida: row['Equipe Sugerida'] || 'Não definida',
-                            alimentador: row['Alimentador'] || '',
-                            pontoEletrico: row['Ponto Elétrico'] || '',
-                            orderDate: row['Data da Ordem'] || new Date().toISOString().split('T')[0],
-                            completionDate: row['Status'] === 'CONCLUÍDO' ? (row['Data Conclusão'] || new Date().toISOString().split('T')[0]) : null,
-                            description: row['Descrição'] || '',
-                            lat: row['Latitude'] ? parseFloat(row['Latitude']) : null,
-                            lng: row['Longitude'] ? parseFloat(row['Longitude']) : null,
+                            origem: row['origem'] || row['Origem'] || 'OSM',
+                            category: row['category'] || row['Categoria'] || 'OUTROS',
+                            status: row['status'] || row['Status'] || 'PENDENTE',
+                            urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
+                            equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
+                            alimentador: row['alimentador'] || row['Alimentador'] || '',
+                            pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
+                            orderDate: row['orderDate'] || row['Data da Ordem'] || new Date().toISOString().split('T')[0],
+                            description: row['description'] || row['Descrição'] || '',
+                            lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined && row['Latitude'] !== '' ? row['Latitude'] : null),
+                            lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined && row['Longitude'] !== '' ? row['Longitude'] : null),
                             history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem importada em lote via planilha.' }]
                         };
 
                         const normalized = window.normalizeOrder(rawOrder);
                         newOrders.push(normalized);
                         
-                        // Prepara o lote para salvar no Firebase
-                        const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
-                        batch.set(docRef, normalized);
+                        if (db && auth && auth.currentUser) {
+                            const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
+                            batch.set(docRef, normalized);
+                        }
                         importedCount++;
                     });
 
                     if (importedCount > 0) {
-                        window.updateSyncBadge('🔄 Salvando lote...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400');
-                        await batch.commit(); // Salva tudo no Firebase de uma vez
-                        
-                        ordersData = [...newOrders, ...ordersData]; // Atualiza a tela
+                        if (db && auth && auth.currentUser) {
+                            await batch.commit();
+                        }
+                        ordersData = [...newOrders, ...ordersData];
                         localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData));
                         
-                        window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20');
                         window.renderListView();
                         if (map) window.renderMap();
                         
                         let msg = `Foram importadas ${importedCount} ordens com sucesso!`;
-                        if (skippedCount > 0) msg += `\n\nOutras ${skippedCount} ordens foram ignoradas porque já estavam cadastradas no sistema.`;
+                        if (skippedCount > 0) msg += `\n\nOutras ${skippedCount} ordens foram ignoradas por já possuírem o mesmo número de OS.`;
                         window.showModal('Importação Concluída', msg);
                         window.switchTab('list');
-                    } else if (skippedCount > 0) {
-                        window.showModal('Nenhuma Importação', `Todas as ${skippedCount} ordens identificadas na planilha já estão cadastradas no sistema.`);
                     } else {
-                        window.showModal('Aviso', 'Não conseguimos identificar ordens na planilha. Verifique se existe uma coluna chamada "OS / Projeto".');
+                        window.showModal('Aviso', `Nenhuma ordem nova foi importada. ${skippedCount} ordens duplicadas foram ignoradas.`);
                     }
                 } catch (err) {
                     window.showModal('Erro na Importação', 'Não foi possível processar o arquivo: ' + err.message);
                 } finally {
-                    e.target.value = ''; // Limpa o input
+                    e.target.value = '';
                     importBtn.innerHTML = originalHtml;
-                    importBtn.disabled = false;
                 }
             };
             reader.readAsArrayBuffer(file);
@@ -1561,7 +1633,6 @@
                     if (user) {
                         btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
                         
-                        // Exibe a navegação e oculta a tela de bloqueio
                         if (desktopNav) desktopNav.classList.remove('hidden');
                         if (mobileNav) mobileNav.classList.remove('hidden');
                         if (loggedOutView) loggedOutView.classList.add('hidden');
@@ -1597,7 +1668,6 @@
                         btnText.innerText = 'Entrar com Google';
                         window.updateSyncBadge('🔒 Acesso Restrito', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
 
-                        // Oculta todas as abas e menus de navegação quando deslogado
                         if (desktopNav) desktopNav.classList.add('hidden');
                         if (mobileNav) mobileNav.classList.add('hidden');
                         if (loggedOutView) loggedOutView.classList.remove('hidden');
