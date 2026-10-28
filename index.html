@@ -356,14 +356,14 @@
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
                 <div class="border-b border-slate-200/80 dark:border-slate-800 pb-3 flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-black text-amber-600 dark:text-amber-500">📁 Importar Planilha em Lote (Excel)</h2>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Envie um arquivo .xlsx com várias demandas de uma só vez.</p>
+                        <h2 class="text-sm font-black text-amber-600 dark:text-amber-500">📁 Importar Planilha em Lote (Excel / CSV)</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Envie um arquivo .xlsx, .xls ou .csv com várias demandas de uma só vez.</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row items-center gap-3">
                     <label id="importBtn" class="w-full sm:w-auto flex-1 text-center py-3 px-4 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 cursor-pointer transition-all flex items-center justify-center gap-2">
-                        <span>📊 Selecionar Planilha Excel (.xlsx)</span>
-                        <input type="file" id="excelFileInput" accept=".xlsx, .xls" onchange="window.processExcelImport(event)" class="hidden">
+                        <span>📊 Selecionar Planilha / CSV</span>
+                        <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="window.processExcelImport(event)" class="hidden">
                     </label>
                 </div>
             </div>
@@ -1292,14 +1292,14 @@
             }
         };
 
-        // --- TOLERANT EXCEL IMPORT LOGIC ---
+        // --- TOLERANT EXCEL & CSV IMPORT LOGIC (OS-BASED DUPLICATE CHECK ONLY) ---
         window.processExcelImport = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const importBtn = document.getElementById('importBtn');
             const originalHtml = importBtn.innerHTML;
-            importBtn.innerHTML = '<span>⏳ Processando planilha...</span>';
+            importBtn.innerHTML = '<span>⏳ Processando arquivo...</span>';
 
             const reader = new FileReader();
             reader.onload = async function(evt) {
@@ -1310,7 +1310,7 @@
                     const json = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
 
                     if (json.length === 0) {
-                        window.showModal('Aviso', 'A planilha selecionada está vazia.');
+                        window.showModal('Aviso', 'O arquivo selecionado está vazio.');
                         return;
                     }
 
@@ -1321,11 +1321,14 @@
                     const batch = db ? db.batch() : null;
 
                     json.forEach(row => {
-                        const osProj = row['osProject'] || row['OS / Projeto'] || row['OS'] || row['Projeto'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
-                        const osStr = String(osProj).trim();
+                        const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || row['Projeto'] || row['os'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
+                        const osStr = String(rawOs).trim();
                         
-                        if (ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase()) || 
-                            newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase())) {
+                        // Check duplicate strictly by osProject number against existing memory and current batch
+                        const existsInCurrent = ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
+                        const existsInBatch = newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
+
+                        if (existsInCurrent || existsInBatch) {
                             skippedCount++;
                             return;
                         }
@@ -1340,7 +1343,7 @@
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
                             alimentador: row['alimentador'] || row['Alimentador'] || '',
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
-                            orderDate: row['orderDate'] || row['Data da Ordem'] || row['orderDate'] || new Date().toISOString().split('T')[0],
+                            orderDate: row['orderDate'] || row['Data da Ordem'] || row['Data'] || new Date().toISOString().split('T')[0],
                             description: row['description'] || row['Descrição'] || '',
                             lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined && row['Latitude'] !== '' ? row['Latitude'] : null),
                             lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined && row['Longitude'] !== '' ? row['Longitude'] : null),
@@ -1372,7 +1375,7 @@
                         window.showModal('Importação Concluída', msg);
                         window.switchTab('list');
                     } else {
-                        window.showModal('Aviso', `Nenhuma ordem nova foi importada. ${skippedCount} ordens duplicadas foram ignoradas.`);
+                        window.showModal('Aviso', `Nenhuma ordem nova foi importada. ${skippedCount} ordens duplicadas foram ignoradas por já existirem no sistema.`);
                     }
                 } catch (err) {
                     window.showModal('Erro na Importação', 'Não foi possível processar o arquivo: ' + err.message);
