@@ -676,13 +676,13 @@
 
         window.calculateDaysOpen = function(dateString, status, completionDate) {
             if (!dateString) return 0;
-            const parts = dateString.split('-');
+            const parts = String(dateString).split('-');
             if (parts.length !== 3) return 0;
             const start = new Date(parts[0], parts[1] - 1, parts[2]);
             
             let end = new Date();
             if (status === 'CONCLUÍDO' && completionDate) {
-                const cParts = completionDate.split('-');
+                const cParts = String(completionDate).split('-');
                 if (cParts.length === 3) {
                     end = new Date(cParts[0], cParts[1] - 1, cParts[2]);
                 }
@@ -764,7 +764,33 @@
             console.warn("Firebase offline/ambiente local sem suporte.", e);
         }
 
-        // --- 3. DATA NORMALIZATION (SAFE FOR MISSING INFO) ---
+        // --- 3. DATA NORMALIZATION (SAFE FOR MISSING INFO & SERIAL DATES) ---
+        window.normalizeDate = function(val) {
+            if (!val) return new Date().toISOString().split('T')[0];
+            if (typeof val === 'number') {
+                const dateInfo = XLSX.SSF.parse_date_code(val);
+                if (dateInfo) {
+                    const y = dateInfo.y;
+                    const m = String(dateInfo.m).padStart(2, '0');
+                    const d = String(dateInfo.d).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+            }
+            const str = String(val).trim();
+            if (str.match(/^\d{4}-\d{2}-\d{2}$/)) return str;
+            if (str.includes('/')) {
+                const parts = str.split('/');
+                if (parts.length === 3) {
+                    if (parts[2].length === 4) {
+                        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    } else if (parts[0].length === 4) {
+                        return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                    }
+                }
+            }
+            return new Date().toISOString().split('T')[0];
+        };
+
         window.normalizeOrder = function(data) {
             const rawLat = parseFloat(data.lat);
             const rawLng = parseFloat(data.lng);
@@ -781,6 +807,9 @@
             const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
             const urgencia = validUrgencies.includes(data.urgencia) ? data.urgencia : 'Não Avaliada';
 
+            const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem']);
+            const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : null;
+
             return {
                 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
                 osProject: String(data.osProject || data.os || 'SEM-OS').trim(),
@@ -791,8 +820,8 @@
                 equipeSugerida: String(data.equipeSugerida || 'Não definida'),
                 alimentador: String(data.alimentador || ''),
                 pontoEletrico: String(data.pontoEletrico || ''),
-                orderDate: data.orderDate || new Date().toISOString().split('T')[0],
-                completionDate: data.completionDate || null,
+                orderDate: formattedDate,
+                completionDate: formattedCompDate,
                 description: String(data.description || ''),
                 lat: lat,
                 lng: lng,
@@ -1311,7 +1340,7 @@
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
                             alimentador: row['alimentador'] || row['Alimentador'] || '',
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
-                            orderDate: row['orderDate'] || row['Data da Ordem'] || new Date().toISOString().split('T')[0],
+                            orderDate: row['orderDate'] || row['Data da Ordem'] || row['orderDate'] || new Date().toISOString().split('T')[0],
                             description: row['description'] || row['Descrição'] || '',
                             lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined && row['Latitude'] !== '' ? row['Latitude'] : null),
                             lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined && row['Longitude'] !== '' ? row['Longitude'] : null),
