@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- Navigation Tabs (Desktop) -->
-                <nav class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
+                <nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
                     <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2">
                         🗺️ Mapa Interativo
                     </button>
@@ -142,7 +142,7 @@
         </div>
 
         <!-- Mobile Navigation Sub-bar -->
-        <div class="md:hidden flex border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
+        <div id="mobileNav" class="hidden md:hidden flex border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
             <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900">🗺️ Mapa</button>
             <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl">📋 Lista</button>
             <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl">📊 Dashboard</button>
@@ -151,7 +151,23 @@
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
+
+        <!-- LOGGED OUT VIEW / TELA DE ACESSO RESTRITO -->
+        <div id="loggedOutView" class="hidden min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
+            <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
+                🔒
+            </div>
+            <div class="max-w-md space-y-2">
+                <h2 class="text-2xl font-black text-slate-900 dark:text-white">Acesso Restrito ao Sistema</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Para visualizar o mapa interativo, gerenciar demandas, acessar o dashboard e criar novas ordens de serviço, faça login com sua conta Google.
+                </p>
+            </div>
+            <button onclick="window.handleAuthAction()" class="px-6 py-3.5 rounded-2xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95">
+                <span>🔑</span> <span>Entrar com Conta Google</span>
+            </button>
+        </div>
 
         <!-- TAB 1: MAPA INTERATIVO -->
         <div id="tab-map" class="tab-content block space-y-4">
@@ -1459,14 +1475,13 @@
             const dateInp = document.getElementById('orderDate');
             if (dateInp) dateInp.value = new Date().toISOString().split('T')[0];
 
-            setTimeout(() => {
-                window.renderMap();
-            }, 300);
-
             if (auth) {
                 auth.onAuthStateChanged(user => {
                     authUser = user;
                     const btnText = document.getElementById('userAuthBtnText');
+                    const desktopNav = document.getElementById('desktopNav');
+                    const mobileNav = document.getElementById('mobileNav');
+                    const loggedOutView = document.getElementById('loggedOutView');
 
                     if (unsubscribeSnapshot) {
                         unsubscribeSnapshot();
@@ -1475,7 +1490,13 @@
 
                     if (user) {
                         btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
-                        document.getElementById('demoModeBanner').classList.add('hidden');
+                        
+                        // Exibe a navegação e oculta a tela de bloqueio
+                        if (desktopNav) desktopNav.classList.remove('hidden');
+                        if (mobileNav) mobileNav.classList.remove('hidden');
+                        if (loggedOutView) loggedOutView.classList.add('hidden');
+
+                        document.getElementById('demoModeBanner')?.classList.add('hidden');
                         window.updateSyncBadge('🔄 Conectando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
 
                         const userId = user.uid;
@@ -1500,24 +1521,21 @@
                                     window.updateSyncBadge('🔴 Erro de Conexão', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
                                 }
                             );
+
+                        window.switchTab('map');
                     } else {
                         btnText.innerText = 'Entrar com Google';
-                        window.updateSyncBadge('🟡 Modo Local', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
+                        window.updateSyncBadge('🔒 Acesso Restrito', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
 
-                        const localData = localStorage.getItem('eletrogestao_local_data');
-                        if (localData) {
-                            try {
-                                ordersData = JSON.parse(localData).map(o => window.normalizeOrder(o));
-                            } catch(e) {
-                                ordersData = [];
-                            }
-                        } else {
-                            ordersData = sampleSeedData.map(o => window.normalizeOrder(o));
-                            document.getElementById('demoModeBanner').classList.remove('hidden');
-                        }
+                        // Oculta todas as abas e menus de navegação quando deslogado
+                        if (desktopNav) desktopNav.classList.add('hidden');
+                        if (mobileNav) mobileNav.classList.add('hidden');
+                        if (loggedOutView) loggedOutView.classList.remove('hidden');
 
-                        window.renderListView();
-                        if (map) window.renderMap();
+                        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+
+                        ordersData = [];
+                        if (markersGroup) markersGroup.clearLayers();
                     }
                 });
             } else {
