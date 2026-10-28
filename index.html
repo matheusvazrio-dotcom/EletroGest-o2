@@ -110,16 +110,16 @@
 
                 <!-- Navigation Tabs (Desktop) -->
                 <nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
-                    <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2">
+                    <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2 justify-center">
                         🗺️ Mapa Interativo
                     </button>
-                    <button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2">
+                    <button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         📋 Demandas
                     </button>
-                    <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2">
+                    <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         📊 Dashboard
                     </button>
-                    <button onclick="window.switchTab('new')" id="nav-new" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2">
+                    <button onclick="window.switchTab('new')" id="nav-new" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         ➕ Nova Ordem
                     </button>
                 </nav>
@@ -132,7 +132,7 @@
                     </button>
 
                     <div id="userInfoArea" class="flex items-center gap-2">
-                        <button onclick="window.handleAuthAction()" id="userAuthBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-sm hover:shadow-amber-500/20">
+                        <button onclick="window.handleAuthAction()" id="userAuthBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-sm hover:shadow-amber-500/20 justify-center">
                             <span>🔑</span> <span id="userAuthBtnText">Entrar com Google</span>
                         </button>
                     </div>
@@ -142,11 +142,11 @@
         </div>
 
         <!-- Mobile Navigation Sub-bar -->
-        <div id="mobileNav" class="hidden md:hidden flex border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
-            <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900">🗺️ Mapa</button>
-            <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl">📋 Lista</button>
-            <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl">📊 Dashboard</button>
-            <button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl">➕ Criar</button>
+        <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
+            <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">🗺️ Mapa</button>
+            <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📋 Lista</button>
+            <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
+            <button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">➕ Criar</button>
         </div>
     </header>
 
@@ -154,7 +154,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
 
         <!-- LOGGED OUT VIEW / TELA DE ACESSO RESTRITO -->
-        <div id="loggedOutView" class="hidden min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
+        <div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
             <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
                 🔒
             </div>
@@ -164,13 +164,13 @@
                     Para visualizar o mapa interativo, gerenciar demandas, acessar o dashboard e criar novas ordens de serviço, faça login com sua conta Google.
                 </p>
             </div>
-            <button onclick="window.handleAuthAction()" class="px-6 py-3.5 rounded-2xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95">
+            <button onclick="window.handleAuthAction()" class="px-6 py-3.5 rounded-2xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 justify-center">
                 <span>🔑</span> <span>Entrar com Conta Google</span>
             </button>
         </div>
 
         <!-- TAB 1: MAPA INTERATIVO -->
-        <div id="tab-map" class="tab-content block space-y-4">
+        <div id="tab-map" class="tab-content hidden space-y-4">
             <!-- Map Filters Bar -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -197,7 +197,7 @@
                     <span class="text-slate-500 dark:text-slate-400 font-medium">
                         Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bold">0</span> pontos georreferenciados
                     </span>
-                    <button onclick="window.openUnmappedModal()" id="unmappedBtn" class="hidden px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold transition-all">
+                    <button onclick="window.openUnmappedModal()" id="unmappedBtn" class="hidden px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold transition-all flex items-center justify-center">
                         ⚠️ <span id="unmappedCountBadge">0</span> sem GPS
                     </button>
                 </div>
@@ -252,14 +252,24 @@
                             <option value="Baixa">Baixa</option>
                             <option value="Não Avaliada">Não Avaliada</option>
                         </select>
+
+                        <!-- View Mode Switcher Buttons -->
+                        <div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
+                            <button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
+                                📇 Cards
+                            </button>
+                            <button onclick="window.setListViewMode('table')" id="viewModeTableBtn" aria-label="Visualização em Tabela" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
+                                📋 Tabela
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                        <button onclick="window.downloadExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5">
+                        <button onclick="window.downloadExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
                             📊 Baixar Excel
                         </button>
-                        <button onclick="window.generateRoute()" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5">
+                        <button onclick="window.generateRoute()" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
                             📍 Ligações de Vistoria (<span id="selectedCountBadge">0</span>)
                         </button>
                     </div>
@@ -273,7 +283,7 @@
                     <span>💡</span>
                     <span><strong>Modo de Demonstração Ativo:</strong> Você está vendo dados fictícios de exemplo. Faça login para gerenciar suas ordens reais na nuvem.</span>
                 </div>
-                <button onclick="window.clearDemoData()" class="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 rounded-lg font-bold transition-all text-[11px]">
+                <button onclick="window.clearDemoData()" class="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 rounded-lg font-bold transition-all text-[11px] flex items-center justify-center">
                     Limpar Exemplo
                 </button>
             </div>
@@ -283,65 +293,155 @@
                 <!-- Dynamic Content Here -->
             </div>
 
-        </div>
-
-        <!-- TAB 3: DASHBOARD EXECUTIVO -->
-        <div id="tab-dashboard" class="tab-content hidden space-y-6">
-            
-            <!-- KPI Cards Row -->
-            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-sm">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Total de Ordens</span>
-                    <div id="dashTotal" class="text-2xl font-black text-slate-900 dark:text-slate-100 mt-1">0</div>
-                </div>
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-sm">
-                    <span class="text-[10px] font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider">Pendentes</span>
-                    <div id="dashPendentes" class="text-2xl font-black text-amber-600 dark:text-amber-500 mt-1">0</div>
-                </div>
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-sm">
-                    <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-wider">Concluídas</span>
-                    <div id="dashConcluidas" class="text-2xl font-black text-emerald-600 dark:text-emerald-500 mt-1">0</div>
-                </div>
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-sm border-l-4 border-l-red-500">
-                    <span class="text-[10px] font-black text-red-600 dark:text-red-500 uppercase tracking-wider">🚨 Emergências</span>
-                    <div id="dashEmergencias" class="text-2xl font-black text-red-600 dark:text-red-500 mt-1">0</div>
-                </div>
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4.5 rounded-2xl shadow-sm">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">SLA Médio (Abertas)</span>
-                    <div id="dashMediaDias" class="text-2xl font-black text-slate-900 dark:text-slate-100 mt-1">0d</div>
+            <!-- Orders Container (Table View) -->
+            <div id="ordersListTableContainer" class="hidden bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
+                                <th class="p-3 w-10 text-center">
+                                    <input type="checkbox" id="selectAllCheckbox" onclick="window.toggleSelectAll(this)" aria-label="Selecionar todas as ordens visíveis" class="accent-amber-500 cursor-pointer">
+                                </th>
+                                <th class="p-3">Nº OS / Projeto</th>
+                                <th class="p-3">Categoria</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Urgência</th>
+                                <th class="p-3">Alimentador</th>
+                                <th class="p-3">Ponto</th>
+                                <th class="p-3">Abertura</th>
+                                <th class="p-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersListTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                            <!-- Dynamic Table Rows Here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Analytics Charts Grid -->
+        </div>
+
+        <!-- TAB 3: DASHBOARD EXECUTIVO (RENOVADO: MODERNO, MINIMALISTA E COM DETALHES) -->
+        <div id="tab-dashboard" class="tab-content hidden space-y-6">
+            
+            <!-- Header Section of Dashboard -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-slate-200/80 dark:border-slate-800">
+                <div>
+                    <h2 class="text-base font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                        <span>⚡</span> Painel Executivo & Indicadores
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Visão consolidada em tempo real da operação e status das ordens.</p>
+                </div>
+                <div class="text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/20">
+                    Sincronizado Ao Vivo
+                </div>
+            </div>
+
+            <!-- KPI Cards Row (Minimalista, Alinhado e Centralizado) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                
+                <!-- KPI 1: Total -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-700 dark:text-slate-300 mb-2 group-hover:scale-110 transition-transform shadow-inner">
+                        📊
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total de Ordens</span>
+                    <div id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- KPI 2: Pendentes -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-amber-500/20">
+                        ⏳
+                    </div>
+                    <span class="text-[11px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-1">Pendentes</span>
+                    <div id="dashPendentes" class="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tight">0</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- KPI 3: Concluídas -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">
+                        ✅
+                    </div>
+                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Concluídas</span>
+                    <div id="dashConcluidas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- KPI 4: Emergências -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-red-500">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-red-500/20">
+                        🚨
+                    </div>
+                    <span class="text-[11px] font-bold text-red-600 dark:text-red-500 uppercase tracking-widest mb-1">Emergências</span>
+                    <div id="dashEmergencias" class="text-3xl font-black text-red-600 dark:text-red-400 tracking-tight">0</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- KPI 5: SLA Médio -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-sky-500/20">
+                        ⏱️
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">SLA Médio (Abertas)</span>
+                    <div id="dashMediaDias" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0d</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+            </div>
+
+            <!-- Analytics Charts Grid (Modernos e Minimalistas) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Status Chart -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Status das Demandas</h3>
-                    <div class="h-64 relative">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                            <span>🍩</span> Status das Demandas
+                        </h3>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">Visão Geral</span>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
                         <canvas id="statusChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Urgência Chart -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Classificação por Nível de Urgência</h3>
-                    <div class="h-64 relative">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                            <span>📊</span> Nível de Urgência
+                        </h3>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">Prioridades</span>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
                         <canvas id="urgenciaChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Categoria Chart -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Distribuição por Categoria</h3>
-                    <div class="h-64 relative">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                            <span>⚡</span> Distribuição por Categoria
+                        </h3>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">Tipos de Rede</span>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
                         <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Equipe Chart -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Demandas por Equipe Sugerida</h3>
-                    <div class="h-64 relative">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                            <span>👷</span> Equipes Sugeridas
+                        </h3>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">Alocação</span>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
                         <canvas id="equipeChart"></canvas>
                     </div>
                 </div>
@@ -526,7 +626,7 @@
             </div>
             <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 bg-slate-50 dark:bg-slate-950">
                 <button onclick="window.closeFiscalizarModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">Cancelar</button>
-                <button id="saveFiscalizarBtn" onclick="window.saveFiscalizarChanges()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-2">
+                <button id="saveFiscalizarBtn" onclick="window.saveFiscalizarChanges()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-2 justify-center">
                     <span>Salvar Atualização</span>
                 </button>
             </div>
@@ -737,6 +837,7 @@
         let authUser = null;
         let isCompressingPhoto = false;
         let unsubscribeSnapshot = null;
+        let currentListViewMode = 'cards';
 
         const appId = 'eletrogestao_v2';
         
@@ -764,7 +865,7 @@
             console.warn("Firebase offline/ambiente local sem suporte.", e);
         }
 
-        // --- 3. DATA NORMALIZATION (SAFE FOR MISSING INFO & SERIAL DATES) ---
+        // --- 3. DATA NORMALIZATION (TOLERANT TO MISSING FIELDS & SERIAL DATES) ---
         window.normalizeDate = function(val) {
             if (!val) return new Date().toISOString().split('T')[0];
             if (typeof val === 'number') {
@@ -792,37 +893,40 @@
         };
 
         window.normalizeOrder = function(data) {
-            const rawLat = parseFloat(data.lat);
-            const rawLng = parseFloat(data.lng);
+            const rawLat = parseFloat(data.lat !== undefined ? data.lat : data.Latitude);
+            const rawLng = parseFloat(data.lng !== undefined ? data.lng : data.Longitude);
             
             const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
             const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
 
             const validCategories = ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'TRANSFORMADOR', 'BYPASS', 'OUTROS'];
-            const category = validCategories.includes(String(data.category || '').toUpperCase()) ? String(data.category).toUpperCase() : 'OUTROS';
+            const rawCat = String(data.category || data.Categoria || '').toUpperCase();
+            const category = validCategories.includes(rawCat) ? rawCat : 'OUTROS';
 
             const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
-            const status = validStatuses.includes(String(data.status || '').toUpperCase()) ? String(data.status).toUpperCase() : 'PENDENTE';
+            const rawStatus = String(data.status || data.Status || '').toUpperCase();
+            const status = validStatuses.includes(rawStatus) ? rawStatus : 'PENDENTE';
 
             const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
-            const urgencia = validUrgencies.includes(data.urgencia) ? data.urgencia : 'Não Avaliada';
+            const rawUrg = data.urgencia || data.Urgência;
+            const urgencia = validUrgencies.includes(rawUrg) ? rawUrg : 'Não Avaliada';
 
-            const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem']);
+            const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
             const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : null;
 
             return {
                 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
-                osProject: String(data.osProject || data.os || 'SEM-OS').trim(),
-                origem: String(data.origem || 'OSM'),
+                osProject: String(data.osProject || data.os || data.OS || data['OS / Projeto'] || 'SEM-OS').trim(),
+                origem: String(data.origem || data.Origem || 'OSM'),
                 category: category,
                 status: status,
                 urgencia: urgencia,
-                equipeSugerida: String(data.equipeSugerida || 'Não definida'),
-                alimentador: String(data.alimentador || ''),
-                pontoEletrico: String(data.pontoEletrico || ''),
+                equipeSugerida: String(data.equipeSugerida || data['Equipe Sugerida'] || 'Não definida'),
+                alimentador: String(data.alimentador || data.Alimentador || ''),
+                pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
                 orderDate: formattedDate,
                 completionDate: formattedCompDate,
-                description: String(data.description || ''),
+                description: String(data.description || data.Descrição || ''),
                 lat: lat,
                 lng: lng,
                 photo: data.photo || null,
@@ -874,7 +978,7 @@
             }
         };
 
-        // --- 5. RENDER MAP WITH UNMAPPED COUNTER ---
+        // --- 5. RENDER MAP & UNMAPPED GPS MODAL ---
         window.renderMap = function() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer) return;
@@ -887,8 +991,8 @@
                     maxZoom: 20
                 });
 
-                const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-                    attribution: '&copy; Google Maps',
+                const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    attribution: '&copy; Google Satellite',
                     maxZoom: 20
                 });
 
@@ -898,97 +1002,90 @@
                 });
 
                 googleStreets.addTo(map);
-
-                const baseMaps = {
-                    "🗺️ Google Ruas": googleStreets,
-                    "🛰️ Google Satélite": googleHybrid,
-                    "🌙 Modo Escuro": esriDark
-                };
-                L.control.layers(baseMaps).addTo(map);
+                L.control.layers({
+                    "Google Ruas": googleStreets,
+                    "Google Satélite": googleSat,
+                    "Modo Escuro (Esri)": esriDark
+                }).addTo(map);
 
                 markersGroup = L.layerGroup().addTo(map);
-                
-                setTimeout(() => { if (map) map.invalidateSize(); }, 300);
             }
 
-            markersGroup.clearLayers();
+            if (markersGroup) markersGroup.clearLayers();
 
             const fCat = document.getElementById('mapFilterCategory')?.value || '';
             const fStatus = document.getElementById('mapFilterStatus')?.value || '';
 
-            const unmappedOrders = ordersData.filter(o => o.lat === null || o.lng === null);
-            const unmappedBtn = document.getElementById('unmappedBtn');
-            const unmappedBadge = document.getElementById('unmappedCountBadge');
-            
-            if (unmappedOrders.length > 0) {
-                unmappedBtn.classList.remove('hidden');
-                unmappedBadge.innerText = unmappedOrders.length;
-            } else {
-                unmappedBtn.classList.add('hidden');
-            }
-
-            const filtered = ordersData.filter(o => {
+            const mappedOrders = ordersData.filter(o => {
+                if (o.lat === null || o.lng === null) return false;
                 if (fCat && o.category !== fCat) return false;
                 if (fStatus && o.status !== fStatus) return false;
-                return o.lat !== null && o.lng !== null;
+                return true;
             });
 
-            const counterEl = document.getElementById('mapCounter');
-            if (counterEl) counterEl.innerText = filtered.length;
+            const unmappedOrders = ordersData.filter(o => o.lat === null || o.lng === null);
+            const unmappedBtn = document.getElementById('unmappedBtn');
+            if (unmappedBtn) {
+                if (unmappedOrders.length > 0) {
+                    unmappedBtn.classList.remove('hidden');
+                    document.getElementById('unmappedCountBadge').innerText = unmappedOrders.length;
+                } else {
+                    unmappedBtn.classList.add('hidden');
+                }
+            }
 
-            const bounds = [];
-            filtered.forEach(order => {
-                const color = order.urgencia === 'Emergência' ? '#ef4444' : (order.status === 'CONCLUÍDO' ? '#10b981' : '#f59e0b');
+            document.getElementById('mapCounter').innerText = mappedOrders.length;
+
+            const latLngs = [];
+            mappedOrders.forEach(order => {
+                const color = order.status === 'CONCLUÍDO' ? '#10b981' : (order.status === 'PROGRAMADO' ? '#3b82f6' : '#f59e0b');
                 
-                const marker = L.circleMarker([order.lat, order.lng], {
-                    radius: 9,
-                    fillColor: color,
-                    color: '#020617',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.95
+                const htmlIcon = L.divIcon({
+                    className: 'custom-map-marker',
+                    html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 900; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 2px solid #ffffff;">⚡</div>`,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
                 });
 
-                const popupContent = `
-                    <div style="font-family: sans-serif; font-size: 12px; line-height: 1.5;" class="p-1">
-                        <strong style="color: #d97706; font-size: 13px;">${window.escapeHtml(order.osProject)}</strong><br/>
-                        <span style="opacity: 0.85;">Categoria: <b>${window.escapeHtml(order.category)}</b></span><br/>
-                        <span style="opacity: 0.85;">Status: <b>${window.escapeHtml(order.status)}</b></span><br/>
-                        <span style="opacity: 0.85;">Urgência: <b>${window.escapeHtml(order.urgencia)}</b></span><br/>
-                        <span style="opacity: 0.85;">Ponto: <b>${window.escapeHtml(order.pontoEletrico || 'N/D')}</b></span><br/>
-                        <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" style="margin-top:8px; width: 100%; background:#f59e0b; color:#0f172a; border:none; padding:6px 10px; border-radius:6px; font-weight:bold; cursor:pointer;">🔍 Fiscalizar</button>
+                const popupHtml = `
+                    <div style="font-family: inherit; font-size: 12px; min-width: 200px;">
+                        <strong style="font-size: 14px; color: #f59e0b;">${window.escapeHtml(order.osProject)}</strong><br>
+                        <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br>
+                        <strong>Status:</strong> ${window.escapeHtml(order.status)}<br>
+                        <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br>
+                        <p style="margin-top: 6px; color: #94a3b8; max-height: 60px; overflow-y: auto;">${window.escapeHtml(order.description || '')}</p>
                     </div>
                 `;
 
-                marker.bindPopup(popupContent);
+                const marker = L.marker([order.lat, order.lng], { icon: htmlIcon }).bindPopup(popupHtml);
                 markersGroup.addLayer(marker);
-                bounds.push([order.lat, order.lng]);
+                latLngs.push([order.lat, order.lng]);
             });
 
-            if (bounds.length > 0) {
-                map.fitBounds(bounds, { padding: [40, 40] });
+            if (latLngs.length > 0) {
+                map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
             }
         };
 
         window.openUnmappedModal = function() {
-            const listContainer = document.getElementById('unmappedModalList');
-            listContainer.innerHTML = '';
-            
             const unmapped = ordersData.filter(o => o.lat === null || o.lng === null);
+            const container = document.getElementById('unmappedModalList');
+            container.innerHTML = '';
+
             if (unmapped.length === 0) {
-                listContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Todas as ordens possuem coordenadas GPS.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500">Nenhuma ordem sem GPS.</p>`;
             } else {
                 unmapped.forEach(o => {
                     const item = document.createElement('div');
-                    item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex items-center justify-between gap-2";
+                    item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
                     item.innerHTML = `
                         <div>
-                            <strong class="text-amber-600 dark:text-amber-400">${window.escapeHtml(o.osProject)}</strong>
-                            <p class="text-slate-500 dark:text-slate-400 text-[11px]">${window.escapeHtml(o.category)} | ${window.escapeHtml(o.alimentador || 'Sem alimentador')}</p>
+                            <strong class="text-slate-900 dark:text-white">${window.escapeHtml(o.osProject)}</strong>
+                            <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span>
                         </div>
-                        <button onclick="window.openDetailsModal('${window.escapeHtml(o.id)}'); window.closeUnmappedModal();" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold rounded-lg">Ver Detalhes</button>
+                        <button onclick="window.openDetailsModal('${o.id}')" class="px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>
                     `;
-                    listContainer.appendChild(item);
+                    container.appendChild(item);
                 });
             }
 
@@ -999,11 +1096,62 @@
             document.getElementById('unmappedModal').classList.add('hidden');
         };
 
-        // --- 6. RENDER LIST VIEW ---
-        window.renderListView = function() {
-            const container = document.getElementById('ordersListCards');
-            if (!container) return;
+        // --- 6. RENDER LIST VIEW (CARDS & TABLE) ---
+        window.setListViewMode = function(mode) {
+            currentListViewMode = mode;
+            const cardsContainer = document.getElementById('ordersListCards');
+            const tableContainer = document.getElementById('ordersListTableContainer');
+            const cardsBtn = document.getElementById('viewModeCardsBtn');
+            const tableBtn = document.getElementById('viewModeTableBtn');
 
+            if (mode === 'cards') {
+                cardsContainer.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
+                cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
+                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+            } else {
+                cardsContainer.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
+                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
+                cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+            }
+            window.renderListView();
+        };
+
+        window.toggleSelectAll = function(masterCheckbox) {
+            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            const fCat = document.getElementById('listFilterCategory')?.value || '';
+            const fStatus = document.getElementById('listFilterStatus')?.value || '';
+            const fUrg = document.getElementById('listFilterUrgency')?.value || '';
+
+            const filtered = ordersData.filter(o => {
+                if (fCat && o.category !== fCat) return false;
+                if (fStatus && o.status !== fStatus) return false;
+                if (fUrg && o.urgencia !== fUrg) return false;
+
+                if (!searchVal) return true;
+                return o.osProject.toLowerCase().includes(searchVal) || 
+                       o.alimentador.toLowerCase().includes(searchVal) || 
+                       o.description.toLowerCase().includes(searchVal) || 
+                       o.pontoEletrico.toLowerCase().includes(searchVal);
+            });
+
+            if (masterCheckbox.checked) {
+                filtered.forEach(o => {
+                    if (!selectedRouteIds.includes(o.id)) selectedRouteIds.push(o.id);
+                });
+            } else {
+                filtered.forEach(o => {
+                    const idx = selectedRouteIds.indexOf(o.id);
+                    if (idx > -1) selectedRouteIds.splice(idx, 1);
+                });
+            }
+
+            document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+            window.renderListView();
+        };
+
+        window.renderListView = function() {
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
             const fCat = document.getElementById('listFilterCategory')?.value || '';
             const fStatus = document.getElementById('listFilterStatus')?.value || '';
@@ -1023,61 +1171,109 @@
                 return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
             });
 
-            container.innerHTML = '';
+            if (currentListViewMode === 'cards') {
+                const container = document.getElementById('ordersListCards');
+                if (!container) return;
+                container.innerHTML = '';
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
-                return;
-            }
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
+                    return;
+                }
 
-            filtered.forEach(order => {
-                const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-                const isSelected = selectedRouteIds.includes(order.id);
-                
-                const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada' 
-                    ? `<span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 ${window.escapeHtml(order.urgencia)}</span>` 
-                    : `<span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Sem Urgência</span>`;
+                filtered.forEach(order => {
+                    const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
+                    const isSelected = selectedRouteIds.includes(order.id);
+                    
+                    const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada' 
+                        ? `<span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 ${window.escapeHtml(order.urgencia)}</span>` 
+                        : `<span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Sem Urgência</span>`;
 
-                const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
-                                   (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
+                    const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
+                                       (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
 
-                const card = document.createElement('div');
-                card.className = "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3";
-                
-                card.innerHTML = `
-                    <div class="space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="flex items-center gap-2">
-                                <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar para vistoria" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-                                <span class="font-extrabold text-xs text-slate-900 dark:text-white">${window.escapeHtml(order.osProject)}</span>
+                    const card = document.createElement('div');
+                    card.className = "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3";
+                    
+                    card.innerHTML = `
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar para vistoria" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                                    <span class="font-extrabold text-xs text-slate-900 dark:text-white">${window.escapeHtml(order.osProject)}</span>
+                                </div>
+                                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">${window.escapeHtml(order.status)}</span>
                             </div>
-                            <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">${window.escapeHtml(order.status)}</span>
+
+                            <div class="flex flex-wrap gap-1.5 items-center">
+                                <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
+                                ${urgencyBadge}
+                                <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-medium px-2 py-0.5 rounded-lg">Eqp: ${window.escapeHtml(order.equipeSugerida)}</span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
+
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 pt-1">
+                                <p>⚡ Ponto: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong> | Alimentador: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.alimentador || 'N/D')}</strong></p>
+                                <p>📅 Abertura: ${window.escapeHtml(order.orderDate)} (<span class="text-amber-600 dark:text-amber-400 font-bold">${daysOpen} dias ${order.status === 'CONCLUÍDO' ? 'até conclusão' : 'em aberto'}</span>)</p>
+                            </div>
                         </div>
 
-                        <div class="flex flex-wrap gap-1.5 items-center">
-                            <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
-                            ${urgencyBadge}
-                            <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-medium px-2 py-0.5 rounded-lg">Eqp: ${window.escapeHtml(order.equipeSugerida)}</span>
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
+                            <div class="flex gap-1.5">
+                                <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
+                                <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir Ordem">🗑️</button>
+                            </div>
                         </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                const tbody = document.getElementById('ordersListTableBody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
 
-                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</td></tr>`;
+                    return;
+                }
 
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 pt-1">
-                            <p>⚡ Ponto: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong> | Alimentador: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.alimentador || 'N/D')}</strong></p>
-                            <p>📅 Abertura: ${window.escapeHtml(order.orderDate)} (<span class="text-amber-600 dark:text-amber-400 font-bold">${daysOpen} dias ${order.status === 'CONCLUÍDO' ? 'até conclusão' : 'em aberto'}</span>)</p>
-                        </div>
-                    </div>
+                filtered.forEach(order => {
+                    const isSelected = selectedRouteIds.includes(order.id);
+                    const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
+                                       (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
 
-                    <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                        <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all">ℹ️ Detalhes</button>
-                        <div class="flex gap-1.5">
-                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm">🔍 Fiscalizar</button>
-                            <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all" title="Excluir Ordem">🗑️</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+                    const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada' 
+                        ? `<span class="text-red-600 dark:text-red-400 font-bold">${window.escapeHtml(order.urgencia)}</span>` 
+                        : `<span class="text-slate-400">Normal</span>`;
+
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors";
+                    row.innerHTML = `
+                        <td class="p-3 text-center">
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar linha" class="accent-amber-500 cursor-pointer">
+                        </td>
+                        <td class="p-3 font-extrabold text-slate-900 dark:text-white">${window.escapeHtml(order.osProject)}</td>
+                        <td class="p-3">
+                            <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold px-2 py-0.5 rounded-md border border-amber-500/20 text-[10px]">${window.escapeHtml(order.category)}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="font-extrabold px-2 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
+                        </td>
+                        <td class="p-3">${urgencyBadge}</td>
+                        <td class="p-3">${window.escapeHtml(order.alimentador || '-')}</td>
+                        <td class="p-3">${window.escapeHtml(order.pontoEletrico || '-')}</td>
+                        <td class="p-3">${window.escapeHtml(order.orderDate)}</td>
+                        <td class="p-3 text-right space-x-1">
+                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold">ℹ️</button>
+                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-[11px] font-black">🔍</button>
+                            <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-lg text-[11px]">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
         };
 
         // --- 7. RENDER DASHBOARD ---
@@ -1111,9 +1307,9 @@
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(statusCounts),
-                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#fbbf24', '#10b981'] }]
+                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#fbbf24', '#10b981'], borderWidth: 0 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } } } }
             });
 
             // Chart 2: Urgência
@@ -1125,9 +1321,9 @@
                 type: 'bar',
                 data: {
                     labels: Object.keys(urgCounts),
-                    datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'] }]
+                    datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'], borderRadius: 6 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } } }
             });
 
             // Chart 3: Categoria
@@ -1136,12 +1332,12 @@
 
             if (chartInstances.cat) chartInstances.cat.destroy();
             chartInstances.cat = new Chart(document.getElementById('categoryChart'), {
-                type: 'pie',
+                type: 'polarArea',
                 data: {
                     labels: Object.keys(catCounts),
-                    datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#14b8a6', '#64748b'] }]
+                    datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#14b8a6', '#64748b'], borderWidth: 0 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } } }, scales: { r: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { display: false } } } }
             });
 
             // Chart 4: Equipe
@@ -1153,9 +1349,9 @@
                 type: 'bar',
                 data: {
                     labels: Object.keys(eqpCounts),
-                    datasets: [{ label: 'Equipe Sugerida', data: Object.values(eqpCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#64748b'] }]
+                    datasets: [{ label: 'Equipe Sugerida', data: Object.values(eqpCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#64748b'], borderRadius: 6 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } } }
             });
         };
 
@@ -1292,7 +1488,7 @@
             }
         };
 
-        // --- TOLERANT EXCEL & CSV IMPORT LOGIC (OS-BASED DUPLICATE CHECK ONLY) ---
+        // --- TOLERANT EXCEL & CSV IMPORT (OS-BASED DUPLICATE CHECK ONLY) ---
         window.processExcelImport = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1321,14 +1517,13 @@
                     const batch = db ? db.batch() : null;
 
                     json.forEach(row => {
-                        const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || row['Projeto'] || row['os'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
+                        const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || row['Project'] || row['os'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
                         const osStr = String(rawOs).trim();
                         
-                        // Check duplicate strictly by osProject number against existing memory and current batch
-                        const existsInCurrent = ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
+                        const existsInMemory = ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
                         const existsInBatch = newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
 
-                        if (existsInCurrent || existsInBatch) {
+                        if (existsInMemory || existsInBatch) {
                             skippedCount++;
                             return;
                         }
@@ -1343,7 +1538,7 @@
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
                             alimentador: row['alimentador'] || row['Alimentador'] || '',
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
-                            orderDate: row['orderDate'] || row['Data da Ordem'] || row['Data'] || new Date().toISOString().split('T')[0],
+                            orderDate: window.normalizeDate(row['orderDate'] || row['Data da Ordem'] || row['Data']),
                             description: row['description'] || row['Descrição'] || '',
                             lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined && row['Latitude'] !== '' ? row['Latitude'] : null),
                             lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined && row['Longitude'] !== '' ? row['Longitude'] : null),
@@ -1371,11 +1566,11 @@
                         if (map) window.renderMap();
                         
                         let msg = `Foram importadas ${importedCount} ordens com sucesso!`;
-                        if (skippedCount > 0) msg += `\n\nOutras ${skippedCount} ordens foram ignoradas por já possuírem o mesmo número de OS.`;
+                        if (skippedCount > 0) msg += `\n\nOutras ${skippedCount} ordens duplicadas foram ignoradas por já possuírem o mesmo número de OS.`;
                         window.showModal('Importação Concluída', msg);
                         window.switchTab('list');
                     } else {
-                        window.showModal('Aviso', `Nenhuma ordem nova foi importada. ${skippedCount} ordens duplicadas foram ignoradas por já existirem no sistema.`);
+                        window.showModal('Aviso', `Nenhuma ordem nova foi importada. ${skippedCount} ordens foram ignoradas por já existirem no sistema com o mesmo número de OS.`);
                     }
                 } catch (err) {
                     window.showModal('Erro na Importação', 'Não foi possível processar o arquivo: ' + err.message);
