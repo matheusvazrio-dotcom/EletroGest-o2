@@ -704,14 +704,18 @@
         let unsubscribeSnapshot = null;
 
         // Firebase Configuration & Initialization
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eletrogestao_v2';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyD-PlaceholderKeyForAppClientSetup",
+        const appId = 'eletrogestao_v2';
+        
+        // SUAS CREDENCIAIS REAIS DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
             authDomain: "eletrogestao-38596.firebaseapp.com",
+            databaseURL: "https://eletrogestao-38596-default-rtdb.firebaseio.com",
             projectId: "eletrogestao-38596",
-            storageBucket: "eletrogestao-38596.appspot.com",
-            messagingSenderId: "109827364521",
-            appId: "1:109827364521:web:abc123def456"
+            storageBucket: "eletrogestao-38596.firebasestorage.app",
+            messagingSenderId: "505140333342",
+            appId: "1:505140333342:web:7b24bd715fc8417e98570f",
+            measurementId: "G-B7ZDW50Y4X"
         };
 
         let db = null;
@@ -1429,41 +1433,6 @@
             }
         };
 
-        const sampleSeedData = [
-            {
-                id: 'ord_01',
-                osProject: 'OS-2026-001',
-                origem: 'OSM',
-                category: 'POSTE',
-                status: 'PENDENTE',
-                urgencia: 'Alta',
-                equipeSugerida: 'Linha Viva',
-                alimentador: 'SUB-A',
-                pontoEletrico: 'PT-1029',
-                orderDate: '2026-10-10',
-                description: 'Poste de concreto avariado com risco estrutural na fiação secundária.',
-                lat: -23.5505,
-                lng: -46.6333,
-                history: [{ date: '10/10/2026 09:00', message: 'Ordem criada no sistema.' }]
-            },
-            {
-                id: 'ord_02',
-                osProject: 'OS-2026-002',
-                origem: 'CHAMADO',
-                category: 'PODA',
-                status: 'PROGRAMADO',
-                urgencia: 'Média',
-                equipeSugerida: 'Linha Morta',
-                alimentador: 'SUB-B',
-                pontoEletrico: 'PT-4081',
-                orderDate: '2026-10-15',
-                description: 'Galhos de grande porte tocando a rede primária de Média Tensão.',
-                lat: -23.5585,
-                lng: -46.6433,
-                history: [{ date: '15/10/2026 14:30', message: 'Ordem cadastrada.' }]
-            }
-        ];
-
         // --- 16. APPLICATION INITIALIZATION ---
         window.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('keydown', (e) => {
@@ -1538,9 +1507,6 @@
                         if (markersGroup) markersGroup.clearLayers();
                     }
                 });
-            } else {
-                ordersData = sampleSeedData.map(o => window.normalizeOrder(o));
-                window.renderListView();
             }
         });
     </script>
