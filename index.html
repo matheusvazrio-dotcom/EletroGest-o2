@@ -1182,6 +1182,107 @@
             }
         };
 
+        // --- EXCEL IMPORT LOGIC ---
+        window.processExcelImport = async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const importBtn = document.getElementById('importBtn');
+            const originalHtml = importBtn.innerHTML;
+            importBtn.innerHTML = '⏳ Processando...';
+            importBtn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                try {
+                    const data = evt.target.result;
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const json = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
+
+                    if (json.length === 0) {
+                        window.showModal('Aviso', 'A planilha selecionada está vazia.');
+                        return;
+                    }
+
+                    let importedCount = 0;
+                    let skippedCount = 0;
+                    const newOrders = [];
+                    const userId = auth.currentUser.uid;
+                    const batch = db.batch(); // Processamento em lote para salvar tudo rápido
+
+                    json.forEach(row => {
+                        // Aceita o nome da coluna padrão gerada pelo sistema ou variações
+                        const osProj = row['OS / Projeto'] || row['OS'] || row['Projeto'];
+                        if (!osProj) return; 
+
+                        const osStr = String(osProj).trim();
+                        
+                        // Verifica Duplicidade (no banco atual e nas ordens novas da própria planilha)
+                        if (ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase()) || 
+                            newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase())) {
+                            skippedCount++;
+                            return;
+                        }
+
+                        const rawOrder = {
+                            id: 'ord_' + Math.random().toString(36).substr(2, 9),
+                            osProject: osStr,
+                            origem: row['Origem'] || 'OSM',
+                            category: row['Categoria'] || 'OUTROS',
+                            status: row['Status'] || 'PENDENTE',
+                            urgencia: row['Urgência'] || 'Não Avaliada',
+                            equipeSugerida: row['Equipe Sugerida'] || 'Não definida',
+                            alimentador: row['Alimentador'] || '',
+                            pontoEletrico: row['Ponto Elétrico'] || '',
+                            orderDate: row['Data da Ordem'] || new Date().toISOString().split('T')[0],
+                            completionDate: row['Status'] === 'CONCLUÍDO' ? (row['Data Conclusão'] || new Date().toISOString().split('T')[0]) : null,
+                            description: row['Descrição'] || '',
+                            lat: row['Latitude'] ? parseFloat(row['Latitude']) : null,
+                            lng: row['Longitude'] ? parseFloat(row['Longitude']) : null,
+                            history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem importada em lote via planilha.' }]
+                        };
+
+                        const normalized = window.normalizeOrder(rawOrder);
+                        newOrders.push(normalized);
+                        
+                        // Prepara o lote para salvar no Firebase
+                        const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
+                        batch.set(docRef, normalized);
+                        importedCount++;
+                    });
+
+                    if (importedCount > 0) {
+                        window.updateSyncBadge('🔄 Salvando lote...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400');
+                        await batch.commit(); // Salva tudo no Firebase de uma vez
+                        
+                        ordersData = [...newOrders, ...ordersData]; // Atualiza a tela
+                        localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData));
+                        
+                        window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20');
+                        window.renderListView();
+                        if (map) window.renderMap();
+                        
+                        let msg = `Foram importadas ${importedCount} ordens com sucesso!`;
+                        if (skippedCount > 0) msg += `\n\nOutras ${skippedCount} ordens foram ignoradas porque já estavam cadastradas no sistema.`;
+                        window.showModal('Importação Concluída', msg);
+                        window.switchTab('list');
+                    } else if (skippedCount > 0) {
+                        window.showModal('Nenhuma Importação', `Todas as ${skippedCount} ordens identificadas na planilha já estão cadastradas no sistema.`);
+                    } else {
+                        window.showModal('Aviso', 'Não conseguimos identificar ordens na planilha. Verifique se existe uma coluna chamada "OS / Projeto".');
+                    }
+                } catch (err) {
+                    window.showModal('Erro na Importação', 'Não foi possível processar o arquivo: ' + err.message);
+                } finally {
+                    e.target.value = ''; // Limpa o input
+                    importBtn.innerHTML = originalHtml;
+                    importBtn.disabled = false;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
         // --- 11. FISCALIZAR MODAL & PHOTO COMPRESSION ---
         window.openFiscalizarModal = function(id) {
             currentFiscalizarId = id;
