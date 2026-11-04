@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
-       <link rel="manifest" href="manifest.json">
-   <meta name="theme-color" content="#f59e0b">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EletroGestão | Sistema de Ordens de Manutenção</title>
     
-    <!-- Tailwind CSS (URL corrigida) -->
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f59e0b">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     <script>
         tailwind.config = {
@@ -29,21 +31,21 @@
     </script>
 
     <!-- Leaflet Maps CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-    <!-- Leaflet MarkerCluster CSS & JS (Hashes SRI removidos) -->
+    <!-- Leaflet MarkerCluster CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
 
-    <!-- SheetJS (Hashes SRI removidos) -->
+    <!-- SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
 
-    <!-- Chart.js (Hashes SRI removidos) -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
 
-    <!-- Firebase Compat SDKs (Hashes SRI removidos) -->
+    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
@@ -98,8 +100,8 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-200">
 
-    <!-- HEADER / NAVIGATION BAR -->
-    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-40 transition-colors duration-200">
+    <!-- HEADER / NAVIGATION BAR (ALWAYS FIXED / STICKY) -->
+    <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-50 transition-colors duration-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
@@ -146,7 +148,7 @@
             </div>
         </div>
 
-        <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
+        <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
             <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
             <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
             <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
@@ -154,7 +156,7 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
+    <main id="swipeContainer" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
 
         <div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
             <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
@@ -741,7 +743,6 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Função de Data Local (YYYY-MM-DD)
         window.getLocalTodayDate = function() {
             const d = new Date();
             const year = d.getFullYear();
@@ -830,7 +831,6 @@
             return Math.floor(diffTime / (1000 * 60 * 60 * 24));
         };
 
-        // Gerenciamento de Foco de Acessibilidade (Item 19)
         let lastFocusedElement = null;
 
         window.showModal = function(title, body) {
@@ -1021,6 +1021,8 @@
             };
         };
 
+        const orderedTabs = ['map', 'list', 'dashboard', 'new'];
+
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             
@@ -1059,6 +1061,52 @@
                 window.renderDashboard();
             }
         };
+
+        // Swipe gesture handler for horizontal swiping between tabs
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        function handleSwipeGesture() {
+            if (document.getElementById('loggedOutView') && !document.getElementById('loggedOutView').classList.contains('hidden')) return;
+            // Ignore swipe if inside a modal or chart container
+            if (document.querySelector('[role="dialog"]:not(.hidden)')) return;
+
+            const threshold = 70;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) < threshold) return;
+
+            let currentActiveTab = 'list';
+            for (const t of orderedTabs) {
+                const el = document.getElementById(`tab-${t}`);
+                if (el && !el.classList.contains('hidden')) {
+                    currentActiveTab = t;
+                    break;
+                }
+            }
+
+            const currentIndex = orderedTabs.indexOf(currentActiveTab);
+            if (diff > 0) {
+                // Swipe Left -> Next Tab
+                if (currentIndex < orderedTabs.length - 1) {
+                    window.switchTab(orderedTabs[currentIndex + 1]);
+                }
+            } else {
+                // Swipe Right -> Previous Tab
+                if (currentIndex > 0) {
+                    window.switchTab(orderedTabs[currentIndex - 1]);
+                }
+            }
+        }
 
         window.renderMap = function() {
             const mapContainer = document.getElementById('map');
@@ -1117,13 +1165,18 @@
                     iconAnchor: [14, 14]
                 });
 
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${order.lat},${order.lng}`;
+
                 const popupHtml = `
-                    <div style="font-family: inherit; font-size: 12px; min-width: 200px;">
+                    <div style="font-family: inherit; font-size: 12px; min-width: 200px; line-height: 1.5;">
                         <a href="javascript:void(0)" class="map-os-link font-bold text-amber-600 underline" data-id="${window.escapeHtml(order.id)}" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br>
                         <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br>
                         <strong>Status:</strong> ${window.escapeHtml(order.status)}<br>
                         <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br>
                         <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br>
+                        <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                            <a href="${mapsUrl}" target="_blank" class="inline-block w-full py-1.5 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-center font-black rounded-xl text-xs shadow-sm">🗺️ Rotear no Google Maps</a>
+                        </div>
                     </div>
                 `;
 
@@ -1132,7 +1185,6 @@
                 latLngs.push([order.lat, order.lng]);
             });
 
-            // Reenquadramento Dinâmico do Mapa
             if (latLngs.length > 0) {
                 map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
             }
@@ -1458,7 +1510,6 @@
             window.open(url, '_blank');
         };
 
-        // --- DASHBOARD INTERATIVO & FILTROS ---
         window.filterByDashboard = function(type, param) {
             activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
             document.getElementById('listFilterStatus').value = '';
@@ -1732,7 +1783,6 @@
             window.showHtmlModal('Rota Otimizada Gerada', modalHtml);
         };
 
-        // --- SALVAMENTO OFFLINE OTIMIZADO & CADASTRO ---
         window.handleCreateOrder = async function(e) {
             e.preventDefault();
             
@@ -1774,7 +1824,6 @@
             submitBtn.innerHTML = `<span>⏳ Salvando...</span>`;
 
             try {
-                // Salvamento não bloqueante em campo (Salva em background e atualiza estado otimista)
                 window.saveToCloud(newOrder);
                 e.target.reset();
                 document.getElementById('orderDate').value = window.getLocalTodayDate();
@@ -1954,7 +2003,6 @@
             const order = ordersData.find(o => o.id === currentFiscalizarId);
             if (!order) return;
 
-            // Cópia segura para evitar estado corrompido em caso de falha
             const orderCopy = JSON.parse(JSON.stringify(order));
 
             const newStatus = document.getElementById('fiscalizarStatusSelect').value;
