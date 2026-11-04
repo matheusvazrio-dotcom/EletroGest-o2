@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EletroGestão | Sistema de Ordens de Manutenção</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (URL corrigida) -->
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -27,19 +27,24 @@
     </script>
 
     <!-- Leaflet Maps CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- SheetJS (Excel Export & Import) -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Leaflet MarkerCluster CSS & JS (Hashes SRI removidos) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
 
-    <!-- Chart.js (Dashboard Analytics) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (Hashes SRI removidos) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <!-- Chart.js (Hashes SRI removidos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+    <!-- Firebase Compat SDKs (Hashes SRI removidos) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
 
     <style>
         .leaflet-container {
@@ -50,7 +55,6 @@
             z-index: 10;
         }
 
-        /* High-contrast styling for Leaflet Popups */
         .dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip {
             background-color: #0f172a !important;
             color: #f8fafc !important;
@@ -67,7 +71,6 @@
             border-radius: 0.875rem !important;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -85,6 +88,10 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        :focus-visible {
+            outline: 2px solid #f59e0b;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-200">
@@ -94,7 +101,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
-                <!-- Logo & Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-xl font-black shadow-md shadow-amber-500/20">
                         ⚡
@@ -102,13 +108,12 @@
                     <div>
                         <h1 class="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
                             EletroGestão
-                            <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🟡 Modo Local</span>
+                            <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🔄 Conectando...</span>
                         </h1>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Sistema Integrado de Manutenção Elétrica</p>
                     </div>
                 </div>
 
-                <!-- Navigation Tabs (Desktop) -->
                 <nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
                     <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         🗺️ Mapa Interativo
@@ -124,9 +129,8 @@
                     </button>
                 </nav>
 
-                <!-- User Auth & Theme Switcher Area -->
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <button onclick="window.toggleTheme()" id="themeToggleBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200/70 hover:bg-slate-300/70 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-amber-400 border border-slate-300/80 dark:border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm" title="Alternar Modo Noturno / Claro">
+                    <button onclick="window.toggleTheme()" id="themeToggleBtn" aria-label="Alternar tema" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200/70 hover:bg-slate-300/70 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-amber-400 border border-slate-300/80 dark:border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm" title="Alternar Modo Noturno / Claro">
                         <span id="themeToggleIcon">🌙</span> <span id="themeToggleText" class="hidden sm:inline">Modo Escuro</span>
                     </button>
 
@@ -140,7 +144,6 @@
             </div>
         </div>
 
-        <!-- Mobile Navigation Sub-bar -->
         <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
             <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
             <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
@@ -149,10 +152,8 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
 
-        <!-- LOGGED OUT VIEW -->
         <div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
             <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
                 🔒
@@ -173,7 +174,7 @@
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <label for="mapFilterCategory" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">Filtros:</label>
-                    <select id="mapFilterCategory" onchange="window.renderMap()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500">
+                    <select id="mapFilterCategory" onchange="window.renderMap()" aria-label="Filtrar categoria no mapa" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500">
                         <option value="">Todas Categorias</option>
                         <option value="POSTE">POSTE</option>
                         <option value="PODA">PODA</option>
@@ -207,18 +208,26 @@
         </div>
 
         <!-- TAB 2: DEMANDAS -->
-        <div id="tab-list" class="tab-content space-y-4">
+        <div id="tab-list" class="tab-content hidden space-y-4">
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4 transition-colors">
+                
+                <!-- Active Filters Chips Bar -->
+                <div id="activeFiltersBar" class="hidden flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
+                    <span class="text-slate-400 font-bold uppercase text-[10px]">Filtro Ativo:</span>
+                    <div id="activeFiltersChips" class="flex flex-wrap gap-1.5 items-center"></div>
+                    <button onclick="window.clearDashboardFilters()" class="text-amber-600 hover:underline font-bold text-[11px] ml-2">Limpar Filtros</button>
+                </div>
+
                 <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                     
                     <div class="relative w-full md:w-80">
                         <label for="searchInput" class="sr-only">Buscar por OS</label>
-                        <input type="text" id="searchInput" oninput="window.renderListView()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                        <input type="text" id="searchInput" oninput="window.onSearchInput()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                         <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                        <select id="listFilterCategory" aria-label="Filtrar por Categoria" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                        <select id="listFilterCategory" aria-label="Filtrar por Categoria" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="">Categorias</option>
                             <option value="POSTE">POSTE</option>
                             <option value="PODA">PODA</option>
@@ -229,7 +238,7 @@
                             <option value="OUTROS">OUTROS</option>
                         </select>
 
-                        <select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                        <select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="">Status</option>
                             <option value="PENDENTE">PENDENTE</option>
                             <option value="PROGRAMADO">PROGRAMADO</option>
@@ -237,7 +246,7 @@
                             <option value="CONCLUÍDO">CONCLUÍDO</option>
                         </select>
 
-                        <select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                        <select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="recent">Mais Recentes</option>
                             <option value="oldest">Mais Antigos (Aging)</option>
                         </select>
@@ -264,18 +273,17 @@
                 </div>
             </div>
 
-            <div id="demoModeBanner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs text-amber-800 dark:text-amber-300">
-                <div class="flex items-center gap-2">
-                    <span>💡</span>
-                    <span><strong>Modo de Demonstração Ativo:</strong> Faça login com o Google para gerenciar suas ordens reais.</span>
-                </div>
-                <button onclick="window.clearDemoData()" class="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 rounded-lg font-bold transition-all text-[11px] flex items-center justify-center">
-                    Limpar Exemplo
-                </button>
-            </div>
-
             <div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
             <div id="ordersListRowContainer" class="space-y-3"></div>
+
+            <!-- Pagination Container -->
+            <div id="paginationContainer" class="flex items-center justify-between pt-4 pb-2 px-2 text-xs">
+                <span id="paginationInfo" class="text-slate-500">Mostrando 0 de 0</span>
+                <div class="flex gap-2">
+                    <button id="prevPageBtn" onclick="window.changePage(-1)" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 rounded-xl font-bold disabled:opacity-40">Anterior</button>
+                    <button id="nextPageBtn" onclick="window.changePage(1)" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 rounded-xl font-bold disabled:opacity-40">Próxima</button>
+                </div>
+            </div>
         </div>
 
         <!-- TAB 3: DASHBOARD EXECUTIVO -->
@@ -327,7 +335,7 @@
 
                 <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
                     <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-sky-500/20">⏱️</div>
-                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">SLA Médio</span>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Idade média (abertas)</span>
                     <div id="dashMediaDias" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0d</div>
                 </div>
 
@@ -549,12 +557,97 @@
         </div>
     </div>
 
-    <!-- MODAL: DETALHES (Com botões Editar e Fiscalizar integrados) -->
+    <!-- MODAL: EDITAR ORDEM -->
+    <div id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 id="editModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">✏️ Editar Ordem de Serviço</h3>
+                <button onclick="window.closeEditModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+            </div>
+            <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                <input type="hidden" id="editInternalId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="editOsProject" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nº OS / Projeto *</label>
+                        <input type="text" id="editOsProject" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label for="editOrigem" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Origem *</label>
+                        <select id="editOrigem" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="OSM">OSM</option>
+                            <option value="CHAMADO">Chamado de Vistoria</option>
+                            <option value="EMERGÊNCIA">Emergência Operacional</option>
+                            <option value="INSPEÇÃO">Inspeção Periódica</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editCategory" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Categoria *</label>
+                        <select id="editCategory" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="POSTE">POSTE</option>
+                            <option value="PODA">PODA</option>
+                            <option value="CABO">CABO</option>
+                            <option value="ESTRUTURA">ESTRUTURA</option>
+                            <option value="TRANSFORMADOR">TRANSFORMADOR</option>
+                            <option value="BYPASS">BYPASS</option>
+                            <option value="OUTROS">OUTROS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editEquipe" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Equipe Sugerida</label>
+                        <select id="editEquipe" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="Não definida">Não definida</option>
+                            <option value="Linha Viva">Linha Viva</option>
+                            <option value="Linha Morta">Linha Morta</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editAlimentador" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Alimentador</label>
+                        <input type="text" id="editAlimentador" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label for="editPonto" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Ponto Elétrico</label>
+                        <input type="text" id="editPonto" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label for="editDate" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Data da Ordem *</label>
+                        <input type="date" id="editDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label for="editStatus" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status</label>
+                        <select id="editStatus" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="PENDENTE">PENDENTE</option>
+                            <option value="PROGRAMADO">PROGRAMADO</option>
+                            <option value="PARCIAL">PARCIAL</option>
+                            <option value="CONCLUÍDO">CONCLUÍDO</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editLat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
+                        <input type="number" step="any" id="editLat" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label for="editLng" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Longitude</label>
+                        <input type="number" step="any" id="editLng" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="editDescription" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Descrição</label>
+                    <textarea id="editDescription" rows="3" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 bg-slate-50 dark:bg-slate-950">
+                <button onclick="window.closeEditModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white">Cancelar</button>
+                <button onclick="window.saveEditedOrder()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALHES -->
     <div id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detOsTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
                 <h3 id="detOsTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">Detalhes da Ordem</h3>
-                <button onclick="document.getElementById('detailsModal').classList.add('hidden')" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+                <button onclick="window.closeDetailsModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
             </div>
             <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div class="grid grid-cols-2 gap-3 text-xs">
@@ -599,17 +692,16 @@
                 </div>
             </div>
             
-            <!-- Modal Action Buttons (Editar e Fiscalizar) -->
             <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
                 <div class="flex gap-2">
-                    <button id="detEditBtn" onclick="" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <button id="detEditBtn" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
                         ✏️ Editar
                     </button>
-                    <button id="detFiscalizarBtn" onclick="" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5">
+                    <button id="detFiscalizarBtn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5">
                         🔍 Fiscalizar
                     </button>
                 </div>
-                <button onclick="document.getElementById('detailsModal').classList.add('hidden')" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
+                <button onclick="window.closeDetailsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
             </div>
         </div>
     </div>
@@ -627,17 +719,35 @@
         </div>
     </div>
 
-    <!-- GLOBAL NOTICE MODAL -->
+    <!-- GLOBAL NOTICE MODAL (Text) -->
     <div id="appModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
             <h3 id="appModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
             <p id="appModalBody" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed break-words"></p>
-            <button onclick="document.getElementById('appModal').classList.add('hidden')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Entendido</button>
+            <button onclick="window.closeAppModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Entendido</button>
+        </div>
+    </div>
+
+    <!-- GLOBAL HTML MODAL (For HTML content like Route Links) -->
+    <div id="appHtmlModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 id="appHtmlModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
+            <div id="appHtmlModalBody" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-2"></div>
+            <button onclick="window.closeAppHtmlModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Fechar</button>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Função de Data Local (YYYY-MM-DD)
+        window.getLocalTodayDate = function() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         window.toggleTheme = function() {
             const html = document.documentElement;
             const isDark = html.classList.contains('dark');
@@ -718,13 +828,35 @@
             return Math.floor(diffTime / (1000 * 60 * 60 * 24));
         };
 
+        // Gerenciamento de Foco de Acessibilidade (Item 19)
+        let lastFocusedElement = null;
+
         window.showModal = function(title, body) {
+            lastFocusedElement = document.activeElement;
             document.getElementById('appModalTitle').innerText = title;
             document.getElementById('appModalBody').innerText = body;
             document.getElementById('appModal').classList.remove('hidden');
         };
 
+        window.closeAppModal = function() {
+            document.getElementById('appModal').classList.add('hidden');
+            if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
+        };
+
+        window.showHtmlModal = function(title, htmlBody) {
+            lastFocusedElement = document.activeElement;
+            document.getElementById('appHtmlModalTitle').innerText = title;
+            document.getElementById('appHtmlModalBody').innerHTML = htmlBody;
+            document.getElementById('appHtmlModal').classList.remove('hidden');
+        };
+
+        window.closeAppHtmlModal = function() {
+            document.getElementById('appHtmlModal').classList.add('hidden');
+            if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
+        };
+
         window.showConfirmModal = function(title, body) {
+            lastFocusedElement = document.activeElement;
             return new Promise((resolve) => {
                 document.getElementById('confirmModalTitle').innerText = title;
                 document.getElementById('confirmModalBody').innerText = body;
@@ -736,6 +868,7 @@
                     modal.classList.add('hidden');
                     okBtn.removeEventListener('click', onOk);
                     cancelBtn.removeEventListener('click', onCancel);
+                    if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
                 };
 
                 const onOk = () => { cleanup(); resolve(true); };
@@ -750,7 +883,7 @@
         let ordersData = [];
         let selectedRouteIds = [];
         let map = null;
-        let markersGroup = null;
+        let markersClusterGroup = null;
         let routeLayer = null;
         let currentFiscalizarId = null;
         let currentFiscalizarPhotoBase64 = null;
@@ -758,6 +891,16 @@
         let isCompressingPhoto = false;
         let unsubscribeSnapshot = null;
         let currentListViewMode = 'rowlist';
+
+        let activeFilterState = {
+            urgency: null,
+            fiscalizada: null,
+            equipe: null,
+            label: null
+        };
+
+        let currentPage = 1;
+        const pageSize = 50;
 
         const appId = 'eletrogestao_v2';
         
@@ -779,6 +922,9 @@
             if (typeof firebase !== 'undefined') {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
+                db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                    console.warn("Firestore offline persistence notice:", err.code);
+                });
                 auth = firebase.auth();
             }
         } catch(e) {
@@ -786,7 +932,7 @@
         }
 
         window.normalizeDate = function(val) {
-            if (!val) return new Date().toISOString().split('T')[0];
+            if (!val) return window.getLocalTodayDate();
             if (typeof val === 'number') {
                 const dateInfo = XLSX.SSF.parse_date_code(val);
                 if (dateInfo) {
@@ -808,7 +954,7 @@
                     }
                 }
             }
-            return new Date().toISOString().split('T')[0];
+            return window.getLocalTodayDate();
         };
 
         window.normalizeOrder = function(data) {
@@ -840,7 +986,17 @@
             const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : null;
 
             const historyArr = Array.isArray(data.history) ? data.history : [];
-            const isFiscalizada = data.fiscalizada !== undefined ? Boolean(data.fiscalizada) : (historyArr.length > 1 || Boolean(data.photo));
+            
+            let isFiscalizada = false;
+            const rawFisc = data.fiscalizada !== undefined ? data.fiscalizada : data.Fiscalizada;
+            if (typeof rawFisc === 'string') {
+                isFiscalizada = rawFisc.toLowerCase() === 'sim' || rawFisc.toLowerCase() === 'true';
+            } else {
+                isFiscalizada = Boolean(rawFisc);
+            }
+            if (!isFiscalizada && (historyArr.length > 1 || Boolean(data.photo))) {
+                isFiscalizada = true;
+            }
 
             return {
                 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
@@ -909,16 +1065,18 @@
             if (!map) {
                 map = L.map('map').setView([-23.5505, -46.6333], 12);
                 
-                const googleStreets = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { attribution: '&copy; Google Maps', maxZoom: 20 });
-                const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { attribution: '&copy; Google Satellite', maxZoom: 20 });
+                const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 });
+                const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 18 });
                 const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri', maxZoom: 16 });
 
-                googleStreets.addTo(map);
-                L.control.layers({ "Google Ruas": googleStreets, "Google Satélite": googleSat, "Modo Escuro (Esri)": esriDark }).addTo(map);
-                markersGroup = L.layerGroup().addTo(map);
+                osmLayer.addTo(map);
+                L.control.layers({ "OpenStreetMap": osmLayer, "Esri Satélite": esriSat, "Esri Escuro": esriDark }).addTo(map);
+                
+                markersClusterGroup = L.markerClusterGroup();
+                map.addLayer(markersClusterGroup);
             }
 
-            if (markersGroup) markersGroup.clearLayers();
+            if (markersClusterGroup) markersClusterGroup.clearLayers();
 
             const fCat = document.getElementById('mapFilterCategory')?.value || '';
             const fStatus = document.getElementById('mapFilterStatus')?.value || '';
@@ -945,7 +1103,10 @@
 
             const latLngs = [];
             mappedOrders.forEach(order => {
-                const color = order.status === 'CONCLUÍDO' ? '#10b981' : (order.status === 'PROGRAMADO' ? '#3b82f6' : '#f59e0b');
+                let color = '#f59e0b';
+                if (order.status === 'CONCLUÍDO') color = '#10b981';
+                else if (order.status === 'PROGRAMADO') color = '#3b82f6';
+                else if (order.status === 'PARCIAL') color = '#ec4899';
                 
                 const htmlIcon = L.divIcon({
                     className: 'custom-map-marker',
@@ -956,7 +1117,7 @@
 
                 const popupHtml = `
                     <div style="font-family: inherit; font-size: 12px; min-width: 200px;">
-                        <a href="javascript:void(0)" onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br>
+                        <a href="javascript:void(0)" class="map-os-link font-bold text-amber-600 underline" data-id="${window.escapeHtml(order.id)}" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br>
                         <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br>
                         <strong>Status:</strong> ${window.escapeHtml(order.status)}<br>
                         <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br>
@@ -965,12 +1126,31 @@
                 `;
 
                 const marker = L.marker([order.lat, order.lng], { icon: htmlIcon }).bindPopup(popupHtml);
-                markersGroup.addLayer(marker);
+                markersClusterGroup.addLayer(marker);
                 latLngs.push([order.lat, order.lng]);
             });
 
-            if (latLngs.length > 0) map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
+            // Reenquadramento Dinâmico do Mapa
+            if (latLngs.length > 0) {
+                map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
+            }
         };
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('.map-os-link');
+            if (target) {
+                const id = target.getAttribute('data-id');
+                if (id) window.openDetailsModal(id);
+            }
+            const unmapTarget = e.target.closest('.unmapped-os-link');
+            if (unmapTarget) {
+                const id = unmapTarget.getAttribute('data-id');
+                if (id) {
+                    window.closeUnmappedModal();
+                    window.openDetailsModal(id);
+                }
+            }
+        });
 
         window.openUnmappedModal = function() {
             const unmapped = ordersData.filter(o => o.lat === null || o.lng === null);
@@ -985,12 +1165,20 @@
                     item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
                     item.innerHTML = `
                         <div>
-                            <a href="javascript:void(0)" onclick="window.openDetailsModal('${o.id}')" class="font-bold text-amber-600 hover:underline">${window.escapeHtml(o.osProject)}</a>
+                            <a href="javascript:void(0)" class="unmapped-os-link font-bold text-amber-600 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a>
                             <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span>
                         </div>
-                        <button onclick="window.openDetailsModal('${o.id}')" class="px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>
+                        <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>
                     `;
                     container.appendChild(item);
+                });
+
+                container.querySelectorAll('.unmapped-os-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.getAttribute('data-id');
+                        window.closeUnmappedModal();
+                        window.openDetailsModal(id);
+                    });
                 });
             }
             document.getElementById('unmappedModal').classList.remove('hidden');
@@ -1030,15 +1218,44 @@
             window.renderListView();
         };
 
+        window.onSearchInput = function() {
+            currentPage = 1;
+            window.renderListView();
+        };
+
+        window.onFilterChange = function() {
+            currentPage = 1;
+            window.renderListView();
+        };
+
+        window.changePage = function(direction) {
+            currentPage += direction;
+            window.renderListView();
+        };
+
         window.renderListView = function() {
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
             const fCat = document.getElementById('listFilterCategory')?.value || '';
             const fStatus = document.getElementById('listFilterStatus')?.value || '';
             const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
 
+            const activeBar = document.getElementById('activeFiltersBar');
+            const chipsContainer = document.getElementById('activeFiltersChips');
+            if (activeFilterState.label) {
+                activeBar.classList.remove('hidden');
+                chipsContainer.innerHTML = `<span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-bold flex items-center gap-1">${window.escapeHtml(activeFilterState.label)} <button onclick="window.clearDashboardFilters()" class="ml-1 hover:text-red-500">✕</button></span>`;
+            } else {
+                activeBar.classList.add('hidden');
+                chipsContainer.innerHTML = '';
+            }
+
             const filtered = ordersData.filter(o => {
                 if (fCat && o.category !== fCat) return false;
                 if (fStatus && o.status !== fStatus) return false;
+
+                if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
+                if (activeFilterState.fiscalizada !== null && o.fiscalizada !== activeFilterState.fiscalizada) return false;
+                if (activeFilterState.equipe && o.equipeSugerida !== activeFilterState.equipe) return false;
 
                 if (!searchVal) return true;
                 const osp = o.osProject.toLowerCase();
@@ -1059,17 +1276,29 @@
             const navBadge = document.getElementById('navDemandCount');
             if (navBadge) navBadge.innerText = ordersData.length;
 
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
+
+            document.getElementById('paginationInfo').innerText = `Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens`;
+            document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+            document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+
             if (currentListViewMode === 'cards') {
                 const container = document.getElementById('ordersListCards');
                 if (!container) return;
                 container.innerHTML = '';
 
-                if (filtered.length === 0) {
+                if (paginatedItems.length === 0) {
                     container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
                     return;
                 }
 
-                filtered.forEach(order => {
+                paginatedItems.forEach(order => {
                     const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
                     const isSelected = selectedRouteIds.includes(order.id);
                     
@@ -1081,8 +1310,10 @@
                         ? `<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">🔍 Fiscalizada</span>` 
                         : `<span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>`;
 
-                    const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
-                                       (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
+                    let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
+                    if (order.status === 'CONCLUÍDO') statusColor = 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
+                    else if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+                    else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
 
                     const card = document.createElement('div');
                     card.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3`;
@@ -1091,9 +1322,8 @@
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
-                                    <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-                                    <!-- Número da ordem clicável em qualquer aba -->
-                                    <a href="javascript:void(0)" onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="font-black text-xs text-amber-600 dark:text-amber-400 hover:underline">${window.escapeHtml(order.osProject)}</a>
+                                    <input type="checkbox" ${isSelected ? 'checked' : ''} data-id="${window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
+                                    <a href="javascript:void(0)" class="details-os-link font-black text-xs text-amber-600 dark:text-amber-400 hover:underline" data-id="${window.escapeHtml(order.id)}">${window.escapeHtml(order.osProject)}</a>
                                 </div>
                                 <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">${window.escapeHtml(order.status)}</span>
                             </div>
@@ -1113,10 +1343,10 @@
                         </div>
 
                         <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
                             <div class="flex gap-1.5">
-                                <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
-                                <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir">🗑️</button>
+                                <button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
+                                <button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir">🗑️</button>
                             </div>
                         </div>
                     `;
@@ -1127,28 +1357,29 @@
                 if (!rowContainer) return;
                 rowContainer.innerHTML = '';
 
-                if (filtered.length === 0) {
+                if (paginatedItems.length === 0) {
                     rowContainer.innerHTML = `<div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
                     return;
                 }
 
-                filtered.forEach(order => {
+                paginatedItems.forEach(order => {
                     const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
                     const isSelected = selectedRouteIds.includes(order.id);
 
-                    const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
-                                       (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
+                    let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
+                    if (order.status === 'CONCLUÍDO') statusColor = 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
+                    else if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+                    else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
 
                     const cardRow = document.createElement('div');
                     cardRow.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3`;
                     
                     cardRow.innerHTML = `
                         <div class="flex items-center gap-3 flex-wrap">
-                            <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} data-id="${window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <!-- Número da ordem clicável na lista -->
-                                    <a href="javascript:void(0)" onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400 hover:underline tracking-tight">${window.escapeHtml(order.osProject)}</a>
+                                    <a href="javascript:void(0)" class="details-os-link font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400 hover:underline tracking-tight" data-id="${window.escapeHtml(order.id)}">${window.escapeHtml(order.osProject)}</a>
                                     <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-amber-500/20 uppercase">${window.escapeHtml(order.category)}</span>
                                     <span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: ${window.escapeHtml(order.origem || 'OSM')}</span>
                                     <span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
@@ -1165,18 +1396,39 @@
                         </div>
 
                         <div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
-                            <button onclick="window.focusOrderOnMap('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
-                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
-                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Fiscalizar">🔍</button>
-                            <button onclick="window.shareOrderWhatsApp('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Compartilhar">🔗</button>
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Compartilhar">🔗</button>
                             
-                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-sm transition-all flex items-center gap-1">
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-sm transition-all flex items-center gap-1">
                                 🔍 Fiscalizar
                             </button>
-                            <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xs transition-all" title="Excluir">🗑️</button>
+                            <button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xs transition-all" title="Excluir">🗑️</button>
                         </div>
                     `;
                     rowContainer.appendChild(cardRow);
+                });
+            }
+
+            const listContainerElem = currentListViewMode === 'cards' ? document.getElementById('ordersListCards') : document.getElementById('ordersListRowContainer');
+            if (listContainerElem) {
+                listContainerElem.querySelectorAll('.select-route-chk').forEach(chk => {
+                    chk.addEventListener('change', () => window.toggleRouteSelection(chk.getAttribute('data-id')));
+                });
+                listContainerElem.querySelectorAll('.details-os-link, .details-btn').forEach(btn => {
+                    btn.addEventListener('click', () => window.openDetailsModal(btn.getAttribute('data-id')));
+                });
+                listContainerElem.querySelectorAll('.fiscalizar-btn').forEach(btn => {
+                    btn.addEventListener('click', () => window.openFiscalizarModal(btn.getAttribute('data-id')));
+                });
+                listContainerElem.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', () => window.deleteOrder(btn.getAttribute('data-id')));
+                });
+                listContainerElem.querySelectorAll('.map-focus-btn').forEach(btn => {
+                    btn.addEventListener('click', () => window.focusOrderOnMap(btn.getAttribute('data-id')));
+                });
+                listContainerElem.querySelectorAll('.share-btn').forEach(btn => {
+                    btn.addEventListener('click', () => window.shareOrderWhatsApp(btn.getAttribute('data-id')));
                 });
             }
         };
@@ -1204,32 +1456,46 @@
             window.open(url, '_blank');
         };
 
-        // --- DASHBOARD INTERATIVO ---
-        window.filterByDashboard = function(filterType) {
-            // Limpa filtros manuais de busca
-            document.getElementById('searchInput').value = '';
-            document.getElementById('listFilterCategory').value = '';
+        // --- DASHBOARD INTERATIVO & FILTROS ---
+        window.filterByDashboard = function(type, param) {
+            activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
             document.getElementById('listFilterStatus').value = '';
+            document.getElementById('listFilterCategory').value = '';
+            document.getElementById('searchInput').value = '';
 
-            if (filterType === 'total') {
-                // Mantém tudo visível
-            } else if (filterType === 'pendentes') {
+            if (type === 'total') {
+                activeFilterState.label = 'Todas as Demandas';
+            } else if (type === 'pendentes') {
                 document.getElementById('listFilterStatus').value = 'PENDENTE';
-            } else if (filterType === 'concluidas') {
+                activeFilterState.label = 'Status: PENDENTE';
+            } else if (type === 'concluidas') {
                 document.getElementById('listFilterStatus').value = 'CONCLUÍDO';
-            } else if (filterType === 'fiscalizadas') {
-                // Filtro customizado para fiscalizadas
-                document.getElementById('searchInput').value = '';
-            } else if (filterType === 'emergencias') {
-                document.getElementById('searchInput').value = 'Emergência';
+                activeFilterState.label = 'Status: CONCLUÍDO';
+            } else if (type === 'fiscalizadas') {
+                activeFilterState.fiscalizada = true;
+                activeFilterState.label = 'Fiscalizadas';
+            } else if (type === 'emergencias') {
+                activeFilterState.urgency = 'Emergência';
+                activeFilterState.label = 'Urgência: Emergência';
+            } else if (type === 'urgencia') {
+                activeFilterState.urgency = param;
+                activeFilterState.label = `Urgência: ${param}`;
+            } else if (type === 'equipe') {
+                activeFilterState.equipe = param;
+                activeFilterState.label = `Equipe: ${param}`;
             }
 
+            currentPage = 1;
             window.switchTab('list');
-            if (filterType === 'fiscalizadas') {
-                // Filtra via JS as fiscalizadas
-                const container = document.getElementById('ordersListRowContainer');
-                // Aplica filtro específico
-            }
+        };
+
+        window.clearDashboardFilters = function() {
+            activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
+            document.getElementById('listFilterStatus').value = '';
+            document.getElementById('listFilterCategory').value = '';
+            document.getElementById('searchInput').value = '';
+            currentPage = 1;
+            window.renderListView();
         };
 
         let chartInstances = {};
@@ -1265,7 +1531,7 @@
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(statusCounts),
-                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#fbbf24', '#10b981'], borderWidth: 0 }]
+                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899', '#10b981'], borderWidth: 0 }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
@@ -1273,7 +1539,11 @@
                         if (elements.length > 0) {
                             const idx = elements[0].index;
                             const label = Object.keys(statusCounts)[idx];
+                            activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
                             document.getElementById('listFilterStatus').value = label;
+                            document.getElementById('listFilterCategory').value = '';
+                            document.getElementById('searchInput').value = '';
+                            currentPage = 1;
                             window.switchTab('list');
                         }
                     },
@@ -1297,8 +1567,7 @@
                         if (elements.length > 0) {
                             const idx = elements[0].index;
                             const label = Object.keys(urgCounts)[idx];
-                            document.getElementById('searchInput').value = label;
-                            window.switchTab('list');
+                            window.filterByDashboard('urgencia', label);
                         }
                     },
                     plugins: { legend: { display: false } },
@@ -1322,7 +1591,11 @@
                         if (elements.length > 0) {
                             const idx = elements[0].index;
                             const label = Object.keys(catCounts)[idx];
+                            activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
                             document.getElementById('listFilterCategory').value = label;
+                            document.getElementById('listFilterStatus').value = '';
+                            document.getElementById('searchInput').value = '';
+                            currentPage = 1;
                             window.switchTab('list');
                         }
                     },
@@ -1347,8 +1620,7 @@
                         if (elements.length > 0) {
                             const idx = elements[0].index;
                             const label = Object.keys(eqpCounts)[idx];
-                            document.getElementById('searchInput').value = label;
-                            window.switchTab('list');
+                            window.filterByDashboard('equipe', label);
                         }
                     },
                     plugins: { legend: { display: false } },
@@ -1364,15 +1636,18 @@
             }
 
             const dataToExport = ordersData.map(o => ({
+                'id': o.id,
                 'osProject': o.osProject,
                 'origem': o.origem,
                 'category': o.category,
                 'status': o.status,
                 'urgencia': o.urgencia,
                 'fiscalizada': o.fiscalizada ? 'Sim' : 'Não',
+                'equipeSugerida': o.equipeSugerida,
                 'alimentador': o.alimentador,
                 'pontoEletrico': o.pontoEletrico,
                 'orderDate': o.orderDate,
+                'completionDate': o.completionDate || '',
                 'lat': o.lat !== null ? o.lat : '',
                 'lng': o.lng !== null ? o.lng : '',
                 'description': o.description
@@ -1383,6 +1658,17 @@
             XLSX.utils.book_append_sheet(wb, ws, "Demandas");
             XLSX.writeFile(wb, "EletroGestao_Relatorio.xlsx");
         };
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
         window.generateRoute = function() {
             if (selectedRouteIds.length < 2) {
@@ -1396,14 +1682,55 @@
                 return;
             }
 
+            let unvisited = [...routeOrders];
+            let current = unvisited.shift();
+            let orderedRoute = [current];
+            let totalDistanceKm = 0;
+
+            while (unvisited.length > 0) {
+                let nearestIdx = 0;
+                let minDst = Infinity;
+                for (let i = 0; i < unvisited.length; i++) {
+                    const dst = calculateDistance(current.lat, current.lng, unvisited[i].lat, unvisited[i].lng);
+                    if (dst < minDst) {
+                        minDst = dst;
+                        nearestIdx = i;
+                    }
+                }
+                totalDistanceKm += minDst;
+                current = unvisited.splice(nearestIdx, 1)[0];
+                orderedRoute.push(current);
+            }
+
             window.switchTab('map');
-            const coords = routeOrders.map(o => [o.lat, o.lng]);
+            const coords = orderedRoute.map(o => [o.lat, o.lng]);
 
             if (routeLayer) map.removeLayer(routeLayer);
             routeLayer = L.polyline(coords, { color: '#0284c7', weight: 4, dashArray: '8, 8' }).addTo(map);
             map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
+
+            const chunks = [];
+            for (let i = 0; i < orderedRoute.length; i += 10) {
+                chunks.push(orderedRoute.slice(i, i + 10));
+            }
+
+            let mapsLinksHtml = '';
+            chunks.forEach((chunk, index) => {
+                const waypoints = chunk.map(o => `${o.lat},${o.lng}`).join('/');
+                const linkUrl = `https://www.google.com/maps/dir/${waypoints}`;
+                mapsLinksHtml += `<a href="${linkUrl}" target="_blank" class="block py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs text-center border border-amber-500/30">🗺️ Abrir Parte ${index + 1} no Google Maps (${chunk.length} pontos)</a>`;
+            });
+
+            const modalHtml = `
+                <div class="space-y-3">
+                    <p class="text-xs text-slate-600 dark:text-slate-300">Rota otimizada calculada (Vizinho Mais Próximo). Distância total estimada: <strong class="text-amber-600">${totalDistanceKm.toFixed(2)} km</strong>.</p>
+                    <div class="space-y-2 max-h-48 overflow-y-auto">${mapsLinksHtml}</div>
+                </div>
+            `;
+            window.showHtmlModal('Rota Otimizada Gerada', modalHtml);
         };
 
+        // --- SALVAMENTO OFFLINE OTIMIZADO & CADASTRO ---
         window.handleCreateOrder = async function(e) {
             e.preventDefault();
             
@@ -1431,7 +1758,7 @@
                 alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
                 pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
                 orderDate: document.getElementById('orderDate').value,
-                completionDate: document.getElementById('status').value === 'CONCLUÍDO' ? new Date().toISOString().split('T')[0] : null,
+                completionDate: document.getElementById('status').value === 'CONCLUÍDO' ? window.getLocalTodayDate() : null,
                 description: document.getElementById('description').value.trim(),
                 lat: parsedLat,
                 lng: parsedLng,
@@ -1439,20 +1766,20 @@
             };
 
             const newOrder = window.normalizeOrder(rawOrder);
-            ordersData.unshift(newOrder);
 
             const submitBtn = document.getElementById('submitCreateBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<span>⏳ Salvando...</span>`;
 
             try {
-                await window.saveToCloud(newOrder);
+                // Salvamento não bloqueante em campo (Salva em background e atualiza estado otimista)
+                window.saveToCloud(newOrder);
                 e.target.reset();
-                document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('orderDate').value = window.getLocalTodayDate();
                 window.showModal('Sucesso', 'Ordem cadastrada com sucesso!');
                 window.switchTab('list');
             } catch (err) {
-                window.showModal('Erro', 'Não foi possível salvar na nuvem: ' + err.message);
+                window.showModal('Erro', 'Não foi possível salvar: ' + err.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<span>💾 Salvar Ordem de Serviço</span>`;
@@ -1494,7 +1821,6 @@
                     let skippedCount = 0;
                     const newOrders = [];
                     const userId = auth?.currentUser?.uid || 'local_user';
-                    const batch = db ? db.batch() : null;
 
                     json.forEach(row => {
                         const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
@@ -1509,17 +1835,18 @@
                         }
 
                         const rawOrder = {
-                            id: 'ord_' + Math.random().toString(36).substr(2, 9),
+                            id: row['id'] || ('ord_' + Math.random().toString(36).substr(2, 9)),
                             osProject: osStr,
                             origem: row['origem'] || row['Origem'] || 'OSM',
                             category: row['category'] || row['Categoria'] || 'OUTROS',
                             status: row['status'] || row['Status'] || 'PENDENTE',
                             urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
-                            fiscalizada: row['fiscalizada'] === 'Sim' || row['Fiscalizada'] === true || false,
+                            fiscalizada: row['fiscalizada'] || row['Fiscalizada'] || false,
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
                             alimentador: row['alimentador'] || row['Alimentador'] || '',
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
                             orderDate: window.normalizeDate(row['orderDate'] || row['Data da Ordem'] || row['Data']),
+                            completionDate: row['completionDate'] ? window.normalizeDate(row['completionDate']) : null,
                             description: row['description'] || row['Descrição'] || '',
                             lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined ? row['Latitude'] : null),
                             lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined ? row['Longitude'] : null),
@@ -1528,20 +1855,22 @@
 
                         const normalized = window.normalizeOrder(rawOrder);
                         newOrders.push(normalized);
-                        if (db && auth && auth.currentUser) {
-                            const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
-                            batch.set(docRef, normalized);
-                        }
                         importedCount++;
                     });
 
                     if (importedCount > 0) {
-                        if (db && auth && auth.currentUser) await batch.commit();
-                        ordersData = [...newOrders, ...ordersData];
-                        localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData));
-                        
-                        window.renderListView();
-                        if (map) window.renderMap();
+                        if (db && auth && auth.currentUser) {
+                            const chunkSize = 450;
+                            for (let i = 0; i < newOrders.length; i += chunkSize) {
+                                const chunk = newOrders.slice(i, i + chunkSize);
+                                const batch = db.batch();
+                                chunk.forEach(normalized => {
+                                    const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
+                                    batch.set(docRef, normalized);
+                                });
+                                batch.commit().catch(err => console.warn("Batch commit background notice:", err));
+                            }
+                        }
                         window.showModal('Sucesso', `Foram importadas ${importedCount} ordens. ${skippedCount} duplicadas foram ignoradas.`);
                         window.switchTab('list');
                     } else {
@@ -1623,41 +1952,119 @@
             const order = ordersData.find(o => o.id === currentFiscalizarId);
             if (!order) return;
 
+            // Cópia segura para evitar estado corrompido em caso de falha
+            const orderCopy = JSON.parse(JSON.stringify(order));
+
             const newStatus = document.getElementById('fiscalizarStatusSelect').value;
             const newUrgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
             const obs = document.getElementById('fiscalizarObsInput').value.trim();
 
-            const oldStatus = order.status;
-            order.status = newStatus;
-            order.urgencia = newUrgencia;
-            order.fiscalizada = true; 
-            if (currentFiscalizarPhotoBase64) order.photo = currentFiscalizarPhotoBase64;
+            const oldStatus = orderCopy.status;
+            orderCopy.status = newStatus;
+            orderCopy.urgencia = newUrgencia;
+            orderCopy.fiscalizada = true; 
+            if (currentFiscalizarPhotoBase64) orderCopy.photo = currentFiscalizarPhotoBase64;
 
             if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
-                order.completionDate = new Date().toISOString().split('T')[0];
+                orderCopy.completionDate = window.getLocalTodayDate();
             } else if (newStatus !== 'CONCLUÍDO') {
-                order.completionDate = null;
+                orderCopy.completionDate = null;
             }
 
-            if (!order.history) order.history = [];
+            if (!orderCopy.history) orderCopy.history = [];
             let logMsg = `Ordem fiscalizada. Status: ${newStatus}. Urgência: ${newUrgencia}.`;
             if (obs) logMsg += ` Obs: ${obs}`;
             if (currentFiscalizarPhotoBase64) logMsg += ` [Foto Anexada]`;
 
-            order.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: logMsg });
+            orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: logMsg });
 
             const saveBtn = document.getElementById('saveFiscalizarBtn');
             saveBtn.disabled = true;
 
             try {
-                await window.saveToCloud(order);
+                await window.saveToCloud(orderCopy);
                 window.closeFiscalizarModal();
-                window.renderListView();
                 window.showModal('Sucesso', 'Fiscalização registrada com sucesso!');
             } catch(err) {
                 window.showModal('Erro', 'Falha ao salvar: ' + err.message);
             } finally {
                 saveBtn.disabled = false;
+            }
+        };
+
+        window.openEditModal = function(id) {
+            const order = ordersData.find(o => o.id === id);
+            if (!order) return;
+
+            document.getElementById('editInternalId').value = order.id;
+            document.getElementById('editOsProject').value = order.osProject;
+            document.getElementById('editOrigem').value = order.origem;
+            document.getElementById('editCategory').value = order.category;
+            document.getElementById('editEquipe').value = order.equipeSugerida;
+            document.getElementById('editAlimentador').value = order.alimentador || '';
+            document.getElementById('editPonto').value = order.pontoEletrico || '';
+            document.getElementById('editDate').value = order.orderDate;
+            document.getElementById('editStatus').value = order.status;
+            document.getElementById('editLat').value = order.lat !== null ? order.lat : '';
+            document.getElementById('editLng').value = order.lng !== null ? order.lng : '';
+            document.getElementById('editDescription').value = order.description || '';
+
+            document.getElementById('editModal').classList.remove('hidden');
+        };
+
+        window.closeEditModal = function() {
+            document.getElementById('editModal').classList.add('hidden');
+        };
+
+        window.saveEditedOrder = async function() {
+            const id = document.getElementById('editInternalId').value;
+            const order = ordersData.find(o => o.id === id);
+            if (!order) return;
+
+            const orderCopy = JSON.parse(JSON.stringify(order));
+
+            const newOsProj = document.getElementById('editOsProject').value.trim();
+            if (ordersData.some(o => o.osProject.toLowerCase() === newOsProj.toLowerCase() && o.id !== id)) {
+                window.showModal('Erro de Duplicidade', `Já existe outra ordem com o número "${newOsProj}".`);
+                return;
+            }
+
+            const latVal = document.getElementById('editLat').value.trim();
+            const lngVal = document.getElementById('editLng').value.trim();
+            const parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
+            const parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
+
+            orderCopy.osProject = newOsProj;
+            orderCopy.origem = document.getElementById('editOrigem').value;
+            orderCopy.category = document.getElementById('editCategory').value;
+            orderCopy.equipeSugerida = document.getElementById('editEquipe').value;
+            orderCopy.alimentador = document.getElementById('editAlimentador').value.trim().toUpperCase();
+            orderCopy.pontoEletrico = document.getElementById('editPonto').value.trim().toUpperCase();
+            orderCopy.orderDate = document.getElementById('editDate').value;
+            
+            const newStatus = document.getElementById('editStatus').value;
+            const oldStatus = orderCopy.status;
+            orderCopy.status = newStatus;
+
+            if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
+                orderCopy.completionDate = window.getLocalTodayDate();
+            } else if (newStatus !== 'CONCLUÍDO') {
+                orderCopy.completionDate = null;
+            }
+
+            orderCopy.lat = parsedLat;
+            orderCopy.lng = parsedLng;
+            orderCopy.description = document.getElementById('editDescription').value.trim();
+
+            if (!orderCopy.history) orderCopy.history = [];
+            orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: 'Ordem editada no sistema.' });
+
+            try {
+                await window.saveToCloud(orderCopy);
+                window.closeEditModal();
+                window.showModal('Sucesso', 'Ordem atualizada com sucesso!');
+            } catch(err) {
+                window.showModal('Erro', 'Falha ao salvar edições: ' + err.message);
             }
         };
 
@@ -1694,20 +2101,23 @@
                 historyList.appendChild(h);
             });
 
-            // Atribui as ações aos botões do Modal de Detalhes
             const editBtn = document.getElementById('detEditBtn');
             const fiscalizarBtn = document.getElementById('detFiscalizarBtn');
             
             editBtn.onclick = () => {
-                document.getElementById('detailsModal').classList.add('hidden');
-                window.openFiscalizarModal(order.id);
+                window.closeDetailsModal();
+                window.openEditModal(order.id);
             };
             fiscalizarBtn.onclick = () => {
-                document.getElementById('detailsModal').classList.add('hidden');
+                window.closeDetailsModal();
                 window.openFiscalizarModal(order.id);
             };
 
             document.getElementById('detailsModal').classList.remove('hidden');
+        };
+
+        window.closeDetailsModal = function() {
+            document.getElementById('detailsModal').classList.add('hidden');
         };
 
         window.deleteOrder = async function(id) {
@@ -1716,9 +2126,8 @@
 
             try {
                 await window.deleteFromCloud(id);
-                ordersData = ordersData.filter(o => o.id !== id);
-                window.renderListView();
-                if (map) window.renderMap();
+                selectedRouteIds = selectedRouteIds.filter(selectedId => selectedId !== id);
+                document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
                 window.showModal('Sucesso', 'Ordem excluída.');
             } catch(err) {
                 window.showModal('Erro', 'Falha ao excluir: ' + err.message);
@@ -1740,7 +2149,6 @@
                     db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(order.id).set(order)
                         .then(() => {
                             window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
-                            localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData));
                             resolve();
                         })
                         .catch(err => {
@@ -1748,9 +2156,7 @@
                             reject(err);
                         });
                 } else {
-                    localStorage.setItem('eletrogestao_local_data', JSON.stringify(ordersData));
-                    window.updateSyncBadge('🟡 Modo Local', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
-                    resolve();
+                    reject(new Error("Usuário não autenticado no Firestore."));
                 }
             });
         };
@@ -1760,24 +2166,12 @@
                 if (auth && auth.currentUser && db) {
                     const userId = auth.currentUser.uid;
                     db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(id).delete()
-                        .then(() => {
-                            localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData.filter(o => o.id !== id)));
-                            resolve();
-                        })
+                        .then(() => resolve())
                         .catch(err => reject(err));
                 } else {
-                    localStorage.setItem('eletrogestao_local_data', JSON.stringify(ordersData.filter(o => o.id !== id)));
-                    resolve();
+                    reject(new Error("Usuário não autenticado."));
                 }
             });
-        };
-
-        window.clearDemoData = function() {
-            ordersData = [];
-            localStorage.setItem('eletrogestao_local_data', JSON.stringify([]));
-            document.getElementById('demoModeBanner').classList.add('hidden');
-            window.renderListView();
-            if (map) window.renderMap();
         };
 
         window.handleAuthAction = function() {
@@ -1792,11 +2186,13 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.add('hidden'));
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.add('hidden'));
+                }
             });
 
             const dateInp = document.getElementById('orderDate');
-            if (dateInp) dateInp.value = new Date().toISOString().split('T')[0];
+            if (dateInp) dateInp.value = window.getLocalTodayDate();
 
             if (auth) {
                 auth.onAuthStateChanged(user => {
@@ -1814,7 +2210,6 @@
                         if (mobileNav) mobileNav.classList.remove('hidden');
                         if (loggedOutView) loggedOutView.classList.add('hidden');
 
-                        document.getElementById('demoModeBanner')?.classList.add('hidden');
                         window.updateSyncBadge('🔄 Conectando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
 
                         const userId = user.uid;
@@ -1823,10 +2218,22 @@
                                 const cloudOrders = [];
                                 snapshot.forEach(doc => cloudOrders.push(window.normalizeOrder(doc.data())));
                                 ordersData = cloudOrders;
-                                localStorage.setItem(`eletrogestao_local_${userId}`, JSON.stringify(ordersData));
+                                
+                                const validIds = new Set(ordersData.map(o => o.id));
+                                selectedRouteIds = selectedRouteIds.filter(id => validIds.has(id));
+                                document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+
                                 window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
+                                
                                 window.renderListView();
                                 if (map) window.renderMap();
+                                if (!document.getElementById('tab-dashboard').classList.contains('hidden')) {
+                                    window.renderDashboard();
+                                }
+                            }, (error) => {
+                                console.error("Firestore onSnapshot error:", error);
+                                window.updateSyncBadge('🔴 Erro de Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
+                                window.showModal('Aviso de Rede', 'Houve uma falha na sincronização ao vivo com o Firestore. Verifique sua conexão.');
                             });
                         window.switchTab('list');
                     } else {
@@ -1837,7 +2244,7 @@
                         if (loggedOutView) loggedOutView.classList.remove('hidden');
                         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                         ordersData = [];
-                        if (markersGroup) markersGroup.clearLayers();
+                        if (markersClusterGroup) markersClusterGroup.clearLayers();
                     }
                 });
             }
