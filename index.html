@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -115,7 +114,7 @@
                         🗺️ Mapa Interativo
                     </button>
                     <button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2 justify-center">
-                        📋 Demandas
+                        📋 Demandas <span id="navDemandCount" class="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px]">0</span>
                     </button>
                     <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         📊 Dashboard
@@ -210,7 +209,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: DEMANDAS (INICIA EM TABELA) -->
+        <!-- TAB 2: DEMANDAS (MODELO ESTILO CARD-ROW DA FOTO) -->
         <div id="tab-list" class="tab-content space-y-4">
             
             <!-- Controls Bar -->
@@ -220,14 +219,14 @@
                     <!-- Search Input -->
                     <div class="relative w-full md:w-80">
                         <label for="searchInput" class="sr-only">Buscar por OS, Alimentador ou Descrição</label>
-                        <input type="text" id="searchInput" oninput="window.renderListView()" placeholder="Buscar por OS, Alimentador, Descrição..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                        <input type="text" id="searchInput" oninput="window.renderListView()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                         <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
                     </div>
 
                     <!-- Filters Group -->
                     <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                         <select id="listFilterCategory" aria-label="Filtrar por Categoria" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                            <option value="">Todas Categorias</option>
+                            <option value="">Categorias</option>
                             <option value="POSTE">POSTE</option>
                             <option value="PODA">PODA</option>
                             <option value="CABO">CABO</option>
@@ -238,40 +237,36 @@
                         </select>
 
                         <select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                            <option value="">Todos Status</option>
+                            <option value="">Status</option>
                             <option value="PENDENTE">PENDENTE</option>
                             <option value="PROGRAMADO">PROGRAMADO</option>
                             <option value="PARCIAL">PARCIAL</option>
                             <option value="CONCLUÍDO">CONCLUÍDO</option>
                         </select>
 
-                        <select id="listFilterUrgency" aria-label="Filtrar por Urgência" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                            <option value="">Todas Urgências</option>
-                            <option value="Emergência">Emergência</option>
-                            <option value="Alta">Alta</option>
-                            <option value="Média">Média</option>
-                            <option value="Baixa">Baixa</option>
-                            <option value="Não Avaliada">Não Avaliada</option>
+                        <select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.renderListView()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="recent">Mais Recentes</option>
+                            <option value="oldest">Mais Antigos (Aging)</option>
                         </select>
 
-                        <!-- View Mode Switcher Buttons (Inicia por padrão em Tabela) -->
+                        <!-- View Mode Switcher Buttons (Cards vs Lista de Linhas) -->
                         <div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
                             <button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
                                 📇 Cards
                             </button>
-                            <button onclick="window.setListViewMode('table')" id="viewModeTableBtn" aria-label="Visualização em Tabela" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
-                                📋 Tabela
+                            <button onclick="window.setListViewMode('rowlist')" id="viewModeRowListBtn" aria-label="Visualização em Lista" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
+                                📑 Lista
                             </button>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                        <button onclick="window.downloadExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
-                            📊 Baixar Excel
+                        <button onclick="window.downloadExcel()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
+                            📊 Excel
                         </button>
-                        <button onclick="window.generateRoute()" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
-                            📍 Ligações de Vistoria (<span id="selectedCountBadge">0</span>)
+                        <button onclick="window.generateRoute()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-slate-950 font-black rounded-xl text-xs shadow-sm transition-all flex items-center gap-1.5 justify-center">
+                            Traçar Rota (<span id="selectedCountBadge">0</span>)
                         </button>
                     </div>
 
@@ -294,30 +289,9 @@
                 <!-- Dynamic Content Here -->
             </div>
 
-            <!-- Orders Container (Table View - Visible by default) -->
-            <div id="ordersListTableContainer" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
-                                <th class="p-3 w-10 text-center">
-                                    <input type="checkbox" id="selectAllCheckbox" onclick="window.toggleSelectAll(this)" aria-label="Selecionar todas as ordens visíveis" class="accent-amber-500 cursor-pointer">
-                                </th>
-                                <th class="p-3">Nº OS / Projeto</th>
-                                <th class="p-3">Categoria</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Urgência</th>
-                                <th class="p-3">Fiscalizada</th>
-                                <th class="p-3">Alimentador</th>
-                                <th class="p-3">Abertura</th>
-                                <th class="p-3 text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersListTableBody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-                            <!-- Dynamic Table Rows Here -->
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Orders Container (Card-Rows List View - Default as in screenshot) -->
+            <div id="ordersListRowContainer" class="space-y-3">
+                <!-- Dynamic Card Rows Here -->
             </div>
 
         </div>
@@ -847,7 +821,7 @@
         let authUser = null;
         let isCompressingPhoto = false;
         let unsubscribeSnapshot = null;
-        let currentListViewMode = 'table'; // Inicia por padrão em Tabela
+        let currentListViewMode = 'rowlist'; // Padrão: Lista de Linhas estilo Card-Row da imagem
 
         const appId = 'eletrogestao_v2';
         
@@ -875,7 +849,7 @@
             console.warn("Firebase offline/ambiente local sem suporte.", e);
         }
 
-        // --- 3. DATA NORMALIZATION (FIXED MAP MARKER RENDERING & PARSING) ---
+        // --- 3. DATA NORMALIZATION ---
         window.normalizeDate = function(val) {
             if (!val) return new Date().toISOString().split('T')[0];
             if (typeof val === 'number') {
@@ -1117,56 +1091,32 @@
             document.getElementById('unmappedModal').classList.add('hidden');
         };
 
-        // --- 6. RENDER LIST VIEW (DEFAULT TABLE, WITH CARDS TOGGLE & FISCALIZADAS HIGHLIGHT) ---
+        // --- 6. RENDER LIST VIEW (CARD-ROW & CARDS) ---
         window.setListViewMode = function(mode) {
             currentListViewMode = mode;
             const cardsContainer = document.getElementById('ordersListCards');
-            const tableContainer = document.getElementById('ordersListTableContainer');
+            const rowContainer = document.getElementById('ordersListRowContainer');
             const cardsBtn = document.getElementById('viewModeCardsBtn');
-            const tableBtn = document.getElementById('viewModeTableBtn');
+            const rowListBtn = document.getElementById('viewModeRowListBtn');
 
             if (mode === 'cards') {
                 cardsContainer.classList.remove('hidden');
-                tableContainer.classList.add('hidden');
+                rowContainer.classList.add('hidden');
                 cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+                rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
             } else {
                 cardsContainer.classList.add('hidden');
-                tableContainer.classList.remove('hidden');
-                tableBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
+                rowContainer.classList.remove('hidden');
+                rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
                 cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
             }
             window.renderListView();
         };
 
-        window.toggleSelectAll = function(masterCheckbox) {
-            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-            const fCat = document.getElementById('listFilterCategory')?.value || '';
-            const fStatus = document.getElementById('listFilterStatus')?.value || '';
-            const fUrg = document.getElementById('listFilterUrgency')?.value || '';
-
-            const filtered = ordersData.filter(o => {
-                if (fCat && o.category !== fCat) return false;
-                if (fStatus && o.status !== fStatus) return false;
-                if (fUrg && o.urgencia !== fUrg) return false;
-
-                if (!searchVal) return true;
-                return o.osProject.toLowerCase().includes(searchVal) || 
-                       o.alimentador.toLowerCase().includes(searchVal) || 
-                       o.description.toLowerCase().includes(searchVal) || 
-                       o.pontoEletrico.toLowerCase().includes(searchVal);
-            });
-
-            if (masterCheckbox.checked) {
-                filtered.forEach(o => {
-                    if (!selectedRouteIds.includes(o.id)) selectedRouteIds.push(o.id);
-                });
-            } else {
-                filtered.forEach(o => {
-                    const idx = selectedRouteIds.indexOf(o.id);
-                    if (idx > -1) selectedRouteIds.splice(idx, 1);
-                });
-            }
+        window.toggleRouteSelection = function(id) {
+            const index = selectedRouteIds.indexOf(id);
+            if (index > -1) selectedRouteIds.splice(index, 1);
+            else selectedRouteIds.push(id);
 
             document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
             window.renderListView();
@@ -1176,12 +1126,11 @@
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
             const fCat = document.getElementById('listFilterCategory')?.value || '';
             const fStatus = document.getElementById('listFilterStatus')?.value || '';
-            const fUrg = document.getElementById('listFilterUrgency')?.value || '';
+            const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
 
             const filtered = ordersData.filter(o => {
                 if (fCat && o.category !== fCat) return false;
                 if (fStatus && o.status !== fStatus) return false;
-                if (fUrg && o.urgencia !== fUrg) return false;
 
                 if (!searchVal) return true;
                 const osp = o.osProject.toLowerCase();
@@ -1191,6 +1140,21 @@
 
                 return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
             });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.orderDate || '2025-01-01');
+                const dateB = new Date(b.orderDate || '2025-01-01');
+                if (sortOrder === 'oldest') {
+                    return dateA - dateB; // mais antigo primeiro
+                } else {
+                    return dateB - dateA; // mais recente primeiro
+                }
+            });
+
+            // Atualiza contador na aba
+            const navBadge = document.getElementById('navDemandCount');
+            if (navBadge) navBadge.innerText = ordersData.length;
 
             if (currentListViewMode === 'cards') {
                 const container = document.getElementById('ordersListCards');
@@ -1256,57 +1220,93 @@
                     container.appendChild(card);
                 });
             } else {
-                const tbody = document.getElementById('ordersListTableBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
+                // MODELO ESTILO CARD-ROW DA FOTO DO USUÁRIO
+                const rowContainer = document.getElementById('ordersListRowContainer');
+                if (!rowContainer) return;
+                rowContainer.innerHTML = '';
 
                 if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</td></tr>`;
+                    rowContainer.innerHTML = `<div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
                     return;
                 }
 
                 filtered.forEach(order => {
+                    const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
                     const isSelected = selectedRouteIds.includes(order.id);
+
                     const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
                                        (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
 
-                    const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada' 
-                        ? `<span class="text-red-600 dark:text-red-400 font-bold">${window.escapeHtml(order.urgencia)}</span>` 
-                        : `<span class="text-slate-400">Normal</span>`;
+                    const cardRow = document.createElement('div');
+                    cardRow.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3`;
+                    
+                    cardRow.innerHTML = `
+                        <!-- Left Info -->
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar para rota" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-black text-xs sm:text-sm text-slate-900 dark:text-white tracking-tight">${window.escapeHtml(order.osProject)}</span>
+                                    <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-amber-500/20 uppercase">${window.escapeHtml(order.category)}</span>
+                                    <span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: ${window.escapeHtml(order.origem || 'OSM')}</span>
+                                    <span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
+                                    ${order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
+                                </div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+                                    <span>PT: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
+                                    <span>|</span>
+                                    <span>Alt: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
+                                    <span>|</span>
+                                    <span class="flex items-center gap-1">📅 ${window.escapeHtml(order.orderDate)} (<strong class="text-amber-600 dark:text-amber-400">${daysOpen} dias em aberto</strong>)</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    const fiscalizadaBadge = order.fiscalizada
-                        ? `<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/20 text-[10px] inline-flex items-center gap-1">🔍 Sim</span>`
-                        : `<span class="text-slate-400 text-[10px]">Não</span>`;
-
-                    const row = document.createElement('tr');
-                    row.className = `hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors ${order.fiscalizada ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.02]' : ''}`;
-                    row.innerHTML = `
-                        <td class="p-3 text-center">
-                            <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar linha" class="accent-amber-500 cursor-pointer">
-                        </td>
-                        <td class="p-3 font-extrabold text-slate-900 dark:text-white">${window.escapeHtml(order.osProject)}</td>
-                        <td class="p-3">
-                            <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold px-2 py-0.5 rounded-md border border-amber-500/20 text-[10px]">${window.escapeHtml(order.category)}</span>
-                        </td>
-                        <td class="p-3">
-                            <span class="font-extrabold px-2 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
-                        </td>
-                        <td class="p-3">${urgencyBadge}</td>
-                        <td class="p-3">${fiscalizadaBadge}</td>
-                        <td class="p-3">${window.escapeHtml(order.alimentador || '-')}</td>
-                        <td class="p-3">${window.escapeHtml(order.orderDate)}</td>
-                        <td class="p-3 text-right space-x-1">
-                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold">ℹ️</button>
-                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-[11px] font-black">🔍</button>
-                            <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-lg text-[11px]">🗑️</button>
-                        </td>
+                        <!-- Right Actions (Icons & Buttons as in Screenshot) -->
+                        <div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
+                            <button onclick="window.focusOrderOnMap('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
+                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
+                            <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Informações">ℹ️</button>
+                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Editar">✏️</button>
+                            <button onclick="window.shareOrderWhatsApp('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Compartilhar">🔗</button>
+                            
+                            <button onclick="window.openFiscalizarModal('${window.escapeHtml(order.id)}')" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-sm transition-all flex items-center gap-1">
+                                🔍 Fiscalizar
+                            </button>
+                            <button onclick="window.deleteOrder('${window.escapeHtml(order.id)}')" class="w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xs transition-all" title="Excluir">🗑️</button>
+                        </div>
                     `;
-                    tbody.appendChild(row);
+                    rowContainer.appendChild(cardRow);
                 });
             }
         };
 
-        // --- 7. RENDER DASHBOARD (COM AVANÇO DE FISCALIZAÇÃO) ---
+        window.focusOrderOnMap = function(id) {
+            const order = ordersData.find(o => o.id === id);
+            if (!order || order.lat === null || order.lng === null) {
+                window.showModal('Aviso', 'Esta ordem não possui coordenadas GPS cadastradas para exibição no mapa.');
+                return;
+            }
+            window.switchTab('map');
+            if (map) {
+                map.setView([order.lat, order.lng], 16);
+            }
+        };
+
+        window.shareOrderWhatsApp = function(id) {
+            const order = ordersData.find(o => o.id === id);
+            if (!order) return;
+            const text = `*Ordem de Serviço: ${order.osProject}*` +
+                         `\n• Categoria: ${order.category}` +
+                         `\n• Status: ${order.status}` +
+                         `\n• Alimentador: ${order.alimentador || 'N/D'}` +
+                         `\n• Ponto Elétrico: ${order.pontoEletrico || 'N/D'}` +
+                         `\n• Descrição: ${order.description || 'N/D'}`;
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        };
+
+        // --- 7. RENDER DASHBOARD ---
         let chartInstances = {};
         window.renderDashboard = function() {
             const isDark = document.documentElement.classList.contains('dark');
@@ -1414,15 +1414,6 @@
         };
 
         // --- 9. MAP ROUTE ---
-        window.toggleRouteSelection = function(id) {
-            const index = selectedRouteIds.indexOf(id);
-            if (index > -1) selectedRouteIds.splice(index, 1);
-            else selectedRouteIds.push(id);
-
-            document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
-            window.renderListView();
-        };
-
         window.generateRoute = function() {
             if (selectedRouteIds.length < 2) {
                 window.showModal('Aviso', 'Selecione pelo menos 2 ordens com localização na lista para traçar a ligação entre pontos.');
