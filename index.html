@@ -1062,7 +1062,6 @@
             }
         };
 
-        // Swipe gesture handler for horizontal swiping between tabs
         let touchStartX = 0;
         let touchEndX = 0;
 
@@ -1077,7 +1076,6 @@
 
         function handleSwipeGesture() {
             if (document.getElementById('loggedOutView') && !document.getElementById('loggedOutView').classList.contains('hidden')) return;
-            // Ignore swipe if inside a modal or chart container
             if (document.querySelector('[role="dialog"]:not(.hidden)')) return;
 
             const threshold = 70;
@@ -1096,12 +1094,10 @@
 
             const currentIndex = orderedTabs.indexOf(currentActiveTab);
             if (diff > 0) {
-                // Swipe Left -> Next Tab
                 if (currentIndex < orderedTabs.length - 1) {
                     window.switchTab(orderedTabs[currentIndex + 1]);
                 }
             } else {
-                // Swipe Right -> Previous Tab
                 if (currentIndex > 0) {
                     window.switchTab(orderedTabs[currentIndex - 1]);
                 }
@@ -1185,8 +1181,9 @@
                 latLngs.push([order.lat, order.lng]);
             });
 
-            if (latLngs.length > 0) {
+            if (latLngs.length > 0 && !window._initialBoundsSet) {
                 map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
+                window._initialBoundsSet = true;
             }
         };
 
