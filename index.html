@@ -156,7 +156,7 @@
         </div>
     </header>
 
-    <main id="swipeContainer" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
 
         <div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
             <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
@@ -189,11 +189,10 @@
                         <option value="OUTROS">OUTROS</option>
                     </select>
                     <select id="mapFilterStatus" aria-label="Filtrar status no mapa" onchange="window.renderMap()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500">
-                        <option value="">Todos Status</option>
+                        <option value="">Todos Status (Ativos)</option>
                         <option value="PENDENTE">PENDENTE</option>
                         <option value="PROGRAMADO">PROGRAMADO</option>
                         <option value="PARCIAL">PARCIAL</option>
-                        <option value="CONCLUÍDO">CONCLUÍDO</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-3 text-xs">
@@ -247,7 +246,6 @@
                             <option value="PENDENTE">PENDENTE</option>
                             <option value="PROGRAMADO">PROGRAMADO</option>
                             <option value="PARCIAL">PARCIAL</option>
-                            <option value="CONCLUÍDO">CONCLUÍDO</option>
                         </select>
 
                         <select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
@@ -265,7 +263,10 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+                        <button onclick="window.openArchivedModal()" class="px-3 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
+                            📂 Arquivo Concluídas (<span id="archivedCountBadge">0</span>)
+                        </button>
                         <button onclick="window.downloadExcel()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
                             📊 Excel
                         </button>
@@ -309,7 +310,7 @@
                 
                 <div onclick="window.filterByDashboard('total')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
                     <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-700 dark:text-slate-300 mb-2 group-hover:scale-110 transition-transform shadow-inner">📊</div>
-                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total</span>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Ativas</span>
                     <div id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</div>
                 </div>
 
@@ -349,7 +350,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>🍩</span> Status das Demandas</h3>
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>🍩</span> Status das Demandas (Ativas)</h3>
                         <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">Clique na fatia</span>
                     </div>
                     <div class="h-64 relative flex items-center justify-center"><canvas id="statusChart"></canvas></div>
@@ -461,12 +462,37 @@
 
                         <div>
                             <label for="status" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status Inicial</label>
-                            <select id="status" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                            <select id="status" onchange="window.toggleCreateScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
                                 <option value="PENDENTE">PENDENTE</option>
                                 <option value="PROGRAMADO">PROGRAMADO</option>
                                 <option value="PARCIAL">PARCIAL</option>
                                 <option value="CONCLUÍDO">CONCLUÍDO</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Scheduled Fields & Checklist (Visible only if PROGRAMADO) -->
+                    <div id="createScheduledSection" class="hidden space-y-4 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20">
+                        <div>
+                            <label for="scheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
+                            <input type="date" id="scheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Checklist de Programação</span>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chkCroqui" class="w-4 h-4 accent-amber-500 rounded">
+                                    <span>Croqui realizado</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chkApr" class="w-4 h-4 accent-amber-500 rounded">
+                                    <span>Pré-APR emitida</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chkSgm" class="w-4 h-4 accent-amber-500 rounded">
+                                    <span>Anexo SGM anexado</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -501,6 +527,20 @@
 
     </main>
 
+    <!-- MODAL: ARQUIVO DE CONCLUÍDAS -->
+    <div id="archivedModal" role="dialog" aria-modal="true" aria-labelledby="archivedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 id="archivedModalTitle" class="text-sm font-black text-emerald-600 dark:text-emerald-400">📂 Arquivo de Ordens Concluídas</h3>
+                <button onclick="window.closeArchivedModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+            </div>
+            <div class="p-5 space-y-3 max-h-[65vh] overflow-y-auto" id="archivedModalList"></div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
+                <button onclick="window.closeArchivedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ORDENS SEM GPS -->
     <div id="unmappedModal" role="dialog" aria-modal="true" aria-labelledby="unmappedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
@@ -522,16 +562,42 @@
                 <h3 id="fiscalizarModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">Fiscalizar Ordem</h3>
                 <button onclick="window.closeFiscalizarModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
             </div>
-            <div class="p-5 space-y-4">
+            <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
                 <div>
                     <label for="fiscalizarStatusSelect" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Novo Status</label>
-                    <select id="fiscalizarStatusSelect" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
+                    <select id="fiscalizarStatusSelect" onchange="window.toggleFiscalizarScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
                         <option value="PENDENTE">PENDENTE</option>
                         <option value="PROGRAMADO">PROGRAMADO</option>
                         <option value="PARCIAL">PARCIAL</option>
-                        <option value="CONCLUÍDO">CONCLUÍDO</option>
+                        <option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
                     </select>
                 </div>
+
+                <!-- Scheduled Fields & Checklist in Fiscalizar -->
+                <div id="fiscalizarScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
+                    <div>
+                        <label for="fiscalizarScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
+                        <input type="date" id="fiscalizarScheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Checklist de Programação</span>
+                        <div class="space-y-1.5 text-xs">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="fiscChkCroqui" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Croqui realizado</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="fiscChkApr" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Pré-APR emitida</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="fiscChkSgm" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Anexo SGM anexado</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <label for="fiscalizarUrgenciaSelect" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nível de Urgência</label>
                     <select id="fiscalizarUrgenciaSelect" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
@@ -618,13 +684,41 @@
                     </div>
                     <div>
                         <label for="editStatus" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status</label>
-                        <select id="editStatus" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                        <select id="editStatus" onchange="window.toggleEditScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="PENDENTE">PENDENTE</option>
                             <option value="PROGRAMADO">PROGRAMADO</option>
                             <option value="PARCIAL">PARCIAL</option>
-                            <option value="CONCLUÍDO">CONCLUÍDO</option>
+                            <option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
                         </select>
                     </div>
+                </div>
+
+                <!-- Edit Scheduled Fields & Checklist -->
+                <div id="editScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
+                    <div>
+                        <label for="editScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
+                        <input type="date" id="editScheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Checklist de Programação</span>
+                        <div class="space-y-1.5 text-xs">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="editChkCroqui" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Croqui realizado</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="editChkApr" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Pré-APR emitida</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="editChkSgm" class="w-4 h-4 accent-amber-500 rounded">
+                                <span>Anexo SGM anexado</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label for="editLat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
                         <input type="number" step="any" id="editLat" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
@@ -677,7 +771,14 @@
                     <p><strong class="text-slate-500 dark:text-slate-400">Ponto Elétrico:</strong> <span id="detPonto" class="text-slate-800 dark:text-slate-200">N/D</span></p>
                     <p><strong class="text-slate-500 dark:text-slate-400">Alimentador:</strong> <span id="detAlimentador" class="text-slate-800 dark:text-slate-200">N/D</span></p>
                     <p><strong class="text-slate-500 dark:text-slate-400">Data Abertura:</strong> <span id="detDate" class="text-slate-800 dark:text-slate-200">N/D</span> (<span id="detDaysOpen" class="text-amber-600 dark:text-amber-400 font-bold">0</span> dias decorridos)</p>
-                    <p><strong class="text-slate-500 dark:text-slate-400">Coordenadas:</strong> <span id="detCoords" class="text-slate-800 dark:text-slate-200">N/D</span></p>
+                    <div id="detScheduledInfo" class="hidden pt-1 border-t border-slate-200 dark:border-slate-800 mt-1">
+                        <p><strong class="text-amber-600 dark:text-amber-400">Data Programada:</strong> <span id="detScheduledDate" class="text-slate-800 dark:text-slate-200 font-bold">N/D</span></p>
+                        <div class="mt-1">
+                            <span class="font-bold text-slate-500">Checklist:</span>
+                            <ul id="detChecklist" class="list-disc list-inside pl-1 text-[11px] text-slate-600 dark:text-slate-300"></ul>
+                        </div>
+                    </div>
+                    <p class="pt-1"><strong class="text-slate-500 dark:text-slate-400">Coordenadas:</strong> <span id="detCoords" class="text-slate-800 dark:text-slate-200">N/D</span></p>
                 </div>
 
                 <div>
@@ -977,7 +1078,7 @@
             const category = validCategories.includes(rawCat) ? rawCat : 'OUTROS';
 
             const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
-            const rawStatus = String(data.status || data.Status || '').toUpperCase();
+            let rawStatus = String(data.status || data.Status || '').toUpperCase();
             const status = validStatuses.includes(rawStatus) ? rawStatus : 'PENDENTE';
 
             const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
@@ -985,7 +1086,10 @@
             const urgencia = validUrgencies.includes(rawUrg) ? rawUrg : 'Não Avaliada';
 
             const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
-            const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : null;
+            const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : (status === 'CONCLUÍDO' ? window.getLocalTodayDate() : null);
+
+            const scheduledDate = data.scheduledDate ? window.normalizeDate(data.scheduledDate) : null;
+            const checklist = data.checklist || { croqui: false, apr: false, sgm: false };
 
             const historyArr = Array.isArray(data.history) ? data.history : [];
             
@@ -1013,6 +1117,8 @@
                 pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
                 orderDate: formattedDate,
                 completionDate: formattedCompDate,
+                scheduledDate: scheduledDate,
+                checklist: checklist,
                 description: String(data.description || data.Descrição || ''),
                 lat: lat,
                 lng: lng,
@@ -1021,7 +1127,41 @@
             };
         };
 
-        const orderedTabs = ['map', 'list', 'dashboard', 'new'];
+        window.checkScheduledAlertsAndOverdue = function() {
+            if (!ordersData || ordersData.length === 0) return;
+            const todayStr = window.getLocalTodayDate();
+            let alertMessages = [];
+            let needsUpdate = false;
+
+            ordersData.forEach(o => {
+                if (o.status === 'PROGRAMADO' && o.scheduledDate) {
+                    if (o.scheduledDate === todayStr) {
+                        alertMessages.push(`⚠️ A OS <strong>${o.osProject}</strong> está programada para <strong>hoje</strong> (${todayStr}). Verifique se a programação foi cumprida!`);
+                    } else if (o.scheduledDate < todayStr && !o.fiscalizada) {
+                        // Data de programação passou e não foi fiscalizada/concluída -> altera status para PENDENTE (ou outro)
+                        o.status = 'PENDENTE';
+                        if (!o.history) o.history = [];
+                        o.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: `Status alterado automaticamente de PROGRAMADO para PENDENTE por atraso na data programada (${o.scheduledDate}).` });
+                        needsUpdate = true;
+                        alertMessages.push(`🚨 A OS <strong>${o.osProject}</strong> estava programada para ${o.scheduledDate} e o prazo venceu! Status alterado para PENDENTE.`);
+                        
+                        if (auth && auth.currentUser && db) {
+                            const userId = auth.currentUser.uid;
+                            db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(o.id).set(o).catch(err => console.warn(err));
+                        }
+                    }
+                }
+            });
+
+            if (alertMessages.length > 0 && !window._hasAlertedToday) {
+                window.showHtmlModal('🔔 Alerta de Programação de OS', `<div class="space-y-2">${alertMessages.join('<br><br>')}</div>`);
+                window._hasAlertedToday = true;
+            }
+
+            if (needsUpdate) {
+                window.renderListView();
+            }
+        };
 
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1062,48 +1202,6 @@
             }
         };
 
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        document.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipeGesture();
-        }, { passive: true });
-
-        function handleSwipeGesture() {
-            if (document.getElementById('loggedOutView') && !document.getElementById('loggedOutView').classList.contains('hidden')) return;
-            if (document.querySelector('[role="dialog"]:not(.hidden)')) return;
-
-            const threshold = 70;
-            const diff = touchStartX - touchEndX;
-
-            if (Math.abs(diff) < threshold) return;
-
-            let currentActiveTab = 'list';
-            for (const t of orderedTabs) {
-                const el = document.getElementById(`tab-${t}`);
-                if (el && !el.classList.contains('hidden')) {
-                    currentActiveTab = t;
-                    break;
-                }
-            }
-
-            const currentIndex = orderedTabs.indexOf(currentActiveTab);
-            if (diff > 0) {
-                if (currentIndex < orderedTabs.length - 1) {
-                    window.switchTab(orderedTabs[currentIndex + 1]);
-                }
-            } else {
-                if (currentIndex > 0) {
-                    window.switchTab(orderedTabs[currentIndex - 1]);
-                }
-            }
-        }
-
         window.renderMap = function() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer) return;
@@ -1127,14 +1225,16 @@
             const fCat = document.getElementById('mapFilterCategory')?.value || '';
             const fStatus = document.getElementById('mapFilterStatus')?.value || '';
 
-            const mappedOrders = ordersData.filter(o => {
+            const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+
+            const mappedOrders = activeOrders.filter(o => {
                 if (o.lat === null || o.lng === null) return false;
                 if (fCat && o.category !== fCat) return false;
                 if (fStatus && o.status !== fStatus) return false;
                 return true;
             });
 
-            const unmappedOrders = ordersData.filter(o => o.lat === null || o.lng === null);
+            const unmappedOrders = activeOrders.filter(o => o.lat === null || o.lng === null);
             const unmappedBtn = document.getElementById('unmappedBtn');
             if (unmappedBtn) {
                 if (unmappedOrders.length > 0) {
@@ -1150,8 +1250,7 @@
             const latLngs = [];
             mappedOrders.forEach(order => {
                 let color = '#f59e0b';
-                if (order.status === 'CONCLUÍDO') color = '#10b981';
-                else if (order.status === 'PROGRAMADO') color = '#3b82f6';
+                if (order.status === 'PROGRAMADO') color = '#3b82f6';
                 else if (order.status === 'PARCIAL') color = '#ec4899';
                 
                 const htmlIcon = L.divIcon({
@@ -1204,12 +1303,12 @@
         });
 
         window.openUnmappedModal = function() {
-            const unmapped = ordersData.filter(o => o.lat === null || o.lng === null);
+            const unmapped = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
             const container = document.getElementById('unmappedModalList');
             container.innerHTML = '';
 
             if (unmapped.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500">Nenhuma ordem sem GPS.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500">Nenhuma ordem ativa sem GPS.</p>`;
             } else {
                 unmapped.forEach(o => {
                     const item = document.createElement('div');
@@ -1237,6 +1336,44 @@
 
         window.closeUnmappedModal = function() {
             document.getElementById('unmappedModal').classList.add('hidden');
+        };
+
+        window.openArchivedModal = function() {
+            const archived = ordersData.filter(o => o.status === 'CONCLUÍDO');
+            const container = document.getElementById('archivedModalList');
+            container.innerHTML = '';
+
+            if (archived.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada no momento.</p>`;
+            } else {
+                archived.forEach(o => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center gap-2";
+                    item.innerHTML = `
+                        <div>
+                            <a href="javascript:void(0)" class="archived-os-link font-bold text-emerald-600 dark:text-emerald-400 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a>
+                            <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg flex items-center justify-center">Detalhes</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+
+                container.querySelectorAll('.archived-view-btn, .archived-os-link').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.getAttribute('data-id');
+                        window.closeArchivedModal();
+                        window.openDetailsModal(id);
+                    });
+                });
+            }
+            document.getElementById('archivedModal').classList.remove('hidden');
+        };
+
+        window.closeArchivedModal = function() {
+            document.getElementById('archivedModal').classList.add('hidden');
         };
 
         window.setListViewMode = function(mode) {
@@ -1290,6 +1427,10 @@
             const fStatus = document.getElementById('listFilterStatus')?.value || '';
             const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
 
+            const archivedCount = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
+            const archivedBadge = document.getElementById('archivedCountBadge');
+            if (archivedBadge) archivedBadge.innerText = archivedCount;
+
             const activeBar = document.getElementById('activeFiltersBar');
             const chipsContainer = document.getElementById('activeFiltersChips');
             if (activeFilterState.label) {
@@ -1300,7 +1441,9 @@
                 chipsContainer.innerHTML = '';
             }
 
-            const filtered = ordersData.filter(o => {
+            const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+
+            const filtered = activeOrders.filter(o => {
                 if (fCat && o.category !== fCat) return false;
                 if (fStatus && o.status !== fStatus) return false;
 
@@ -1325,7 +1468,7 @@
             });
 
             const navBadge = document.getElementById('navDemandCount');
-            if (navBadge) navBadge.innerText = ordersData.length;
+            if (navBadge) navBadge.innerText = activeOrders.length;
 
             const totalItems = filtered.length;
             const totalPages = Math.ceil(totalItems / pageSize) || 1;
@@ -1335,7 +1478,7 @@
             const startIndex = (currentPage - 1) * pageSize;
             const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
 
-            document.getElementById('paginationInfo').innerText = `Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens`;
+            document.getElementById('paginationInfo').innerText = `Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens ativas`;
             document.getElementById('prevPageBtn').disabled = currentPage <= 1;
             document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
 
@@ -1345,7 +1488,7 @@
                 container.innerHTML = '';
 
                 if (paginatedItems.length === 0) {
-                    container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
+                    container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>`;
                     return;
                 }
 
@@ -1362,9 +1505,21 @@
                         : `<span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>`;
 
                     let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-                    if (order.status === 'CONCLUÍDO') statusColor = 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
-                    else if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+                    if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
                     else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
+
+                    let scheduledInfoHtml = '';
+                    if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+                        const chk = order.checklist || {};
+                        scheduledInfoHtml = `<div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-2 text-[11px] space-y-1">
+                            <p class="font-bold text-sky-600 dark:text-sky-400">📅 Prog: ${window.escapeHtml(order.scheduledDate)}</p>
+                            <div class="flex gap-2 text-[10px] text-slate-600 dark:text-slate-300">
+                                <span>Croqui: ${chk.croqui ? '✅' : '❌'}</span>
+                                <span>APR: ${chk.apr ? '✅' : '❌'}</span>
+                                <span>SGM: ${chk.sgm ? '✅' : '❌'}</span>
+                            </div>
+                        </div>`;
+                    }
 
                     const card = document.createElement('div');
                     card.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3`;
@@ -1384,6 +1539,8 @@
                                 ${urgencyBadge}
                                 ${fiscalizadaBadge}
                             </div>
+
+                            ${scheduledInfoHtml}
 
                             <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
 
@@ -1409,7 +1566,7 @@
                 rowContainer.innerHTML = '';
 
                 if (paginatedItems.length === 0) {
-                    rowContainer.innerHTML = `<div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem de serviço encontrada.</div>`;
+                    rowContainer.innerHTML = `<div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>`;
                     return;
                 }
 
@@ -1418,9 +1575,14 @@
                     const isSelected = selectedRouteIds.includes(order.id);
 
                     let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-                    if (order.status === 'CONCLUÍDO') statusColor = 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
-                    else if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+                    if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
                     else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
+
+                    let scheduledRowBadge = '';
+                    if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+                        const chk = order.checklist || {};
+                        scheduledRowBadge = `<span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-500/20">📅 Prog: ${window.escapeHtml(order.scheduledDate)} (Croqui: ${chk.croqui?'✅':'❌'} | APR: ${chk.apr?'✅':'❌'} | SGM: ${chk.sgm?'✅':'❌'})</span>`;
+                    }
 
                     const cardRow = document.createElement('div');
                     cardRow.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3`;
@@ -1435,6 +1597,7 @@
                                     <span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: ${window.escapeHtml(order.origem || 'OSM')}</span>
                                     <span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
                                     ${order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
+                                    ${scheduledRowBadge}
                                 </div>
                                 <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
                                     <span>PT: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
@@ -1514,13 +1677,13 @@
             document.getElementById('searchInput').value = '';
 
             if (type === 'total') {
-                activeFilterState.label = 'Todas as Demandas';
+                activeFilterState.label = 'Todas as Ativas';
             } else if (type === 'pendentes') {
                 document.getElementById('listFilterStatus').value = 'PENDENTE';
                 activeFilterState.label = 'Status: PENDENTE';
             } else if (type === 'concluidas') {
-                document.getElementById('listFilterStatus').value = 'CONCLUÍDO';
-                activeFilterState.label = 'Status: CONCLUÍDO';
+                window.openArchivedModal();
+                return;
             } else if (type === 'fiscalizadas') {
                 activeFilterState.fiscalizada = true;
                 activeFilterState.label = 'Fiscalizadas';
@@ -1553,18 +1716,20 @@
             const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#94a3b8' : '#475569';
 
-            const total = ordersData.length;
-            const pendentesList = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+            const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+            const total = activeOrders.length;
+            const pendentesList = activeOrders.filter(o => o.status === 'PENDENTE');
             const pendentes = pendentesList.length;
             const concluidas = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-            const emergencias = ordersData.filter(o => o.urgencia === 'Emergência').length;
+            const emergencias = activeOrders.filter(o => o.urgencia === 'Emergência').length;
 
             const fiscalizadasCount = ordersData.filter(o => o.fiscalizada).length;
-            const fiscalizadasPercent = total > 0 ? Math.round((fiscalizadasCount / total) * 100) : 0;
+            const totalAll = ordersData.length;
+            const fiscalizadasPercent = totalAll > 0 ? Math.round((fiscalizadasCount / totalAll) * 100) : 0;
 
             let totalDaysOpen = 0;
-            pendentesList.forEach(o => totalDaysOpen += window.calculateDaysOpen(o.orderDate, o.status, o.completionDate));
-            const avgDays = pendentes > 0 ? Math.round(totalDaysOpen / pendentes) : 0;
+            activeOrders.forEach(o => totalDaysOpen += window.calculateDaysOpen(o.orderDate, o.status, o.completionDate));
+            const avgDays = total > 0 ? Math.round(totalDaysOpen / total) : 0;
 
             document.getElementById('dashTotal').innerText = total;
             document.getElementById('dashPendentes').innerText = pendentes;
@@ -1573,15 +1738,15 @@
             document.getElementById('dashEmergencias').innerText = emergencias;
             document.getElementById('dashMediaDias').innerText = `${avgDays}d`;
 
-            const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0, 'CONCLUÍDO': 0 };
-            ordersData.forEach(o => statusCounts[o.status] = (statusCounts[o.status] || 0) + 1);
+            const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
+            activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
 
             if (chartInstances.status) chartInstances.status.destroy();
             chartInstances.status = new Chart(document.getElementById('statusChart'), {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(statusCounts),
-                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899', '#10b981'], borderWidth: 0 }]
+                    datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 0 }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
@@ -1602,7 +1767,7 @@
             });
 
             const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
-            ordersData.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
+            activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
 
             if (chartInstances.urgencia) chartInstances.urgencia.destroy();
             chartInstances.urgencia = new Chart(document.getElementById('urgenciaChart'), {
@@ -1626,7 +1791,7 @@
             });
 
             const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'TRANSFORMADOR': 0, 'BYPASS': 0, 'OUTROS': 0 };
-            ordersData.forEach(o => catCounts[o.category] = (catCounts[o.category] || 0) + 1);
+            activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
 
             if (chartInstances.cat) chartInstances.cat.destroy();
             chartInstances.cat = new Chart(document.getElementById('categoryChart'), {
@@ -1655,7 +1820,7 @@
             });
 
             const eqpCounts = { 'Linha Viva': 0, 'Linha Morta': 0, 'Não definida': 0 };
-            ordersData.forEach(o => eqpCounts[o.equipeSugerida] = (eqpCounts[o.equipeSugerida] || 0) + 1);
+            activeOrders.forEach(o => { if (eqpCounts[o.equipeSugerida] !== undefined) eqpCounts[o.equipeSugerida]++; });
 
             if (chartInstances.equipe) chartInstances.equipe.destroy();
             chartInstances.equipe = new Chart(document.getElementById('equipeChart'), {
@@ -1698,6 +1863,10 @@
                 'pontoEletrico': o.pontoEletrico,
                 'orderDate': o.orderDate,
                 'completionDate': o.completionDate || '',
+                'scheduledDate': o.scheduledDate || '',
+                'croqui': o.checklist?.croqui ? 'Sim' : 'Não',
+                'apr': o.checklist?.apr ? 'Sim' : 'Não',
+                'sgm': o.checklist?.sgm ? 'Sim' : 'Não',
                 'lat': o.lat !== null ? o.lat : '',
                 'lng': o.lng !== null ? o.lng : '',
                 'description': o.description
@@ -1722,7 +1891,7 @@
 
         window.generateRoute = function() {
             if (selectedRouteIds.length < 2) {
-                window.showModal('Aviso', 'Selecione pelo menos 2 ordens com localização na lista para traçar a rota.');
+                window.showModal('Aviso', 'Selecione pelo menos 2 ordens ativas com localização na lista para traçar a rota.');
                 return;
             }
 
@@ -1780,6 +1949,43 @@
             window.showHtmlModal('Rota Otimizada Gerada', modalHtml);
         };
 
+        window.toggleCreateScheduledFields = function() {
+            const status = document.getElementById('status').value;
+            const section = document.getElementById('createScheduledSection');
+            if (status === 'PROGRAMADO') {
+                section.classList.remove('hidden');
+                document.getElementById('scheduledDate').value = window.getLocalTodayDate();
+            } else {
+                section.classList.add('hidden');
+            }
+        };
+
+        window.toggleEditScheduledFields = function() {
+            const status = document.getElementById('editStatus').value;
+            const section = document.getElementById('editScheduledSection');
+            if (status === 'PROGRAMADO') {
+                section.classList.remove('hidden');
+                if (!document.getElementById('editScheduledDate').value) {
+                    document.getElementById('editScheduledDate').value = window.getLocalTodayDate();
+                }
+            } else {
+                section.classList.add('hidden');
+            }
+        };
+
+        window.toggleFiscalizarScheduledFields = function() {
+            const status = document.getElementById('fiscalizarStatusSelect').value;
+            const section = document.getElementById('fiscalizarScheduledSection');
+            if (status === 'PROGRAMADO') {
+                section.classList.remove('hidden');
+                if (!document.getElementById('fiscalizarScheduledDate').value) {
+                    document.getElementById('fiscalizarScheduledDate').value = window.getLocalTodayDate();
+                }
+            } else {
+                section.classList.add('hidden');
+            }
+        };
+
         window.handleCreateOrder = async function(e) {
             e.preventDefault();
             
@@ -1795,19 +2001,29 @@
             let parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
             let parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
 
+            const initialStatus = document.getElementById('status').value;
+            const scheduledDate = initialStatus === 'PROGRAMADO' ? document.getElementById('scheduledDate').value : null;
+            const checklist = {
+                croqui: document.getElementById('chkCroqui').checked,
+                apr: document.getElementById('chkApr').checked,
+                sgm: document.getElementById('chkSgm').checked
+            };
+
             const rawOrder = {
                 id: 'ord_' + Math.random().toString(36).substr(2, 9),
                 osProject: osProjVal,
                 origem: document.getElementById('origem').value,
                 category: document.getElementById('category').value,
-                status: document.getElementById('status').value,
+                status: initialStatus,
                 urgencia: 'Não Avaliada',
                 fiscalizada: false,
                 equipeSugerida: document.getElementById('equipeSugerida').value,
                 alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
                 pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
                 orderDate: document.getElementById('orderDate').value,
-                completionDate: document.getElementById('status').value === 'CONCLUÍDO' ? window.getLocalTodayDate() : null,
+                completionDate: initialStatus === 'CONCLUÍDO' ? window.getLocalTodayDate() : null,
+                scheduledDate: scheduledDate,
+                checklist: checklist,
                 description: document.getElementById('description').value.trim(),
                 lat: parsedLat,
                 lng: parsedLng,
@@ -1824,6 +2040,7 @@
                 window.saveToCloud(newOrder);
                 e.target.reset();
                 document.getElementById('orderDate').value = window.getLocalTodayDate();
+                document.getElementById('createScheduledSection').classList.add('hidden');
                 window.showModal('Sucesso', 'Ordem cadastrada com sucesso!');
                 window.switchTab('list');
             } catch (err) {
@@ -1882,12 +2099,18 @@
                             return;
                         }
 
+                        const statusVal = row['status'] || row['Status'] || 'PENDENTE';
+                        const schedDate = row['scheduledDate'] || row['Data da Programação'] || null;
+                        const isCroqui = String(row['croqui'] || '').toLowerCase() === 'sim' || Boolean(row['croqui']);
+                        const isApr = String(row['apr'] || '').toLowerCase() === 'sim' || Boolean(row['apr']);
+                        const isSgm = String(row['sgm'] || '').toLowerCase() === 'sim' || Boolean(row['sgm']);
+
                         const rawOrder = {
                             id: row['id'] || ('ord_' + Math.random().toString(36).substr(2, 9)),
                             osProject: osStr,
                             origem: row['origem'] || row['Origem'] || 'OSM',
                             category: row['category'] || row['Categoria'] || 'OUTROS',
-                            status: row['status'] || row['Status'] || 'PENDENTE',
+                            status: statusVal,
                             urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
                             fiscalizada: row['fiscalizada'] || row['Fiscalizada'] || false,
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
@@ -1895,6 +2118,8 @@
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
                             orderDate: window.normalizeDate(row['orderDate'] || row['Data da Ordem'] || row['Data']),
                             completionDate: row['completionDate'] ? window.normalizeDate(row['completionDate']) : null,
+                            scheduledDate: schedDate ? window.normalizeDate(schedDate) : null,
+                            checklist: { croqui: isCroqui, apr: isApr, sgm: isSgm },
                             description: row['description'] || row['Descrição'] || '',
                             lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined ? row['Latitude'] : null),
                             lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined ? row['Longitude'] : null),
@@ -1947,6 +2172,17 @@
             document.getElementById('fiscalizarStatusSelect').value = order.status;
             document.getElementById('fiscalizarUrgenciaSelect').value = order.urgencia;
             document.getElementById('fiscalizarObsInput').value = '';
+
+            const section = document.getElementById('fiscalizarScheduledSection');
+            if (order.status === 'PROGRAMADO') {
+                section.classList.remove('hidden');
+                document.getElementById('fiscalizarScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
+                document.getElementById('fiscChkCroqui').checked = Boolean(order.checklist?.croqui);
+                document.getElementById('fiscChkApr').checked = Boolean(order.checklist?.apr);
+                document.getElementById('fiscChkSgm').checked = Boolean(order.checklist?.sgm);
+            } else {
+                section.classList.add('hidden');
+            }
 
             document.getElementById('fiscalizarModal').classList.remove('hidden');
         };
@@ -2010,6 +2246,19 @@
             orderCopy.status = newStatus;
             orderCopy.urgencia = newUrgencia;
             orderCopy.fiscalizada = true; 
+
+            if (newStatus === 'PROGRAMADO') {
+                orderCopy.scheduledDate = document.getElementById('fiscalizarScheduledDate').value || window.getLocalTodayDate();
+                orderCopy.checklist = {
+                    croqui: document.getElementById('fiscChkCroqui').checked,
+                    apr: document.getElementById('fiscChkApr').checked,
+                    sgm: document.getElementById('fiscChkSgm').checked
+                };
+            } else {
+                orderCopy.scheduledDate = null;
+                orderCopy.checklist = { croqui: false, apr: false, sgm: false };
+            }
+
             if (currentFiscalizarPhotoBase64) orderCopy.photo = currentFiscalizarPhotoBase64;
 
             if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
@@ -2020,6 +2269,7 @@
 
             if (!orderCopy.history) orderCopy.history = [];
             let logMsg = `Ordem fiscalizada. Status: ${newStatus}. Urgência: ${newUrgencia}.`;
+            if (newStatus === 'PROGRAMADO') logMsg += ` [Data Prog: ${orderCopy.scheduledDate}, Croqui: ${orderCopy.checklist.croqui}, APR: ${orderCopy.checklist.apr}, SGM: ${orderCopy.checklist.sgm}]`;
             if (obs) logMsg += ` Obs: ${obs}`;
             if (currentFiscalizarPhotoBase64) logMsg += ` [Foto Anexada]`;
 
@@ -2055,6 +2305,17 @@
             document.getElementById('editLat').value = order.lat !== null ? order.lat : '';
             document.getElementById('editLng').value = order.lng !== null ? order.lng : '';
             document.getElementById('editDescription').value = order.description || '';
+
+            const section = document.getElementById('editScheduledSection');
+            if (order.status === 'PROGRAMADO') {
+                section.classList.remove('hidden');
+                document.getElementById('editScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
+                document.getElementById('editChkCroqui').checked = Boolean(order.checklist?.croqui);
+                document.getElementById('editChkApr').checked = Boolean(order.checklist?.apr);
+                document.getElementById('editChkSgm').checked = Boolean(order.checklist?.sgm);
+            } else {
+                section.classList.add('hidden');
+            }
 
             document.getElementById('editModal').classList.remove('hidden');
         };
@@ -2093,6 +2354,18 @@
             const oldStatus = orderCopy.status;
             orderCopy.status = newStatus;
 
+            if (newStatus === 'PROGRAMADO') {
+                orderCopy.scheduledDate = document.getElementById('editScheduledDate').value || window.getLocalTodayDate();
+                orderCopy.checklist = {
+                    croqui: document.getElementById('editChkCroqui').checked,
+                    apr: document.getElementById('editChkApr').checked,
+                    sgm: document.getElementById('editChkSgm').checked
+                };
+            } else {
+                orderCopy.scheduledDate = null;
+                orderCopy.checklist = { croqui: false, apr: false, sgm: false };
+            }
+
             if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
                 orderCopy.completionDate = window.getLocalTodayDate();
             } else if (newStatus !== 'CONCLUÍDO') {
@@ -2130,6 +2403,20 @@
             document.getElementById('detDaysOpen').innerText = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
             document.getElementById('detCoords').innerText = (order.lat !== null && order.lng !== null) ? `${order.lat}, ${order.lng}` : 'Não georreferenciado';
             document.getElementById('detDescription').innerText = order.description || 'Sem descrição cadastrada.';
+
+            const schedInfo = document.getElementById('detScheduledInfo');
+            if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+                schedInfo.classList.remove('hidden');
+                document.getElementById('detScheduledDate').innerText = order.scheduledDate;
+                const chk = order.checklist || {};
+                document.getElementById('detChecklist').innerHTML = `
+                    <li>Croqui realizado: ${chk.croqui ? '✅ Sim' : '❌ Não'}</li>
+                    <li>Pré-APR emitida: ${chk.apr ? '✅ Sim' : '❌ Não'}</li>
+                    <li>Anexo SGM anexado: ${chk.sgm ? '✅ Sim' : '❌ Não'}</li>
+                `;
+            } else {
+                schedInfo.classList.add('hidden');
+            }
 
             const photoContainer = document.getElementById('detPhotoContainer');
             if (order.photo) {
@@ -2277,6 +2564,7 @@
                                 if (!document.getElementById('tab-dashboard').classList.contains('hidden')) {
                                     window.renderDashboard();
                                 }
+                                window.checkScheduledAlertsAndOverdue();
                             }, (error) => {
                                 console.error("Firestore onSnapshot error:", error);
                                 window.updateSyncBadge('🔴 Erro de Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
