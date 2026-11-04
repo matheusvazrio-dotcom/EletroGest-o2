@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -110,10 +111,10 @@
 
                 <!-- Navigation Tabs (Desktop) -->
                 <nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
-                    <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2 justify-center">
+                    <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
                         🗺️ Mapa Interativo
                     </button>
-                    <button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
+                    <button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2 justify-center">
                         📋 Demandas
                     </button>
                     <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
@@ -143,8 +144,8 @@
 
         <!-- Mobile Navigation Sub-bar -->
         <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
-            <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">🗺️ Mapa</button>
-            <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📋 Lista</button>
+            <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
+            <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
             <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
             <button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">➕ Criar</button>
         </div>
@@ -209,8 +210,8 @@
             </div>
         </div>
 
-        <!-- TAB 2: DEMANDAS (LISTA / CARDS) -->
-        <div id="tab-list" class="tab-content hidden space-y-4">
+        <!-- TAB 2: DEMANDAS (INICIA EM TABELA) -->
+        <div id="tab-list" class="tab-content space-y-4">
             
             <!-- Controls Bar -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4 transition-colors">
@@ -253,12 +254,12 @@
                             <option value="Não Avaliada">Não Avaliada</option>
                         </select>
 
-                        <!-- View Mode Switcher Buttons -->
+                        <!-- View Mode Switcher Buttons (Inicia por padrão em Tabela) -->
                         <div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
-                            <button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
+                            <button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
                                 📇 Cards
                             </button>
-                            <button onclick="window.setListViewMode('table')" id="viewModeTableBtn" aria-label="Visualização em Tabela" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
+                            <button onclick="window.setListViewMode('table')" id="viewModeTableBtn" aria-label="Visualização em Tabela" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
                                 📋 Tabela
                             </button>
                         </div>
@@ -277,24 +278,24 @@
                 </div>
             </div>
 
-            <!-- Demo Mode Banner (If Offline/Demo) -->
+            <!-- Demo Mode Banner -->
             <div id="demoModeBanner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs text-amber-800 dark:text-amber-300">
                 <div class="flex items-center gap-2">
                     <span>💡</span>
-                    <span><strong>Modo de Demonstração Ativo:</strong> Você está vendo dados fictícios de exemplo. Faça login para gerenciar suas ordens reais na nuvem.</span>
+                    <span><strong>Modo de Demonstração Ativo:</strong> Faça login com o Google para gerenciar suas ordens reais.</span>
                 </div>
                 <button onclick="window.clearDemoData()" class="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 rounded-lg font-bold transition-all text-[11px] flex items-center justify-center">
                     Limpar Exemplo
                 </button>
             </div>
 
-            <!-- Orders Container (Cards View) -->
-            <div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Orders Container (Cards View - Hidden by default) -->
+            <div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
                 <!-- Dynamic Content Here -->
             </div>
 
-            <!-- Orders Container (Table View) -->
-            <div id="ordersListTableContainer" class="hidden bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+            <!-- Orders Container (Table View - Visible by default) -->
+            <div id="ordersListTableContainer" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -306,8 +307,8 @@
                                 <th class="p-3">Categoria</th>
                                 <th class="p-3">Status</th>
                                 <th class="p-3">Urgência</th>
+                                <th class="p-3">Fiscalizada</th>
                                 <th class="p-3">Alimentador</th>
-                                <th class="p-3">Ponto</th>
                                 <th class="p-3">Abertura</th>
                                 <th class="p-3 text-right">Ações</th>
                             </tr>
@@ -321,7 +322,7 @@
 
         </div>
 
-        <!-- TAB 3: DASHBOARD EXECUTIVO (RENOVADO: MODERNO, MINIMALISTA E COM DETALHES) -->
+        <!-- TAB 3: DASHBOARD EXECUTIVO -->
         <div id="tab-dashboard" class="tab-content hidden space-y-6">
             
             <!-- Header Section of Dashboard -->
@@ -337,15 +338,15 @@
                 </div>
             </div>
 
-            <!-- KPI Cards Row (Minimalista, Alinhado e Centralizado) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- KPI Cards Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 
                 <!-- KPI 1: Total -->
                 <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center">
                     <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-700 dark:text-slate-300 mb-2 group-hover:scale-110 transition-transform shadow-inner">
                         📊
                     </div>
-                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total de Ordens</span>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total</span>
                     <div id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</div>
                     <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
@@ -370,7 +371,17 @@
                     <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
-                <!-- KPI 4: Emergências -->
+                <!-- KPI 4: Fiscalizadas (Avanço) -->
+                <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-emerald-500">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">
+                        🔍
+                    </div>
+                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Fiscalizadas</span>
+                    <div id="dashFiscalizadas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0%</div>
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- KPI 5: Emergências -->
                 <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-red-500">
                     <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-red-500/20">
                         🚨
@@ -380,19 +391,19 @@
                     <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
-                <!-- KPI 5: SLA Médio -->
+                <!-- KPI 6: SLA Médio -->
                 <div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
                     <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-sky-500/20">
                         ⏱️
                     </div>
-                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">SLA Médio (Abertas)</span>
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">SLA Médio</span>
                     <div id="dashMediaDias" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0d</div>
                     <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
             </div>
 
-            <!-- Analytics Charts Grid (Modernos e Minimalistas) -->
+            <!-- Analytics Charts Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Status Chart -->
                 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4">
@@ -714,7 +725,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 0. THEME MANAGEMENT (MODO NOTURNO / CLARO) ---
+        // --- 0. THEME MANAGEMENT ---
         window.toggleTheme = function() {
             const html = document.documentElement;
             const isDark = html.classList.contains('dark');
@@ -799,8 +810,7 @@
         window.showModal = function(title, body) {
             document.getElementById('appModalTitle').innerText = title;
             document.getElementById('appModalBody').innerText = body;
-            const modal = document.getElementById('appModal');
-            modal.classList.remove('hidden');
+            document.getElementById('appModal').classList.remove('hidden');
         };
 
         window.showConfirmModal = function(title, body) {
@@ -837,7 +847,7 @@
         let authUser = null;
         let isCompressingPhoto = false;
         let unsubscribeSnapshot = null;
-        let currentListViewMode = 'cards';
+        let currentListViewMode = 'table'; // Inicia por padrão em Tabela
 
         const appId = 'eletrogestao_v2';
         
@@ -865,7 +875,7 @@
             console.warn("Firebase offline/ambiente local sem suporte.", e);
         }
 
-        // --- 3. DATA NORMALIZATION (TOLERANT TO MISSING FIELDS & SERIAL DATES) ---
+        // --- 3. DATA NORMALIZATION (FIXED MAP MARKER RENDERING & PARSING) ---
         window.normalizeDate = function(val) {
             if (!val) return new Date().toISOString().split('T')[0];
             if (typeof val === 'number') {
@@ -893,8 +903,14 @@
         };
 
         window.normalizeOrder = function(data) {
-            const rawLat = parseFloat(data.lat !== undefined ? data.lat : data.Latitude);
-            const rawLng = parseFloat(data.lng !== undefined ? data.lng : data.Longitude);
+            let rawLatVal = data.lat !== undefined ? data.lat : data.Latitude;
+            let rawLngVal = data.lng !== undefined ? data.lng : data.Longitude;
+
+            if (typeof rawLatVal === 'string') rawLatVal = rawLatVal.replace(',', '.');
+            if (typeof rawLngVal === 'string') rawLngVal = rawLngVal.replace(',', '.');
+
+            const rawLat = parseFloat(rawLatVal);
+            const rawLng = parseFloat(rawLngVal);
             
             const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
             const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
@@ -914,6 +930,9 @@
             const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
             const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : null;
 
+            const historyArr = Array.isArray(data.history) ? data.history : [];
+            const isFiscalizada = data.fiscalizada !== undefined ? Boolean(data.fiscalizada) : (historyArr.length > 1 || Boolean(data.photo));
+
             return {
                 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
                 osProject: String(data.osProject || data.os || data.OS || data['OS / Projeto'] || 'SEM-OS').trim(),
@@ -921,6 +940,7 @@
                 category: category,
                 status: status,
                 urgencia: urgencia,
+                fiscalizada: isFiscalizada,
                 equipeSugerida: String(data.equipeSugerida || data['Equipe Sugerida'] || 'Não definida'),
                 alimentador: String(data.alimentador || data.Alimentador || ''),
                 pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
@@ -930,7 +950,7 @@
                 lat: lat,
                 lng: lng,
                 photo: data.photo || null,
-                history: Array.isArray(data.history) ? data.history : []
+                history: historyArr
             };
         };
 
@@ -978,7 +998,7 @@
             }
         };
 
-        // --- 5. RENDER MAP & UNMAPPED GPS MODAL ---
+        // --- 5. RENDER MAP & UNMAPPED MODAL ---
         window.renderMap = function() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer) return;
@@ -1052,6 +1072,7 @@
                         <strong style="font-size: 14px; color: #f59e0b;">${window.escapeHtml(order.osProject)}</strong><br>
                         <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br>
                         <strong>Status:</strong> ${window.escapeHtml(order.status)}<br>
+                        <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br>
                         <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br>
                         <p style="margin-top: 6px; color: #94a3b8; max-height: 60px; overflow-y: auto;">${window.escapeHtml(order.description || '')}</p>
                     </div>
@@ -1096,7 +1117,7 @@
             document.getElementById('unmappedModal').classList.add('hidden');
         };
 
-        // --- 6. RENDER LIST VIEW (CARDS & TABLE) ---
+        // --- 6. RENDER LIST VIEW (DEFAULT TABLE, WITH CARDS TOGGLE & FISCALIZADAS HIGHLIGHT) ---
         window.setListViewMode = function(mode) {
             currentListViewMode = mode;
             const cardsContainer = document.getElementById('ordersListCards');
@@ -1189,11 +1210,15 @@
                         ? `<span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 ${window.escapeHtml(order.urgencia)}</span>` 
                         : `<span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Sem Urgência</span>`;
 
+                    const fiscalizadaBadge = order.fiscalizada 
+                        ? `<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">🔍 Fiscalizada</span>` 
+                        : `<span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>`;
+
                     const statusColor = order.status === 'CONCLUÍDO' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 
                                        (order.status === 'PROGRAMADO' ? 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20' : 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20');
 
                     const card = document.createElement('div');
-                    card.className = "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3";
+                    card.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3`;
                     
                     card.innerHTML = `
                         <div class="space-y-2.5">
@@ -1208,6 +1233,7 @@
                             <div class="flex flex-wrap gap-1.5 items-center">
                                 <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
                                 ${urgencyBadge}
+                                ${fiscalizadaBadge}
                                 <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-medium px-2 py-0.5 rounded-lg">Eqp: ${window.escapeHtml(order.equipeSugerida)}</span>
                             </div>
 
@@ -1248,8 +1274,12 @@
                         ? `<span class="text-red-600 dark:text-red-400 font-bold">${window.escapeHtml(order.urgencia)}</span>` 
                         : `<span class="text-slate-400">Normal</span>`;
 
+                    const fiscalizadaBadge = order.fiscalizada
+                        ? `<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/20 text-[10px] inline-flex items-center gap-1">🔍 Sim</span>`
+                        : `<span class="text-slate-400 text-[10px]">Não</span>`;
+
                     const row = document.createElement('tr');
-                    row.className = "hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors";
+                    row.className = `hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors ${order.fiscalizada ? 'bg-emerald-500/[0.03] dark:bg-emerald-500/[0.02]' : ''}`;
                     row.innerHTML = `
                         <td class="p-3 text-center">
                             <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="window.toggleRouteSelection('${window.escapeHtml(order.id)}')" aria-label="Selecionar linha" class="accent-amber-500 cursor-pointer">
@@ -1262,8 +1292,8 @@
                             <span class="font-extrabold px-2 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
                         </td>
                         <td class="p-3">${urgencyBadge}</td>
+                        <td class="p-3">${fiscalizadaBadge}</td>
                         <td class="p-3">${window.escapeHtml(order.alimentador || '-')}</td>
-                        <td class="p-3">${window.escapeHtml(order.pontoEletrico || '-')}</td>
                         <td class="p-3">${window.escapeHtml(order.orderDate)}</td>
                         <td class="p-3 text-right space-x-1">
                             <button onclick="window.openDetailsModal('${window.escapeHtml(order.id)}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold">ℹ️</button>
@@ -1276,7 +1306,7 @@
             }
         };
 
-        // --- 7. RENDER DASHBOARD ---
+        // --- 7. RENDER DASHBOARD (COM AVANÇO DE FISCALIZAÇÃO) ---
         let chartInstances = {};
         window.renderDashboard = function() {
             const isDark = document.documentElement.classList.contains('dark');
@@ -1288,6 +1318,9 @@
             const concluidas = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
             const emergencias = ordersData.filter(o => o.urgencia === 'Emergência').length;
 
+            const fiscalizadasCount = ordersData.filter(o => o.fiscalizada).length;
+            const fiscalizadasPercent = total > 0 ? Math.round((fiscalizadasCount / total) * 100) : 0;
+
             let totalDaysOpen = 0;
             pendentesList.forEach(o => totalDaysOpen += window.calculateDaysOpen(o.orderDate, o.status, o.completionDate));
             const avgDays = pendentes > 0 ? Math.round(totalDaysOpen / pendentes) : 0;
@@ -1295,10 +1328,10 @@
             document.getElementById('dashTotal').innerText = total;
             document.getElementById('dashPendentes').innerText = pendentes;
             document.getElementById('dashConcluidas').innerText = concluidas;
+            document.getElementById('dashFiscalizadas').innerText = `${fiscalizadasPercent}%`;
             document.getElementById('dashEmergencias').innerText = emergencias;
             document.getElementById('dashMediaDias').innerText = `${avgDays}d`;
 
-            // Chart 1: Status
             const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0, 'CONCLUÍDO': 0 };
             ordersData.forEach(o => statusCounts[o.status] = (statusCounts[o.status] || 0) + 1);
 
@@ -1312,7 +1345,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } } } }
             });
 
-            // Chart 2: Urgência
             const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
             ordersData.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
 
@@ -1326,7 +1358,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } } }
             });
 
-            // Chart 3: Categoria
             const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'TRANSFORMADOR': 0, 'BYPASS': 0, 'OUTROS': 0 };
             ordersData.forEach(o => catCounts[o.category] = (catCounts[o.category] || 0) + 1);
 
@@ -1340,7 +1371,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } } }, scales: { r: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { display: false } } } }
             });
 
-            // Chart 4: Equipe
             const eqpCounts = { 'Linha Viva': 0, 'Linha Morta': 0, 'Não definida': 0 };
             ordersData.forEach(o => eqpCounts[o.equipeSugerida] = (eqpCounts[o.equipeSugerida] || 0) + 1);
 
@@ -1368,6 +1398,7 @@
                 'category': o.category,
                 'status': o.status,
                 'urgencia': o.urgencia,
+                'fiscalizada': o.fiscalizada ? 'Sim' : 'Não',
                 'alimentador': o.alimentador,
                 'pontoEletrico': o.pontoEletrico,
                 'orderDate': o.orderDate,
@@ -1382,7 +1413,7 @@
             XLSX.writeFile(wb, "EletroGestao_Relatorio.xlsx");
         };
 
-        // --- 9. MAP ROUTE / CONNECTION LINE ---
+        // --- 9. MAP ROUTE ---
         window.toggleRouteSelection = function(id) {
             const index = selectedRouteIds.indexOf(id);
             if (index > -1) selectedRouteIds.splice(index, 1);
@@ -1412,7 +1443,7 @@
             map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
         };
 
-        // --- 10. CREATE ORDER WITH DUPLICATE PROTECTION ---
+        // --- 10. CREATE ORDER & EXCEL IMPORT ---
         window.handleCreateOrder = async function(e) {
             e.preventDefault();
             
@@ -1425,8 +1456,8 @@
             const latVal = document.getElementById('lat').value.trim();
             const lngVal = document.getElementById('lng').value.trim();
             
-            let parsedLat = parseFloat(latVal);
-            let parsedLng = parseFloat(lngVal);
+            let parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
+            let parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
 
             if (latVal !== '' && (isNaN(parsedLat) || parsedLat < -90 || parsedLat > 90)) {
                 window.showModal('Erro de Validação', 'A latitude informada deve estar entre -90 e 90.');
@@ -1444,14 +1475,15 @@
                 category: document.getElementById('category').value,
                 status: document.getElementById('status').value,
                 urgencia: 'Não Avaliada',
+                fiscalizada: false,
                 equipeSugerida: document.getElementById('equipeSugerida').value,
                 alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
                 pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
                 orderDate: document.getElementById('orderDate').value,
                 completionDate: document.getElementById('status').value === 'CONCLUÍDO' ? new Date().toISOString().split('T')[0] : null,
                 description: document.getElementById('description').value.trim(),
-                lat: latVal !== '' ? parsedLat : null,
-                lng: lngVal !== '' ? parsedLng : null,
+                lat: parsedLat,
+                lng: parsedLng,
                 history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem registrada no sistema.' }]
             };
 
@@ -1488,7 +1520,6 @@
             }
         };
 
-        // --- TOLERANT EXCEL & CSV IMPORT (OS-BASED DUPLICATE CHECK ONLY) ---
         window.processExcelImport = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1535,6 +1566,7 @@
                             category: row['category'] || row['Categoria'] || 'OUTROS',
                             status: row['status'] || row['Status'] || 'PENDENTE',
                             urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
+                            fiscalizada: row['fiscalizada'] === 'Sim' || row['Fiscalizada'] === true || false,
                             equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
                             alimentador: row['alimentador'] || row['Alimentador'] || '',
                             pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
@@ -1675,6 +1707,7 @@
             const oldStatus = order.status;
             order.status = newStatus;
             order.urgencia = newUrgencia;
+            order.fiscalizada = true; 
             if (currentFiscalizarPhotoBase64) order.photo = currentFiscalizarPhotoBase64;
 
             if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
@@ -1684,7 +1717,7 @@
             }
 
             if (!order.history) order.history = [];
-            let logMsg = `Status alterado para ${newStatus}. Urgência: ${newUrgencia}.`;
+            let logMsg = `Ordem fiscalizada. Status alterado para ${newStatus}. Urgência: ${newUrgencia}.`;
             if (obs) logMsg += ` Obs: ${obs}`;
             if (currentFiscalizarPhotoBase64) logMsg += ` [Foto Anexada]`;
 
@@ -1697,7 +1730,7 @@
                 await window.saveToCloud(order);
                 window.closeFiscalizarModal();
                 window.renderListView();
-                window.showModal('Atualizado', 'Fiscalização registrada com sucesso na nuvem!');
+                window.showModal('Fiscalizada', 'Fiscalização registrada com sucesso na nuvem!');
             } catch(err) {
                 window.showModal('Erro de Gravação', 'Falha ao salvar fiscalização: ' + err.message);
             } finally {
@@ -1890,7 +1923,7 @@
                                 }
                             );
 
-                        window.switchTab('map');
+                        window.switchTab('list');
                     } else {
                         btnText.innerText = 'Entrar com Google';
                         window.updateSyncBadge('🔒 Acesso Restrito', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
@@ -1910,3 +1943,4 @@
     </script>
 </body>
 </html>
+```
