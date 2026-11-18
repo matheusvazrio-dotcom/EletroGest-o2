@@ -43,213 +43,110 @@ brand: {
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
 ​<style>
-.leaflet-container {
-width: 100%;
-height: 100%;
-min-height: 500px;
-border-radius: 1rem;
-z-index: 10;
-}
-​.dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip {
-background-color: #0f172a !important;
-color: #f8fafc !important;
-border: 1px solid #334155 !important;
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
-border-radius: 0.875rem !important;
-}
-​.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-background-color: #ffffff !important;
-color: #0f172a !important;
-border: 1px solid #e2e8f0 !important;
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
-border-radius: 0.875rem !important;
-}
-​::-webkit-scrollbar {
-width: 6px;
-height: 6px;
-}
-::-webkit-scrollbar-track {
-background: transparent;
-}
-::-webkit-scrollbar-thumb {
-background: #cbd5e1;
-border-radius: 4px;
-}
-.dark ::-webkit-scrollbar-thumb {
-background: #334155;
-}
-::-webkit-scrollbar-thumb:hover {
-background: #94a3b8;
-}
-:focus-visible {
-outline: 2px solid #f59e0b;
-outline-offset: 2px;
-}
+.leaflet-container { width: 100%; height: 100%; min-height: 500px; border-radius: 1rem; z-index: 10; }
+.dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip { background-color: #0f172a !important; color: #f8fafc !important; border: 1px solid #334155 !important; border-radius: 0.875rem !important; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background-color: #ffffff !important; color: #0f172a !important; border: 1px solid #e2e8f0 !important; border-radius: 0.875rem !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-200">
-​<!-- HEADER / NAVIGATION BAR (ALWAYS FIXED / STICKY) -->
-<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-50 transition-colors duration-200 shadow-sm">
+​<!-- HEADER / NAVIGATION BAR -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-50 shadow-sm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
 ​<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-xl font-black shadow-md shadow-amber-500/20">
-⚡
-</div>
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-xl font-black shadow-md shadow-amber-500/20">⚡</div>
 <div>
 <h1 class="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
 EletroGestão
-<span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🟢 Pronto</span>
+<span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🔄 Conectando...</span>
 </h1>
 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Sistema Integrado de Manutenção Elétrica</p>
 </div>
 </div>
-​<nav id="desktopNav" class="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
-<button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
-🗺️ Mapa Interativo
-</button>
-<button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm flex items-center gap-2 justify-center">
-📋 Demandas <span id="navDemandCount" class="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px]">0</span>
-</button>
-<button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
-📊 Dashboard
-</button>
-<button onclick="window.switchTab('new')" id="nav-new" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
-➕ Nova Ordem
-</button>
+​<nav class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80">
+<button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">🗺️ Mapa Interativo</button>
+<button onclick="window.switchTab('list')" id="nav-list" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm">📋 Demandas <span id="navDemandCount" class="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px]">0</span></button>
+<button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">📊 Dashboard</button>
+<button onclick="window.switchTab('new')" id="nav-new" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">➕ Nova Ordem</button>
 </nav>
 ​<div class="flex items-center gap-2 sm:gap-3">
-<button onclick="window.toggleTheme()" id="themeToggleBtn" aria-label="Alternar tema" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200/70 hover:bg-slate-300/70 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-amber-400 border border-slate-300/80 dark:border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm" title="Alternar Modo Noturno / Claro">
+<button onclick="window.toggleTheme()" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200/70 hover:bg-slate-300/70 text-slate-700 dark:bg-slate-800 dark:text-amber-400 border border-slate-300/80 dark:border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm">
 <span id="themeToggleIcon">🌙</span> <span id="themeToggleText" class="hidden sm:inline">Modo Escuro</span>
 </button>
-​<div id="userInfoArea" class="flex items-center gap-2">
-<button onclick="window.handleAuthAction()" id="userAuthBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-sm hover:shadow-amber-500/20 justify-center">
+<button onclick="window.handleAuthAction()" id="userAuthBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all shadow-sm flex items-center gap-2">
 <span>🔑</span> <span id="userAuthBtnText">Entrar com Google</span>
 </button>
 </div>
-</div>
 ​</div>
 </div>
-​<div id="mobileNav" class="flex md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
-<button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
-<button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
-<button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
-<button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">➕ Criar</button>
+​<div class="flex md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold">
+<button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400">🗺️ Mapa</button>
+<button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold bg-slate-100 dark:bg-slate-900 rounded-xl">📋 Lista</button>
+<button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400">📊 Dashboard</button>
+<button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400">➕ Criar</button>
 </div>
 </header>
 ​<main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
-​<!-- TAB 1: MAPA INTERATIVO -->
+​<!-- TAB 1: MAPA -->
 <div id="tab-map" class="tab-content hidden space-y-4">
-<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
-<div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-<label for="mapFilterCategory" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">Filtros:</label>
-<select id="mapFilterCategory" onchange="window.renderMap()" aria-label="Filtrar categoria no mapa" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500">
+<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-2">
+<select id="mapFilterCategory" onchange="window.renderMap()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2 outline-none">
 <option value="">Todas Categorias</option>
-<option value="POSTE">POSTE</option>
-<option value="PODA">PODA</option>
-<option value="CABO">CABO</option>
-<option value="ESTRUTURA">ESTRUTURA</option>
-<option value="EQUIPAMENTO">EQUIPAMENTO</option>
-<option value="CHAVE">CHAVE</option>
-<option value="BYPASS">BYPASS</option>
-<option value="OUTROS">OUTROS</option>
+<option value="POSTE">POSTE</option><option value="PODA">PODA</option><option value="CABO">CABO</option><option value="ESTRUTURA">ESTRUTURA</option><option value="EQUIPAMENTO">EQUIPAMENTO</option><option value="CHAVE">CHAVE</option><option value="BYPASS">BYPASS</option><option value="OUTROS">OUTROS</option>
 </select>
-<select id="mapFilterStatus" aria-label="Filtrar status no mapa" onchange="window.renderMap()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500">
+<select id="mapFilterStatus" onchange="window.renderMap()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2 outline-none">
 <option value="">Todos Status (Ativos)</option>
-<option value="PENDENTE">PENDENTE</option>
-<option value="PROGRAMADO">PROGRAMADO</option>
-<option value="PARCIAL">PARCIAL</option>
+<option value="PENDENTE">PENDENTE</option><option value="PROGRAMADO">PROGRAMADO</option><option value="PARCIAL">PARCIAL</option>
 </select>
-​<label class="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 ml-2 cursor-pointer bg-slate-100 dark:bg-slate-950 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-800">
+<label class="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 cursor-pointer bg-slate-100 dark:bg-slate-950 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-800">
 <input type="checkbox" id="mapShowArchivedToggle" onchange="window.renderMap()" class="w-4 h-4 accent-amber-500 rounded">
 <span>Ver Concluídas no Mapa</span>
 </label>
 </div>
-​<div class="flex items-center gap-3 text-xs">
-<span class="text-slate-500 dark:text-slate-400 font-medium">
-Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bold">0</span> pontos
-</span>
-<button onclick="window.openUnmappedModal()" id="unmappedBtn" class="hidden px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold transition-all flex items-center justify-center">
-⚠️ <span id="unmappedCountBadge">0</span> sem GPS
-</button>
+<div class="text-xs text-slate-500">Exibindo <span id="mapCounter" class="text-amber-600 font-bold">0</span> pontos</div>
 </div>
-</div>
-​<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-2 rounded-2xl shadow-sm relative min-h-[500px] h-[calc(100vh-230px)]">
+<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-2 rounded-2xl shadow-sm relative min-h-[500px] h-[calc(100vh-230px)]">
 <div id="map" class="w-full h-full min-h-[480px]"></div>
 </div>
 </div>
 ​<!-- TAB 2: DEMANDAS -->
 <div id="tab-list" class="tab-content space-y-4">
-<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4 transition-colors">
-​<!-- Active Filters Chips Bar -->
-<div id="activeFiltersBar" class="hidden flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
-<span class="text-slate-400 font-bold uppercase text-[10px]">Filtro Ativo:</span>
-<div id="activeFiltersChips" class="flex flex-wrap gap-1.5 items-center"></div>
-<button onclick="window.clearDashboardFilters()" class="text-amber-600 hover:underline font-bold text-[11px] ml-2">Limpar Filtros</button>
-</div>
-​<div class="flex flex-col md:flex-row items-center justify-between gap-4">
-​<div class="relative w-full md:w-72">
-<label for="searchInput" class="sr-only">Buscar por OS</label>
-<input type="text" id="searchInput" oninput="window.onSearchInput()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4">
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="relative w-full md:w-72">
+<input type="text" id="searchInput" oninput="window.onSearchInput()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
 </div>
 ​<div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-<select id="listFilterCategory" aria-label="Filtrar por Categoria" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+<select id="listFilterCategory" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2.5 outline-none">
 <option value="">Categorias</option>
-<option value="POSTE">POSTE</option>
-<option value="PODA">PODA</option>
-<option value="CABO">CABO</option>
-<option value="ESTRUTURA">ESTRUTURA</option>
-<option value="EQUIPAMENTO">EQUIPAMENTO</option>
-<option value="CHAVE">CHAVE</option>
-<option value="BYPASS">BYPASS</option>
-<option value="OUTROS">OUTROS</option>
+<option value="POSTE">POSTE</option><option value="PODA">PODA</option><option value="CABO">CABO</option><option value="ESTRUTURA">ESTRUTURA</option><option value="EQUIPAMENTO">EQUIPAMENTO</option><option value="CHAVE">CHAVE</option><option value="BYPASS">BYPASS</option><option value="OUTROS">OUTROS</option>
 </select>
-​<select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+<select id="listFilterStatus" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2.5 outline-none">
 <option value="">Status</option>
-<option value="PENDENTE">PENDENTE</option>
-<option value="PROGRAMADO">PROGRAMADO</option>
-<option value="PARCIAL">PARCIAL</option>
+<option value="PENDENTE">PENDENTE</option><option value="PROGRAMADO">PROGRAMADO</option><option value="PARCIAL">PARCIAL</option>
 </select>
-​<select id="listFilterUrgency" aria-label="Filtrar por Criticidade" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+<select id="listFilterUrgency" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2.5 outline-none">
 <option value="">Criticidade (Todas)</option>
-<option value="Emergência">Emergência</option>
-<option value="Alta">Alta</option>
-<option value="Média">Média</option>
-<option value="Baixa">Baixa</option>
-<option value="Não Avaliada">Não Avaliada</option>
+<option value="Emergência">Emergência</option><option value="Alta">Alta</option><option value="Média">Média</option><option value="Baixa">Baixa</option><option value="Não Avaliada">Não Avaliada</option>
 </select>
-​<select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-<option value="recent">Mais Recentes</option>
-<option value="oldest">Mais Antigos (Aging)</option>
-<option value="urgency">Maior Criticidade</option>
+<select id="listSortOrder" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs rounded-xl px-3 py-2.5 outline-none">
+<option value="recent">Mais Recentes</option><option value="oldest">Mais Antigos</option><option value="urgency">Maior Criticidade</option>
 </select>
-​<div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
-<button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
-📇 Cards
-</button>
-<button onclick="window.setListViewMode('rowlist')" id="viewModeRowListBtn" aria-label="Visualização em Lista" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center">
-📑 Lista
-</button>
+</div>
+​<div class="flex items-center gap-2 w-full md:w-auto justify-end">
+<button onclick="window.openArchivedModal()" class="px-3 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold shadow-sm">📂 Concluídas (<span id="archivedCountBadge">0</span>)</button>
+<button onclick="window.downloadExcel()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm">📊 Excel</button>
 </div>
 </div>
-​<div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-<button onclick="window.openArchivedModal()" class="px-3 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
-📂 Arquivo Concluídas (<span id="archivedCountBadge">0</span>)
-</button>
-<button onclick="window.downloadExcel()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
-📊 Excel
-</button>
-<button onclick="window.generateRoute()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-slate-950 font-black rounded-xl text-xs shadow-sm transition-all flex items-center gap-1.5 justify-center">
-Traçar Rota (<span id="selectedCountBadge">0</span>)
-</button>
 </div>
-​</div>
-</div>
-​<div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
-<div id="ordersListRowContainer" class="space-y-3"></div>
-​<!-- Pagination Container -->
-<div id="paginationContainer" class="flex items-center justify-between pt-4 pb-2 px-2 text-xs">
+​<div id="ordersListRowContainer" class="space-y-3"></div>
+​<div id="paginationContainer" class="flex items-center justify-between pt-4 pb-2 px-2 text-xs">
 <span id="paginationInfo" class="text-slate-500">Mostrando 0 de 0</span>
 <div class="flex gap-2">
 <button id="prevPageBtn" onclick="window.changePage(-1)" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 rounded-xl font-bold disabled:opacity-40">Anterior</button>
@@ -257,681 +154,258 @@ Traçar Rota (<span id="selectedCountBadge">0</span>)
 </div>
 </div>
 </div>
-​<!-- TAB 3: DASHBOARD EXECUTIVO -->
+​<!-- TAB 3: DASHBOARD -->
 <div id="tab-dashboard" class="tab-content hidden space-y-6">
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-slate-200/80 dark:border-slate-800">
-<div>
-<h2 class="text-base font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-<span>⚡</span> Painel Executivo & Indicadores (Clique em qualquer gráfico para ampliar e interagir)
-</h2>
-<p class="text-xs text-slate-500 dark:text-slate-400">Visão consolidada em tempo real da operação.</p>
+<div class="pb-2 border-b border-slate-200/80 dark:border-slate-800">
+<h2 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2"><span>⚡</span> Painel Executivo & Indicadores (Clique nos gráficos para ampliar)</h2>
 </div>
-</div>
-​<!-- KPI Cards Row (Interactive) -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-​<div onclick="window.filterByDashboard('total')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
-<div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-700 dark:text-slate-300 mb-2 group-hover:scale-110 transition-transform shadow-inner">📊</div>
-<span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Ativas</span>
-<div id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</div>
+<div onclick="window.filterByDashboard('total')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center cursor-pointer hover:border-amber-500">
+<span class="text-[11px] font-bold text-slate-400 uppercase">Total Ativas</span>
+<div id="dashTotal" class="text-3xl font-black mt-1">0</div>
 </div>
-​<div onclick="window.filterByDashboard('pendentes')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
-<div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-amber-500/20">⏳</div>
-<span class="text-[11px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-1">Pendentes</span>
-<div id="dashPendentes" class="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tight">0</div>
+<div onclick="window.filterByDashboard('pendentes')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center cursor-pointer hover:border-amber-500">
+<span class="text-[11px] font-bold text-amber-600 uppercase">Pendentes</span>
+<div id="dashPendentes" class="text-3xl font-black text-amber-600 mt-1">0</div>
 </div>
-​<div onclick="window.filterByDashboard('concluidas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-emerald-500">
-<div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">✅</div>
-<span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Concluídas</span>
-<div id="dashConcluidas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0</div>
+<div onclick="window.filterByDashboard('concluidas')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center cursor-pointer hover:border-emerald-500">
+<span class="text-[11px] font-bold text-emerald-600 uppercase">Concluídas</span>
+<div id="dashConcluidas" class="text-3xl font-black text-emerald-600 mt-1">0</div>
 </div>
-​<div onclick="window.filterByDashboard('fiscalizadas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-emerald-500 cursor-pointer hover:border-emerald-600">
-<div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">🔍</div>
-<span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Fiscalizadas</span>
-<div id="dashFiscalizadas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0%</div>
+<div onclick="window.filterByDashboard('fiscalizadas')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center cursor-pointer border-t-4 border-t-emerald-500">
+<span class="text-[11px] font-bold text-emerald-600 uppercase">Fiscalizadas</span>
+<div id="dashFiscalizadas" class="text-3xl font-black text-emerald-600 mt-1">0%</div>
 </div>
-​<div onclick="window.filterByDashboard('emergencias')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-red-500 cursor-pointer hover:border-red-600">
-<div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-red-500/20">🚨</div>
-<span class="text-[11px] font-bold text-red-600 dark:text-red-500 uppercase tracking-widest mb-1">Emergências</span>
-<div id="dashEmergencias" class="text-3xl font-black text-red-600 dark:text-red-400 tracking-tight">0</div>
+<div onclick="window.filterByDashboard('emergencias')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center cursor-pointer border-t-4 border-t-red-500">
+<span class="text-[11px] font-bold text-red-600 uppercase">Emergências</span>
+<div id="dashEmergencias" class="text-3xl font-black text-red-600 mt-1">0</div>
 </div>
-​<div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
-<div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-sky-500/20">⏱️</div>
-<span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Idade média (abertas)</span>
-<div id="dashMediaDias" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0d</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm text-center sm:col-span-2 lg:col-span-1">
+<span class="text-[11px] font-bold text-slate-400 uppercase">Idade Média</span>
+<div id="dashMediaDias" class="text-3xl font-black mt-1">0d</div>
 </div>
-​</div>
-​<!-- Analytics Charts Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<!-- Chart 1: Status -->
-<div onclick="window.openChartFocusModal('status')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
-<div class="flex items-center justify-between">
-<h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>🍩</span> Status das Demandas (Ativas)</h3>
-<span class="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">🔍 Ampliar / Interagir</span>
 </div>
+​<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div onclick="window.openChartFocusModal('status')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm cursor-pointer space-y-4">
+<h3 class="text-xs font-black uppercase tracking-wider">Status das Demandas</h3>
 <div class="h-64 relative flex items-center justify-center"><canvas id="statusChart"></canvas></div>
 </div>
-​<!-- Chart 2: Urgência / Criticidade -->
-<div onclick="window.openChartFocusModal('urgencia')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
-<div class="flex items-center justify-between">
-<h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>📊</span> Nível de Criticidade (Urgência)</h3>
-<span class="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">🔍 Ampliar / Interagir</span>
-</div>
+<div onclick="window.openChartFocusModal('urgencia')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm cursor-pointer space-y-4">
+<h3 class="text-xs font-black uppercase tracking-wider">Nível de Criticidade</h3>
 <div class="h-64 relative flex items-center justify-center"><canvas id="urgenciaChart"></canvas></div>
 </div>
-​<!-- Chart 3: Categoria -->
-<div onclick="window.openChartFocusModal('category')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
-<div class="flex items-center justify-between">
-<h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>⚡</span> Distribuição por Categoria</h3>
-<span class="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">🔍 Ampliar / Interagir</span>
-</div>
+<div onclick="window.openChartFocusModal('category')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm cursor-pointer space-y-4">
+<h3 class="text-xs font-black uppercase tracking-wider">Distribuição por Categoria</h3>
 <div class="h-64 relative flex items-center justify-center"><canvas id="categoryChart"></canvas></div>
 </div>
-​<!-- Chart 4: Visão Executiva Geral -->
-<div onclick="window.openChartFocusModal('executive')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
-<div class="flex items-center justify-between">
-<h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>📈</span> Visão Consolidada da Operação</h3>
-<span class="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">🔍 Ampliar / Interagir</span>
-</div>
+<div onclick="window.openChartFocusModal('executive')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm cursor-pointer space-y-4">
+<h3 class="text-xs font-black uppercase tracking-wider">Visão Consolidada</h3>
 <div class="h-64 relative flex items-center justify-center"><canvas id="executiveChart"></canvas></div>
 </div>
 </div>
-​</div>
-​<!-- TAB 4: NOVA ORDEM DE SERVIÇO & IMPORTAÇÃO -->
+</div>
+​<!-- TAB 4: NOVA ORDEM -->
 <div id="tab-new" class="tab-content hidden max-w-2xl mx-auto space-y-6">
-<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
-<div class="border-b border-slate-200/80 dark:border-slate-800 pb-3 flex items-center justify-between">
-<div>
-<h2 class="text-sm font-black text-amber-600 dark:text-amber-500">📁 Importar Planilha em Lote (Excel / CSV)</h2>
-<p class="text-[11px] text-slate-500 dark:text-slate-400">Envie um arquivo .xlsx, .xls ou .csv com várias demandas.</p>
-</div>
-</div>
-<div class="flex flex-col sm:flex-row items-center gap-3">
-<label id="importBtn" class="w-full sm:w-auto flex-1 text-center py-3 px-4 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 cursor-pointer transition-all flex items-center justify-center gap-2">
-<span>📊 Selecionar Planilha / CSV</span>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+<h2 class="text-sm font-black text-amber-600">📁 Importar Planilha (Excel / CSV)</h2>
+<label class="block text-center py-3 px-4 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 cursor-pointer">
+<span>📊 Selecionar Planilha</span>
 <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="window.processExcelImport(event)" class="hidden">
 </label>
 </div>
-</div>
-​<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6">
-<div class="border-b border-slate-200/80 dark:border-slate-800 pb-4">
-<h2 class="text-lg font-black text-amber-600 dark:text-amber-500">➕ Cadastrar Nova Ordem de Manutenção</h2>
-<p class="text-xs text-slate-500 dark:text-slate-400">Preencha os campos abaixo para registrar a demanda no sistema.</p>
-</div>
-​<form onsubmit="window.handleCreateOrder(event)" class="space-y-4">
+​<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6">
+<h2 class="text-lg font-black text-amber-600">➕ Cadastrar Nova Ordem</h2>
+<form onsubmit="window.handleCreateOrder(event)" class="space-y-4">
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <div>
-<label for="osProject" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nº OS / Projeto *</label>
-<input type="text" id="osProject" required placeholder="Ex: OS-2026-99" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-​<div>
-<label for="origem" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Origem *</label>
-<select id="origem" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="OSM">OSM (Ordem de Serviço)</option>
-<option value="CHAMADO">Chamado de Vistoria</option>
-<option value="EMERGÊNCIA">Emergência Operacional</option>
-<option value="INSPEÇÃO">Inspeção Periódica</option>
-<option value="PEDIDO INTERNO">Pedido Interno</option>
-</select>
-</div>
-​<div>
-<label for="category" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Categoria *</label>
-<select id="category" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="POSTE">POSTE</option>
-<option value="PODA">PODA</option>
-<option value="CABO">CABO</option>
-<option value="ESTRUTURA">ESTRUTURA</option>
-<option value="EQUIPAMENTO">EQUIPAMENTO</option>
-<option value="CHAVE">CHAVE</option>
-<option value="BYPASS">BYPASS</option>
-<option value="OUTROS">OUTROS</option>
-</select>
-</div>
-​<div>
-<label for="equipeSugerida" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Equipe Sugerida</label>
-<select id="equipeSugerida" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="Não definida">Não definida</option>
-<option value="Linha Viva">Linha Viva</option>
-<option value="Linha Morta">Linha Morta</option>
-</select>
-</div>
-​<div>
-<label for="alimentador" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Alimentador</label>
-<input type="text" id="alimentador" placeholder="Ex: SUB-01" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-​<div>
-<label for="pontoEletrico" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Ponto Elétrico</label>
-<input type="text" id="pontoEletrico" placeholder="Ex: PT-4421" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-​<div>
-<label for="orderDate" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Data da Ordem *</label>
-<input type="date" id="orderDate" required class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-​<div>
-<label for="status" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status Inicial</label>
-<select id="status" onchange="window.toggleCreateScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="PENDENTE">PENDENTE</option>
-<option value="PROGRAMADO">PROGRAMADO</option>
-<option value="PARCIAL">PARCIAL</option>
-<option value="CONCLUÍDO">CONCLUÍDO</option>
-</select>
-</div>
-</div>
-​<!-- Scheduled Fields & Checklist (Visible only if PROGRAMADO) -->
-<div id="createScheduledSection" class="hidden space-y-4 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20">
-<div>
-<label for="scheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
-<input type="date" id="scheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+<label class="block text-xs font-bold uppercase mb-1">Nº OS / Projeto *</label>
+<input type="text" id="osProject" required class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
 </div>
 <div>
-<span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Checklist de Programação</span>
+<label class="block text-xs font-bold uppercase mb-1">Origem *</label>
+<select id="origem" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+<option value="OSM">OSM</option><option value="CHAMADO">Chamado de Vistoria</option><option value="EMERGÊNCIA">Emergência</option><option value="INSPEÇÃO">Inspeção</option><option value="PEDIDO INTERNO">Pedido Interno</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Categoria *</label>
+<select id="category" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+<option value="POSTE">POSTE</option><option value="PODA">PODA</option><option value="CABO">CABO</option><option value="ESTRUTURA">ESTRUTURA</option><option value="EQUIPAMENTO">EQUIPAMENTO</option><option value="CHAVE">CHAVE</option><option value="BYPASS">BYPASS</option><option value="OUTROS">OUTROS</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Equipe Sugerida</label>
+<select id="equipeSugerida" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+<option value="Não definida">Não definida</option><option value="Linha Viva">Linha Viva</option><option value="Linha Morta">Linha Morta</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Alimentador</label>
+<input type="text" id="alimentador" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Ponto Elétrico</label>
+<input type="text" id="pontoEletrico" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Data da Ordem *</label>
+<input type="date" id="orderDate" required class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Status Inicial</label>
+<select id="status" onchange="window.toggleCreateScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+<option value="PENDENTE">PENDENTE</option><option value="PROGRAMADO">PROGRAMADO</option><option value="PARCIAL">PARCIAL</option><option value="CONCLUÍDO">CONCLUÍDO</option>
+</select>
+</div>
+</div>
+​<div id="createScheduledSection" class="hidden space-y-4 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20">
+<div>
+<label class="block text-xs font-bold text-amber-600 uppercase mb-1">Data da Programação *</label>
+<input type="date" id="scheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none">
+</div>
 <div class="space-y-2 text-xs">
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="chkCroqui" class="w-4 h-4 accent-amber-500 rounded">
-<span>Croqui realizado</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="chkApr" class="w-4 h-4 accent-amber-500 rounded">
-<span>Pré-APR emitida</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="chkSgm" class="w-4 h-4 accent-amber-500 rounded">
-<span>Anexo SGM anexado</span>
-</label>
-</div>
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="chkCroqui" class="w-4 h-4 accent-amber-500 rounded"><span>Croqui realizado</span></label>
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="chkApr" class="w-4 h-4 accent-amber-500 rounded"><span>Pré-APR emitida</span></label>
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="chkSgm" class="w-4 h-4 accent-amber-500 rounded"><span>Anexo SGM anexado</span></label>
 </div>
 </div>
 ​<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<div>
-<label for="lat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
-<input type="number" step="any" id="lat" min="-90" max="90" placeholder="-23.5505" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+<div><label class="block text-xs font-bold uppercase mb-1">Latitude</label><input type="number" step="any" id="lat" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none"></div>
+<div><label class="block text-xs font-bold uppercase mb-1">Longitude</label><input type="number" step="any" id="lng" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none"></div>
 </div>
-<div>
-<label for="lng" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Longitude</label>
-<input type="number" step="any" id="lng" min="-180" max="180" placeholder="-46.6333" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-</div>
-​<button type="button" onclick="window.useCurrentLocation()" class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
-📍 Usar minha localização GPS atual
-</button>
+​<button type="button" onclick="window.useCurrentLocation()" class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">📍 Usar minha localização GPS atual</button>
 ​<div>
-<label for="description" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Descrição Detalhada</label>
-<textarea id="description" rows="3" placeholder="Descreva o problema encontrado no local..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+<label class="block text-xs font-bold uppercase mb-1">Descrição</label>
+<textarea id="description" rows="3" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs outline-none"></textarea>
 </div>
-​<div class="pt-4 flex gap-3">
-<button type="submit" id="submitCreateBtn" class="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md hover:shadow-amber-500/20 transition-all uppercase flex items-center justify-center gap-2">
-<span>💾 Salvar Ordem de Serviço</span>
-</button>
-</div>
+​<button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md uppercase">💾 Salvar Ordem de Serviço</button>
 </form>
 </div>
 </div>
-​</main>
-​<!-- MODAL: GRÁFICO EM FOCO (TELA CHEIA INTERATIVA) -->
-<div id="chartFocusModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-<div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<div>
-<h3 id="chartFocusTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Painel Ampliado do Indicador</h3>
-<p class="text-xs text-slate-500">Clique nos filtros abaixo ou interaja diretamente para filtrar a visualização.</p>
-</div>
-<button onclick="window.closeChartFocusModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl font-bold p-2">✕</button>
-</div>
-​<div class="p-6 space-y-4 flex-1 overflow-y-auto">
-<div id="chartFocusToolbar" class="flex flex-wrap gap-2 items-center pb-3 border-b border-slate-100 dark:border-slate-800 text-xs"></div>
-<div class="h-80 sm:h-96 relative flex items-center justify-center w-full">
-<canvas id="focusedChartCanvas"></canvas>
-</div>
-</div>
-​<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
-<button onclick="window.closeChartFocusModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs">Fechar Painel</button>
-</div>
-</div>
-</div>
-​<!-- MODAL: ARQUIVO DE CONCLUÍDAS -->
-<div id="archivedModal" role="dialog" aria-modal="true" aria-labelledby="archivedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+</main>
+​<!-- MODAIS -->
+<div id="archivedModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<h3 id="archivedModalTitle" class="text-sm font-black text-emerald-600 dark:text-emerald-400">📂 Arquivo de Ordens Concluídas</h3>
-<button onclick="window.closeArchivedModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+<h3 class="text-sm font-black text-emerald-600">📂 Ordens Concluídas</h3>
+<button onclick="window.closeArchivedModal()" class="text-slate-400 font-bold">✕</button>
 </div>
 <div class="p-5 space-y-3 max-h-[65vh] overflow-y-auto" id="archivedModalList"></div>
 <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
-<button onclick="window.closeArchivedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
+<button onclick="window.closeArchivedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 rounded-xl text-xs font-bold">Fechar</button>
 </div>
 </div>
 </div>
-​<!-- MODAL: ORDENS SEM GPS -->
-<div id="unmappedModal" role="dialog" aria-modal="true" aria-labelledby="unmappedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
-<div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<h3 id="unmappedModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">⚠️ Ordens Sem Coordenadas GPS</h3>
-<button onclick="window.closeUnmappedModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
-</div>
-<div class="p-5 space-y-3 max-h-[65vh] overflow-y-auto" id="unmappedModalList"></div>
-<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
-<button onclick="window.closeUnmappedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
-</div>
-</div>
-</div>
-​<!-- MODAL: FISCALIZAR -->
-<div id="fiscalizarModal" role="dialog" aria-modal="true" aria-labelledby="fiscalizarModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+​<div id="fiscalizarModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<h3 id="fiscalizarModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">Fiscalizar Ordem</h3>
-<button onclick="window.closeFiscalizarModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+<h3 id="fiscalizarModalTitle" class="text-sm font-black text-amber-600">Fiscalizar Ordem</h3>
+<button onclick="window.closeFiscalizarModal()" class="text-slate-400 font-bold">✕</button>
 </div>
 <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
 <div>
-<label for="fiscalizarStatusSelect" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Novo Status</label>
-<select id="fiscalizarStatusSelect" onchange="window.toggleFiscalizarScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
-<option value="PENDENTE">PENDENTE</option>
-<option value="PROGRAMADO">PROGRAMADO</option>
-<option value="PARCIAL">PARCIAL</option>
-<option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
+<label class="block text-xs font-bold uppercase mb-1">Novo Status</label>
+<select id="fiscalizarStatusSelect" onchange="window.toggleFiscalizarScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none">
+<option value="PENDENTE">PENDENTE</option><option value="PROGRAMADO">PROGRAMADO</option><option value="PARCIAL">PARCIAL</option><option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
 </select>
 </div>
-​<!-- Scheduled Fields & Checklist in Fiscalizar -->
 <div id="fiscalizarScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
 <div>
-<label for="fiscalizarScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
-<input type="date" id="fiscalizarScheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+<label class="block text-xs font-bold text-amber-600 uppercase mb-1">Data da Programação *</label>
+<input type="date" id="fiscalizarScheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none">
+</div>
+<div class="space-y-1.5 text-xs">
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="fiscChkCroqui" class="w-4 h-4 accent-amber-500 rounded"><span>Croqui realizado</span></label>
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="fiscChkApr" class="w-4 h-4 accent-amber-500 rounded"><span>Pré-APR emitida</span></label>
+<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="fiscChkSgm" class="w-4 h-4 accent-amber-500 rounded"><span>Anexo SGM anexado</span></label>
+</div>
 </div>
 <div>
-<span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Checklist de Programação</span>
-<div class="space-y-1.5 text-xs">
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="fiscChkCroqui" class="w-4 h-4 accent-amber-500 rounded">
-<span>Croqui realizado</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="fiscChkApr" class="w-4 h-4 accent-amber-500 rounded">
-<span>Pré-APR emitida</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="fiscChkSgm" class="w-4 h-4 accent-amber-500 rounded">
-<span>Anexo SGM anexado</span>
-</label>
-</div>
-</div>
-</div>
-​<div>
-<label for="fiscalizarUrgenciaSelect" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nível de Criticidade (Urgência)</label>
-<select id="fiscalizarUrgenciaSelect" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
-<option value="Não Avaliada">Não Avaliada</option>
-<option value="Baixa">Baixa (Manutenção Preventiva)</option>
-<option value="Média">Média (Acompanhar)</option>
-<option value="Alta">Alta (Risco Material)</option>
-<option value="Emergência">Emergência (Risco Imediato)</option>
+<label class="block text-xs font-bold uppercase mb-1">Nível de Criticidade</label>
+<select id="fiscalizarUrgenciaSelect" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none">
+<option value="Não Avaliada">Não Avaliada</option><option value="Baixa">Baixa</option><option value="Média">Média</option><option value="Alta">Alta</option><option value="Emergência">Emergência</option>
 </select>
 </div>
 <div>
-<label for="fiscalizarPhotoInput" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Foto da Vistoria (Opcional - Compactada < 50KB)</label>
-<input type="file" id="fiscalizarPhotoInput" accept="image/*" onchange="window.processFiscalizarPhoto(event)" class="w-full text-slate-500 dark:text-slate-400 text-xs file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500/10 file:text-amber-600 dark:file:text-amber-400 cursor-pointer">
-<div id="photoCompressStatus" class="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-semibold hidden">⌛ Processando e otimizando imagem...</div>
+<label class="block text-xs font-bold uppercase mb-1">Foto da Vistoria (Opcional)</label>
+<input type="file" id="fiscalizarPhotoInput" accept="image/*" onchange="window.processFiscalizarPhoto(event)" class="w-full text-xs text-slate-500">
 </div>
 <div>
-<label for="fiscalizarObsInput" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Observações da Fiscalização</label>
-<textarea id="fiscalizarObsInput" rows="3" placeholder="Insira dados de campo ou motivo da alteração..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+<label class="block text-xs font-bold uppercase mb-1">Observações</label>
+<textarea id="fiscalizarObsInput" rows="3" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-3 text-xs outline-none"></textarea>
 </div>
 </div>
 <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 bg-slate-50 dark:bg-slate-950">
-<button onclick="window.closeFiscalizarModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">Cancelar</button>
-<button id="saveFiscalizarBtn" onclick="window.saveFiscalizarChanges()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-2 justify-center">
-<span>Salvar Vistoria</span>
-</button>
+<button onclick="window.closeFiscalizarModal()" class="px-4 py-2 text-xs font-bold text-slate-500">Cancelar</button>
+<button onclick="window.saveFiscalizarChanges()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md">Salvar Vistoria</button>
 </div>
 </div>
 </div>
-​<!-- MODAL: EDITAR ORDEM -->
-<div id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+​<div id="detailsModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<h3 id="editModalTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">✏️ Editar Ordem de Serviço</h3>
-<button onclick="window.closeEditModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
+<h3 id="detOsTitle" class="text-sm font-black text-amber-600">Detalhes</h3>
+<button onclick="window.closeDetailsModal()" class="text-slate-400 font-bold">✕</button>
 </div>
-<div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
-<input type="hidden" id="editInternalId">
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<div>
-<label for="editOsProject" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nº OS / Projeto *</label>
-<input type="text" id="editOsProject" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
+<div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl"><span>Origem:</span> <strong id="detOrigem"></strong></div>
+<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl"><span>Criticidade:</span> <strong id="detUrgencia" class="text-red-500"></strong></div>
+<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl"><span>Status:</span> <strong id="detStatus"></strong></div>
+<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl"><span>Equipe:</span> <strong id="detEquipe"></strong></div>
 </div>
-<div>
-<label for="editOrigem" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Origem *</label>
-<select id="editOrigem" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="OSM">OSM</option>
-<option value="CHAMADO">Chamado de Vistoria</option>
-<option value="EMERGÊNCIA">Emergência Operacional</option>
-<option value="INSPEÇÃO">Inspeção Periódica</option>
-<option value="PEDIDO INTERNO">Pedido Interno</option>
-</select>
+<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl space-y-1">
+<p><strong>Ponto:</strong> <span id="detPonto"></span></p>
+<p><strong>Alimentador:</strong> <span id="detAlimentador"></span></p>
+<p><strong>Abertura:</strong> <span id="detDate"></span></p>
 </div>
-<div>
-<label for="editCategory" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Categoria *</label>
-<select id="editCategory" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="POSTE">POSTE</option>
-<option value="PODA">PODA</option>
-<option value="CABO">CABO</option>
-<option value="ESTRUTURA">ESTRUTURA</option>
-<option value="EQUIPAMENTO">EQUIPAMENTO</option>
-<option value="CHAVE">CHAVE</option>
-<option value="BYPASS">BYPASS</option>
-<option value="OUTROS">OUTROS</option>
-</select>
+<div><span class="block uppercase font-bold text-[10px] text-slate-400 mb-1">Descrição</span><p id="detDescription" class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl leading-relaxed"></p></div>
 </div>
-<div>
-<label for="editEquipe" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Equipe Sugerida</label>
-<select id="editEquipe" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="Não definida">Não definida</option>
-<option value="Linha Viva">Linha Viva</option>
-<option value="Linha Morta">Linha Morta</option>
-</select>
-</div>
-<div>
-<label for="editAlimentador" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Alimentador</label>
-<input type="text" id="editAlimentador" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-<div>
-<label for="editPonto" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Ponto Elétrico</label>
-<input type="text" id="editPonto" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-<div>
-<label for="editDate" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Data da Ordem *</label>
-<input type="date" id="editDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-<div>
-<label for="editStatus" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status</label>
-<select id="editStatus" onchange="window.toggleEditScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-<option value="PENDENTE">PENDENTE</option>
-<option value="PROGRAMADO">PROGRAMADO</option>
-<option value="PARCIAL">PARCIAL</option>
-<option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
-</select>
-</div>
-</div>
-​<!-- Edit Scheduled Fields & Checklist -->
-<div id="editScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
-<div>
-<label for="editScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
-<input type="date" id="editScheduledDate" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-<div>
-<span class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Checklist de Programação</span>
-<div class="space-y-1.5 text-xs">
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="editChkCroqui" class="w-4 h-4 accent-amber-500 rounded">
-<span>Croqui realizado</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="editChkApr" class="w-4 h-4 accent-amber-500 rounded">
-<span>Pré-APR emitida</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input type="checkbox" id="editChkSgm" class="w-4 h-4 accent-amber-500 rounded">
-<span>Anexo SGM anexado</span>
-</label>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
+<button onclick="window.closeDetailsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 rounded-xl text-xs font-bold">Fechar</button>
 </div>
 </div>
 </div>
-​<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<div>
-<label for="editLat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
-<input type="number" step="any" id="editLat" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-<div>
-<label for="editLng" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Longitude</label>
-<input type="number" step="any" id="editLng" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
-</div>
-</div>
-​<button type="button" onclick="window.useCurrentLocationEdit()" class="w-full text-center py-2 px-3 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
-📍 Usar minha localização GPS atual
-</button>
-​<div>
-<label for="editDescription" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Descrição</label>
-<textarea id="editDescription" rows="3" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
-</div>
-</div>
-<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 bg-slate-50 dark:bg-slate-950">
-<button onclick="window.closeEditModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white">Cancelar</button>
-<button onclick="window.saveEditedOrder()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md">Salvar Alterações</button>
-</div>
-</div>
-</div>
-​<!-- MODAL: DETALHES -->
-<div id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detOsTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
-<div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<h3 id="detOsTitle" class="text-sm font-black text-amber-600 dark:text-amber-500">Detalhes da Ordem</h3>
-<button onclick="window.closeDetailsModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg font-bold">✕</button>
-</div>
-<div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
-<div class="grid grid-cols-2 gap-3 text-xs">
-<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-<span class="block text-[10px] font-bold text-slate-400 uppercase">Origem</span>
-<span id="detOrigem" class="font-semibold text-slate-800 dark:text-slate-200">N/D</span>
-</div>
-<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-<span class="block text-[10px] font-bold text-slate-400 uppercase">Criticidade (Urgência)</span>
-<span id="detUrgencia" class="font-bold text-red-600 dark:text-red-400">N/D</span>
-</div>
-<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-<span class="block text-[10px] font-bold text-slate-400 uppercase">Status</span>
-<span id="detStatus" class="font-bold text-amber-600 dark:text-amber-400">PENDENTE</span>
-</div>
-<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-<span class="block text-[10px] font-bold text-slate-400 uppercase">Equipe Sugerida</span>
-<span id="detEquipe" class="font-semibold text-slate-800 dark:text-slate-200">N/D</span>
-</div>
-</div>
-​<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
-<p><strong class="text-slate-500 dark:text-slate-400">Ponto Elétrico:</strong> <span id="detPonto" class="text-slate-800 dark:text-slate-200">N/D</span></p>
-<p><strong class="text-slate-500 dark:text-slate-400">Alimentador:</strong> <span id="detAlimentador" class="text-slate-800 dark:text-slate-200">N/D</span></p>
-<p><strong class="text-slate-500 dark:text-slate-400">Data Abertura:</strong> <span id="detDate" class="text-slate-800 dark:text-slate-200">N/D</span> (<span id="detDaysOpen" class="text-amber-600 dark:text-amber-400 font-bold">0</span> dias decorridos)</p>
-<div id="detScheduledInfo" class="hidden pt-1 border-t border-slate-200 dark:border-slate-800 mt-1">
-<p><strong class="text-amber-600 dark:text-amber-400">Data Programada:</strong> <span id="detScheduledDate" class="text-slate-800 dark:text-slate-200 font-bold">N/D</span></p>
-<div class="mt-1">
-<span class="font-bold text-slate-500">Checklist:</span>
-<ul id="detChecklist" class="list-disc list-inside pl-1 text-[11px] text-slate-600 dark:text-slate-300"></ul>
-</div>
-</div>
-<p class="pt-1"><strong class="text-slate-500 dark:text-slate-400">Coordenadas:</strong> <span id="detCoords" class="text-slate-800 dark:text-slate-200">N/D</span></p>
-</div>
-​<div>
-<span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descrição</span>
-<p id="detDescription" class="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed break-words"></p>
-</div>
-​<div id="detPhotoContainer" class="hidden">
-<span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Foto da Vistoria</span>
-<img id="detPhoto" src="" alt="Evidência da vistoria" class="w-full h-auto max-h-52 object-cover rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950">
-</div>
-​<div>
-<span class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Histórico de Alterações</span>
-<div id="detHistoryList" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
-</div>
-</div>
-​<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-<div class="flex gap-2">
-<button id="detEditBtn" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
-✏️ Editar
-</button>
-<button id="detFiscalizarBtn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5">
-🔍 Fiscalizar
-</button>
-</div>
-<button onclick="window.closeDetailsModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold">Fechar</button>
-</div>
-</div>
-</div>
-​<!-- MODAL: CONFIRMAÇÃO -->
-<div id="confirmModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+​<div id="confirmModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
-<div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center text-xl mx-auto font-black">⚠️</div>
-<h3 id="confirmModalTitle" class="text-base font-black text-slate-900 dark:text-white">Confirmar Exclusão</h3>
-<p id="confirmModalBody" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+<h3 id="confirmModalTitle" class="text-base font-black">Confirmar</h3>
+<p id="confirmModalBody" class="text-xs text-slate-600 dark:text-slate-300"></p>
 <div class="flex gap-2 pt-2">
-<button id="confirmCancelBtn" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs">Cancelar</button>
-<button id="confirmOkBtn" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs">Excluir</button>
+<button id="confirmCancelBtn" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold">Cancelar</button>
+<button id="confirmOkBtn" class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-xs font-bold">Excluir</button>
 </div>
 </div>
 </div>
-​<!-- GLOBAL NOTICE MODAL (Text) -->
-<div id="appModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+​<div id="appModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
-<h3 id="appModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
-<p id="appModalBody" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed break-words whitespace-pre-line"></p>
+<h3 id="appModalTitle" class="text-base font-black text-amber-600">Aviso</h3>
+<p id="appModalBody" class="text-xs text-slate-600 dark:text-slate-300"></p>
 <button onclick="window.closeAppModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Entendido</button>
 </div>
 </div>
-​<!-- GLOBAL HTML MODAL (For HTML content like Route Links) -->
-<div id="appHtmlModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-<h3 id="appHtmlModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
-<div id="appHtmlModalBody" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-2"></div>
-<button onclick="window.closeAppHtmlModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Fechar</button>
-</div>
-</div>
-​<!-- JAVASCRIPT LOGIC -->
+​<!-- SCRIPT PRINCIPAL COM FIREBASE ATIVO -->
 <script>
-window.getLocalTodayDate = function() {
-const d = new Date();
-const year = d.getFullYear();
-const month = String(d.getMonth() + 1).padStart(2, '0');
-const day = String(d.getDate()).padStart(2, '0');
-return ${year}-${month}-${day};
+window.getLocalTodayDate = () => new Date().toISOString().split('T')[0];
+window.escapeHtml = (str) => String(str || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+​window.toggleTheme = () => {
+const isDark = document.documentElement.classList.toggle('dark');
+localStorage.setItem('eletrogestao_theme', isDark ? 'dark' : 'light');
+document.getElementById('themeToggleText').innerText = isDark ? 'Modo Escuro' : 'Modo Claro';
+document.getElementById('themeToggleIcon').innerText = isDark ? '🌙' : '☀️';
 };
-​window.toggleTheme = function() {
-const html = document.documentElement;
-const isDark = html.classList.contains('dark');
-if (isDark) {
-html.classList.remove('dark');
-localStorage.setItem('eletrogestao_theme', 'light');
-updateThemeUI(false);
-} else {
-html.classList.add('dark');
-localStorage.setItem('eletrogestao_theme', 'dark');
-updateThemeUI(true);
-}
-};
-​function updateThemeUI(isDark) {
-const btnText = document.getElementById('themeToggleText');
-const btnIcon = document.getElementById('themeToggleIcon');
-if (btnText) btnText.innerText = isDark ? 'Modo Escuro' : 'Modo Claro';
-if (btnIcon) btnIcon.innerText = isDark ? '🌙' : '☀️';
-​if (typeof Chart !== 'undefined' && typeof chartInstances !== 'undefined') {
-const textColor = isDark ? '#94a3b8' : '#475569';
-Object.values(chartInstances).forEach(chart => {
-if (chart && chart.options) {
-if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
-chart.options.plugins.legend.labels.color = textColor;
-}
-if (chart.options.scales) {
-if (chart.options.scales.x && chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
-if (chart.options.scales.y && chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
-}
-chart.update();
-}
+​window.showModal = (t, b) => { document.getElementById('appModalTitle').innerText = t; document.getElementById('appModalBody').innerText = b; document.getElementById('appModal').classList.remove('hidden'); };
+window.closeAppModal = () => document.getElementById('appModal').classList.add('hidden');
+​window.showConfirmModal = (t, b) => new Promise(res => {
+document.getElementById('confirmModalTitle').innerText = t;
+document.getElementById('confirmModalBody').innerText = b;
+const m = document.getElementById('confirmModal'), ok = document.getElementById('confirmOkBtn'), cancel = document.getElementById('confirmCancelBtn');
+const clean = () => { m.classList.add('hidden'); ok.onclick = null; cancel.onclick = null; };
+ok.onclick = () => { clean(); res(true); };
+cancel.onclick = () => { clean(); res(false); };
+m.classList.remove('hidden');
 });
-}
-}
-​(function initTheme() {
-const savedTheme = localStorage.getItem('eletrogestao_theme');
-if (savedTheme === 'light') {
-document.documentElement.classList.remove('dark');
-setTimeout(() => updateThemeUI(false), 50);
-} else {
-document.documentElement.classList.add('dark');
-setTimeout(() => updateThemeUI(true), 50);
-}
-})();
-​window.escapeHtml = function(str) {
-if (str === null || str === undefined) return '';
-return String(str)
-.replace(/&/g, '&')
-.replace(/</g, '<')
-.replace(/>/g, '>')
-.replace(/"/g, '"')
-.replace(/'/g, ''');
-};
-​window.calculateDaysOpen = function(dateString, status, completionDate) {
-if (!dateString) return 0;
-const parts = String(dateString).split('-');
-if (parts.length !== 3) return 0;
-const start = new Date(parts[0], parts[1] - 1, parts[2]);
-​let end = new Date();
-if (status === 'CONCLUÍDO' && completionDate) {
-const cParts = String(completionDate).split('-');
-if (cParts.length === 3) {
-end = new Date(cParts[0], cParts[1] - 1, cParts[2]);
-}
-}
-​start.setHours(0, 0, 0, 0);
-end.setHours(0, 0, 0, 0);
-​if (end < start) return 0;
-const diffTime = end - start;
-return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-};
-​let lastFocusedElement = null;
-​window.showModal = function(title, body) {
-lastFocusedElement = document.activeElement;
-document.getElementById('appModalTitle').innerText = title;
-document.getElementById('appModalBody').innerText = body;
-document.getElementById('appModal').classList.remove('hidden');
-};
-​window.closeAppModal = function() {
-document.getElementById('appModal').classList.add('hidden');
-if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
-};
-​window.showHtmlModal = function(title, htmlBody) {
-lastFocusedElement = document.activeElement;
-document.getElementById('appHtmlModalTitle').innerText = title;
-document.getElementById('appHtmlModalBody').innerHTML = htmlBody;
-document.getElementById('appHtmlModal').classList.remove('hidden');
-};
-​window.closeAppHtmlModal = function() {
-document.getElementById('appHtmlModal').classList.add('hidden');
-if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
-};
-​window.showConfirmModal = function(title, body) {
-lastFocusedElement = document.activeElement;
-return new Promise((resolve) => {
-document.getElementById('confirmModalTitle').innerText = title;
-document.getElementById('confirmModalBody').innerText = body;
-const modal = document.getElementById('confirmModal');
-const okBtn = document.getElementById('confirmOkBtn');
-const cancelBtn = document.getElementById('confirmCancelBtn');
-​const cleanup = () => {
-modal.classList.add('hidden');
-okBtn.removeEventListener('click', onOk);
-cancelBtn.removeEventListener('click', onCancel);
-if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
-};
-​const onOk = () => { cleanup(); resolve(true); };
-const onCancel = () => { cleanup(); resolve(false); };
-​okBtn.addEventListener('click', onOk);
-cancelBtn.addEventListener('click', onCancel);
-modal.classList.remove('hidden');
-});
-};
-​let ordersData = [];
-let selectedRouteIds = [];
-let map = null;
-let markersClusterGroup = null;
-let routeLayer = null;
-let currentFiscalizarId = null;
-let currentFiscalizarPhotoBase64 = null;
-let authUser = null;
-let isCompressingPhoto = false;
-let unsubscribeSnapshot = null;
-let currentListViewMode = 'rowlist';
-​let activeFilterState = {
-urgency: null,
-fiscalizada: null,
-equipe: null,
-label: null
-};
-​let currentPage = 1;
-const pageSize = 50;
-​const appId = 'eletrogestao_v2';
+​let ordersData = [], map = null, markersClusterGroup = null, currentFiscalizarId = null, authUser = null, unsubscribeSnapshot = null, currentPage = 1, chartInstances = {};
+const pageSize = 50, appId = 'eletrogestao_v2';
 ​const firebaseConfig = {
 apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
 authDomain: "eletrogestao-38596.firebaseapp.com",
@@ -939,516 +413,177 @@ databaseURL: "https://eletrogestao-38596-default-rtdb.firebaseio.com",
 projectId: "eletrogestao-38596",
 storageBucket: "eletrogestao-38596.firebasestorage.app",
 messagingSenderId: "505140333342",
-appId: "1:505140333342:web:7b24bd715fc8417e98570f",
-measurementId: "G-B7ZDW50Y4X"
+appId: "1:505140333342:web:7b24bd715fc8417e98570f"
 };
-​let db = null;
-let auth = null;
-​try {
+​let db = null, auth = null;
+try {
 if (typeof firebase !== 'undefined') {
-if (!firebase.apps.length) {
 firebase.initializeApp(firebaseConfig);
-}
 db = firebase.firestore();
 auth = firebase.auth();
 }
-} catch(e) {
-console.warn("Firebase offline.", e);
-}
-​// CARREGA DADOS LOCAIS SE HOUVER
-try {
-const local = localStorage.getItem('eletrogestao_offline_data');
-if (local) ordersData = JSON.parse(local);
-} catch(e) {}
-​window.saveLocalFallback = function() {
-try {
-localStorage.setItem('eletrogestao_offline_data', JSON.stringify(ordersData));
-} catch(e) {}
-};
-​window.normalizeDate = function(val) {
-if (!val) return window.getLocalTodayDate();
-if (typeof val === 'number') {
-const dateInfo = XLSX.SSF.parse_date_code(val);
-if (dateInfo) {
-const y = dateInfo.y;
-const m = String(dateInfo.m).padStart(2, '0');
-const d = String(dateInfo.d).padStart(2, '0');
-return ${y}-${m}-${d};
-}
-}
-const str = String(val).trim();
-if (str.match(/^\d{4}-\d{2}-\d{2}$/)) return str;
-if (str.includes('/')) {
-const parts = str.split('/');
-if (parts.length === 3) {
-if (parts[2].length === 4) {
-return ${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')};
-} else if (parts[0].length === 4) {
-return ${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')};
-}
-}
-}
-return window.getLocalTodayDate();
-};
-​window.normalizeOrder = function(data) {
-let rawLatVal = data.lat !== undefined ? data.lat : data.Latitude;
-let rawLngVal = data.lng !== undefined ? data.lng : data.Longitude;
-​if (typeof rawLatVal === 'string') rawLatVal = rawLatVal.replace(',', '.');
-if (typeof rawLngVal === 'string') rawLngVal = rawLngVal.replace(',', '.');
-​const rawLat = parseFloat(rawLatVal);
-const rawLng = parseFloat(rawLngVal);
-​const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
-const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
-​const validCategories = ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'EQUIPAMENTO', 'CHAVE', 'BYPASS', 'OUTROS'];
-let rawCat = String(data.category || data.Categoria || '').toUpperCase();
-if (rawCat === 'TRANSFORMADOR') rawCat = 'EQUIPAMENTO';
-const category = validCategories.includes(rawCat) ? rawCat : 'OUTROS';
-​const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
-let rawStatus = String(data.status || data.Status || '').toUpperCase();
-const status = validStatuses.includes(rawStatus) ? rawStatus : 'PENDENTE';
-​const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
-const rawUrg = data.urgencia || data.Urgência;
-const urgencia = validUrgencies.includes(rawUrg) ? rawUrg : 'Não Avaliada';
-​const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
-const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : (status === 'CONCLUÍDO' ? window.getLocalTodayDate() : null);
-​const scheduledDate = data.scheduledDate ? window.normalizeDate(data.scheduledDate) : null;
-const checklist = data.checklist || { croqui: false, apr: false, sgm: false };
-​const historyArr = Array.isArray(data.history) ? data.history : [];
-​let isFiscalizada = false;
-const rawFisc = data.fiscalizada !== undefined ? data.fiscalizada : data.Fiscalizada;
-if (typeof rawFisc === 'string') {
-isFiscalizada = rawFisc.toLowerCase() === 'sim' || rawFisc.toLowerCase() === 'true';
-} else {
-isFiscalizada = Boolean(rawFisc);
-}
-if (!isFiscalizada && historyArr.length > 1) {
-for (let h of historyArr) {
-if (h.message && h.message.includes('Fiscalizada')) {
-isFiscalizada = true;
-break;
-}
-}
-}
+} catch(e) { console.warn("Firebase init error", e); }
+​window.normalizeOrder = (data) => {
+let lat = parseFloat(String(data.lat || data.Latitude || '').replace(',', '.'));
+let lng = parseFloat(String(data.lng || data.Longitude || '').replace(',', '.'));
+lat = (!isNaN(lat) && lat >= -90 && lat <= 90 && lat !== 0) ? lat : null;
+lng = (!isNaN(lng) && lng >= -180 && lng <= 180 && lng !== 0) ? lng : null;
+​let cat = String(data.category || data.Categoria || 'OUTROS').toUpperCase();
+if (cat === 'TRANSFORMADOR') cat = 'EQUIPAMENTO';
+if (!['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'EQUIPAMENTO', 'CHAVE', 'BYPASS', 'OUTROS'].includes(cat)) cat = 'OUTROS';
+​let status = String(data.status || data.Status || 'PENDENTE').toUpperCase();
+if (!['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'].includes(status)) status = 'PENDENTE';
+​let urg = data.urgencia || data.Urgência || 'Não Avaliada';
+if (!['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'].includes(urg)) urg = 'Não Avaliada';
 ​return {
 id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
-osProject: String(data.osProject || data.os || data.OS || data['OS / Projeto'] || 'SEM-OS').trim(),
+osProject: String(data.osProject || data.os || data.OS || 'SEM-OS').trim(),
 origem: String(data.origem || data.Origem || 'OSM'),
-category: category,
+category: cat,
 status: status,
-urgencia: urgencia,
-fiscalizada: isFiscalizada,
-equipeSugerida: String(data.equipeSugerida || data['Equipe Sugerida'] || 'Não definida'),
-alimentador: String(data.alimentador || data.Alimentador || ''),
-pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
-orderDate: formattedDate,
-completionDate: formattedCompDate,
-scheduledDate: scheduledDate,
-checklist: checklist,
-description: String(data.description || data.Descrição || ''),
-lat: lat,
-lng: lng,
-photo: data.photo || null,
-history: historyArr
+urgencia: urg,
+fiscalizada: Boolean(data.fiscalizada || data.Fiscalizada || false),
+equipeSugerida: String(data.equipeSugerida || 'Não definida'),
+alimentador: String(data.alimentador || ''),
+pontoEletrico: String(data.pontoEletrico || ''),
+orderDate: String(data.orderDate || window.getLocalTodayDate()),
+completionDate: data.completionDate || (status === 'CONCLUÍDO' ? window.getLocalTodayDate() : null),
+scheduledDate: data.scheduledDate || null,
+checklist: data.checklist || { croqui: false, apr: false, sgm: false },
+description: String(data.description || ''),
+lat: lat, lng: lng, photo: data.photo || null
 };
 };
-​window.switchTab = function(tabName) {
-document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-​document.querySelectorAll('.nav-btn').forEach(btn => {
-btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
-btn.classList.add('text-slate-600', 'dark:text-slate-400');
-});
-document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
-btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
-btn.classList.add('text-slate-600', 'dark:text-slate-400');
-});
-​const targetTab = document.getElementById(tab-${tabName});
-if (targetTab) targetTab.classList.remove('hidden');
-​const navBtn = document.getElementById(nav-${tabName});
-if (navBtn) {
-navBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-navBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
+​if (auth) {
+auth.onAuthStateChanged(user => {
+authUser = user;
+const badge = document.getElementById('syncStatusBadge');
+const btnText = document.getElementById('userAuthBtnText');
+if (user) {
+if (badge) { badge.className = "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"; badge.innerText = "🟢 Sincronizado"; }
+if (btnText) btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Sair';
+window.setupFirestoreSync(user.uid);
+} else {
+if (badge) { badge.className = "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"; badge.innerText = "🔒 Offline / Deslogado"; }
+if (btnText) btnText.innerText = 'Entrar com Google';
 }
-​const mNavBtn = document.getElementById(mnav-${tabName});
-if (mNavBtn) {
-mNavBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-mNavBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
+});
 }
-​if (tabName === 'map') {
-setTimeout(() => {
-if (!map) window.renderMap();
-else { map.invalidateSize(); window.renderMap(); }
-}, 150);
-} else if (tabName === 'list') {
+​window.handleAuthAction = () => {
+if (!auth) return window.showModal('Erro', 'Firebase Auth indisponível.');
+if (authUser) {
+auth.signOut().then(() => window.showModal('Logout', 'Você saiu da conta.'));
+} else {
+const provider = new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider).catch(err => window.showModal('Erro no Login', err.message));
+}
+};
+​window.setupFirestoreSync = (uid) => {
+if (!db) return;
+if (unsubscribeSnapshot) unsubscribeSnapshot();
+const col = db.collection('artifacts').doc(appId).collection('users').doc(uid).collection('electrical_orders');
+unsubscribeSnapshot = col.onSnapshot(snapshot => {
+ordersData = [];
+snapshot.forEach(doc => ordersData.push(window.normalizeOrder({ id: doc.id, ...doc.data() })));
 window.renderListView();
-} else if (tabName === 'dashboard') {
-window.renderDashboard();
-}
+if (map) window.renderMap();
+}, err => console.warn("Firestore sync error", err));
 };
-​window.renderMap = function() {
-const mapContainer = document.getElementById('map');
-if (!mapContainer) return;
-​if (!map) {
+​window.saveOrderCloud = async (order) => {
+if (!db || !authUser) return;
+try {
+await db.collection('artifacts').doc(appId).collection('users').doc(authUser.uid).collection('electrical_orders').doc(order.id).set(order);
+} catch(e) { console.warn("Cloud save error", e); }
+};
+​window.deleteOrderCloud = async (id) => {
+if (!db || !authUser) return;
+try {
+await db.collection('artifacts').doc(appId).collection('users').doc(authUser.uid).collection('electrical_orders').doc(id).delete();
+} catch(e) { console.warn("Cloud delete error", e); }
+};
+​window.switchTab = (tab) => {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+document.getElementById(tab-${tab}).classList.remove('hidden');
+if (tab === 'map') setTimeout(() => { if (!map) window.renderMap(); else { map.invalidateSize(); window.renderMap(); } }, 150);
+if (tab === 'list') window.renderListView();
+if (tab === 'dashboard') window.renderDashboard();
+};
+​window.renderMap = () => {
+if (!map) {
 map = L.map('map').setView([-23.5505, -46.6333], 12);
-​const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 });
-const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 18 });
-const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 });
-​osmLayer.addTo(map);
-L.control.layers({ "OpenStreetMap": osmLayer, "Esri Satélite": esriSat, "Esri Escuro": esriDark }).addTo(map);
-​markersClusterGroup = L.markerClusterGroup();
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+markersClusterGroup = L.markerClusterGroup();
 map.addLayer(markersClusterGroup);
 }
-​if (markersClusterGroup) markersClusterGroup.clearLayers();
-​const fCat = document.getElementById('mapFilterCategory')?.value || '';
-const fStatus = document.getElementById('mapFilterStatus')?.value || '';
+markersClusterGroup.clearLayers();
 const showArchived = document.getElementById('mapShowArchivedToggle')?.checked || false;
-​const targetOrders = showArchived ? ordersData : ordersData.filter(o => o.status !== 'CONCLUÍDO');
-​const mappedOrders = targetOrders.filter(o => {
-if (o.lat === null || o.lng === null) return false;
-if (fCat && o.category !== fCat) return false;
-if (fStatus && o.status !== fStatus) return false;
-return true;
-});
-​const unmappedOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
-const unmappedBtn = document.getElementById('unmappedBtn');
-if (unmappedBtn) {
-if (unmappedOrders.length > 0) {
-unmappedBtn.classList.remove('hidden');
-document.getElementById('unmappedCountBadge').innerText = unmappedOrders.length;
-} else {
-unmappedBtn.classList.add('hidden');
-}
-}
-​document.getElementById('mapCounter').innerText = mappedOrders.length;
-​const latLngs = [];
-mappedOrders.forEach(order => {
-let color = '#f59e0b';
-if (order.status === 'PROGRAMADO') color = '#3b82f6';
-else if (order.status === 'PARCIAL') color = '#ec4899';
-else if (order.status === 'CONCLUÍDO') color = '#10b981';
-​const htmlIcon = L.divIcon({
-className: 'custom-map-marker',
-html: <div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 900; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 2px solid #ffffff;">⚡</div>,
-iconSize: [28, 28],
-iconAnchor: [14, 14]
-});
-​const mapsUrl = https://www.google.com/maps/dir/?api=1&destination=${order.lat},${order.lng};
-​const popupHtml = <div style="font-family: inherit; font-size: 12px; min-width: 200px; line-height: 1.5;"> <a href="javascript:void(0)" class="map-os-link font-bold text-amber-600 underline" data-id="${window.escapeHtml(order.id)}" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br> <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br> <strong>Status:</strong> ${window.escapeHtml(order.status)}<br> <strong>Criticidade:</strong> ${window.escapeHtml(order.urgencia)}<br> <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br> <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br> <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800"> <a href="${mapsUrl}" target="_blank" rel="noopener" class="inline-block w-full py-1.5 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-center font-black rounded-xl text-xs shadow-sm">🗺️ Rotear no Google Maps</a> </div> </div>;
-​const marker = L.marker([order.lat, order.lng], { icon: htmlIcon }).bindPopup(popupHtml);
+const target = showArchived ? ordersData : ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​target.forEach(o => {
+if (o.lat === null || o.lng === null) return;
+const color = o.status === 'PROGRAMADO' ? '#3b82f6' : o.status === 'PARCIAL' ? '#ec4899' : o.status === 'CONCLUÍDO' ? '#10b981' : '#f59e0b';
+const icon = L.divIcon({ html: <div style="background:${color}; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:10px; border:2px solid #fff;">⚡</div>, iconSize: [24,24] });
+const marker = L.marker([o.lat, o.lng], { icon }).bindPopup(<b>${window.escapeHtml(o.osProject)}</b><br>Cat: ${window.escapeHtml(o.category)}<br>Status: ${window.escapeHtml(o.status)}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${o.lat},${o.lng}" target="_blank" style="color:#f59e0b;font-weight:bold;">🗺️ Rotear no Maps</a>);
 markersClusterGroup.addLayer(marker);
-latLngs.push([order.lat, order.lng]);
 });
-​if (latLngs.length > 0 && !window._initialBoundsSet) {
-map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
-window._initialBoundsSet = true;
-}
+document.getElementById('mapCounter').innerText = target.filter(o => o.lat !== null).length;
 };
-​document.addEventListener('click', function(e) {
-const target = e.target.closest('.map-os-link');
-if (target) {
-const id = target.getAttribute('data-id');
-if (id) window.openDetailsModal(id);
-}
-});
-​window.openUnmappedModal = function() {
-const unmapped = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
-const container = document.getElementById('unmappedModalList');
-container.innerHTML = '';
-​if (unmapped.length === 0) {
-container.innerHTML = <p class="text-xs text-slate-500">Nenhuma ordem ativa sem GPS.</p>;
-} else {
-unmapped.forEach(o => {
-const item = document.createElement('div');
-item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
-item.innerHTML = <div> <span class="font-bold text-amber-600">${window.escapeHtml(o.osProject)}</span> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg">Ver</button>;
-container.appendChild(item);
-});
-​container.querySelectorAll('.unmapped-os-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-window.closeUnmappedModal();
-window.openDetailsModal(btn.getAttribute('data-id'));
-});
-});
-}
-document.getElementById('unmappedModal').classList.remove('hidden');
-};
-​window.closeUnmappedModal = function() {
-document.getElementById('unmappedModal').classList.add('hidden');
-};
-​window.openArchivedModal = function() {
-const archived = ordersData.filter(o => o.status === 'CONCLUÍDO');
-const container = document.getElementById('archivedModalList');
-container.innerHTML = '';
-​if (archived.length === 0) {
-container.innerHTML = <p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada.</p>;
-} else {
-archived.forEach(o => {
-const item = document.createElement('div');
-item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center gap-2";
-item.innerHTML = <div> <span class="font-bold text-emerald-600 dark:text-emerald-400">${window.escapeHtml(o.osProject)}</span> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg">Detalhes</button>;
-container.appendChild(item);
-});
-​container.querySelectorAll('.archived-view-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-window.closeArchivedModal();
-window.openDetailsModal(btn.getAttribute('data-id'));
-});
-});
-}
-document.getElementById('archivedModal').classList.remove('hidden');
-};
-​window.closeArchivedModal = function() {
-document.getElementById('archivedModal').classList.add('hidden');
-};
-​window.setListViewMode = function(mode) {
-currentListViewMode = mode;
-const cardsContainer = document.getElementById('ordersListCards');
-const rowContainer = document.getElementById('ordersListRowContainer');
-const cardsBtn = document.getElementById('viewModeCardsBtn');
-const rowListBtn = document.getElementById('viewModeRowListBtn');
-​if (mode === 'cards') {
-cardsContainer.classList.remove('hidden');
-rowContainer.classList.add('hidden');
-cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center';
-} else {
-cardsContainer.classList.add('hidden');
-rowContainer.classList.remove('hidden');
-rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center';
-}
-window.renderListView();
-};
-​window.toggleRouteSelection = function(id) {
-const index = selectedRouteIds.indexOf(id);
-if (index > -1) selectedRouteIds.splice(index, 1);
-else selectedRouteIds.push(id);
-document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
-window.renderListView();
-};
-​window.onSearchInput = function() { currentPage = 1; window.renderListView(); };
-window.onFilterChange = function() { currentPage = 1; window.renderListView(); };
-window.changePage = function(dir) { currentPage += dir; window.renderListView(); };
-​window.renderListView = function() {
-const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+​window.renderListView = () => {
+const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
 const fCat = document.getElementById('listFilterCategory')?.value || '';
 const fStatus = document.getElementById('listFilterStatus')?.value || '';
-const fUrgency = document.getElementById('listFilterUrgency')?.value || '';
-const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
-​const archivedCount = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-document.getElementById('archivedCountBadge').innerText = archivedCount;
-​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-const filtered = activeOrders.filter(o => {
+const fUrg = document.getElementById('listFilterUrgency')?.value || '';
+​document.getElementById('archivedCountBadge').innerText = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
+const active = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​const filtered = active.filter(o => {
 if (fCat && o.category !== fCat) return false;
 if (fStatus && o.status !== fStatus) return false;
-if (fUrgency && o.urgencia !== fUrgency) return false;
-if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
-if (activeFilterState.fiscalizada !== null && o.fiscalizada !== activeFilterState.fiscalizada) return false;
-if (activeFilterState.equipe && o.equipeSugerida !== activeFilterState.equipe) return false;
-​if (!searchVal) return true;
-return o.osProject.toLowerCase().includes(searchVal) ||
-o.alimentador.toLowerCase().includes(searchVal) ||
-o.description.toLowerCase().includes(searchVal) ||
-o.pontoEletrico.toLowerCase().includes(searchVal);
+if (fUrg && o.urgencia !== fUrg) return false;
+if (search && !o.osProject.toLowerCase().includes(search) && !o.alimentador.toLowerCase().includes(search) && !o.pontoEletrico.toLowerCase().includes(search)) return false;
+return true;
 });
-​filtered.sort((a, b) => {
-if (sortOrder === 'urgency') {
-const urgWeights = { 'Emergência': 4, 'Alta': 3, 'Média': 2, 'Baixa': 1, 'Não Avaliada': 0 };
-const wA = urgWeights[a.urgencia] || 0;
-const wB = urgWeights[b.urgencia] || 0;
-if (wA !== wB) return wB - wA;
-}
-const dateA = new Date(a.orderDate || '2025-01-01');
-const dateB = new Date(b.orderDate || '2025-01-01');
-if (sortOrder === 'oldest') return dateA - dateB;
-return dateB - dateA;
-});
-​document.getElementById('navDemandCount').innerText = activeOrders.length;
-const totalItems = filtered.length;
-const totalPages = Math.ceil(totalItems / pageSize) || 1;
-if (currentPage > totalPages) currentPage = totalPages;
-if (currentPage < 1) currentPage = 1;
-​const startIndex = (currentPage - 1) * pageSize;
-const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
-​document.getElementById('paginationInfo').innerText = Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ativas;
-document.getElementById('prevPageBtn').disabled = currentPage <= 1;
-document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
-​const rowContainer = document.getElementById('ordersListRowContainer');
-rowContainer.innerHTML = '';
-​if (paginatedItems.length === 0) {
-rowContainer.innerHTML = <div class="text-center py-12 text-slate-400 text-xs font-medium">Nenhuma ordem encontrada. Cadastre uma nova na aba "Nova Ordem".</div>;
+​document.getElementById('navDemandCount').innerText = active.length;
+const container = document.getElementById('ordersListRowContainer');
+container.innerHTML = '';
+​if (filtered.length === 0) {
+container.innerHTML = <div class="text-center py-12 text-slate-400 text-xs font-medium">Nenhuma ordem encontrada. Faça login ou cadastre uma nova ordem.</div>;
 return;
 }
-​paginatedItems.forEach(order => {
-const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-const isSelected = selectedRouteIds.includes(order.id);
-let statusColor = 'text-amber-700 bg-amber-500/10 border-amber-500/20';
-if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 bg-sky-500/10 border-sky-500/20';
-else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 bg-pink-500/10 border-pink-500/20';
-​const cardRow = document.createElement('div');
-cardRow.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3;
-​cardRow.innerHTML = `
-<div class="flex items-center gap-3 flex-wrap">
-<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer">
-<div>
-<div class="flex items-center gap-2 flex-wrap">
-<span class="font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400">{window.escapeHtml(order.osProject)}</span>
-<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded border border-amber-500/20 uppercase">{window.escapeHtml(order.category)}</span>
-<span class="bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded border border-red-500/20 uppercase">CRIT: {window.escapeHtml(order.urgencia || 'Não Avaliada')}</span>
-<span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${statusColor}">{window.escapeHtml(order.status)}</span>
-{order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
-</div>
-<div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
-<span>PT: <strong>{window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
-<span>|</span>
-<span>Alt: <strong>${window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
-<span>|</span>
-<span>📅 {window.escapeHtml(order.orderDate)} (<strong>{daysOpen} dias</strong>)</span>
-</div>
-</div>
-</div>
-​<div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="Ver no Mapa">📍</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="Detalhes">👁️</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="WhatsApp">🔗</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs">🔍 Fiscalizar</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn w-8 h-8 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center text-xs" title="Excluir">🗑️</button>
-</div>
-`;
-rowContainer.appendChild(cardRow);
-});
-​rowContainer.querySelectorAll('.select-route-chk').forEach(chk => {
-chk.addEventListener('change', () => window.toggleRouteSelection(chk.getAttribute('data-id')));
-});
-rowContainer.querySelectorAll('.details-btn').forEach(btn => {
-btn.addEventListener('click', () => window.openDetailsModal(btn.getAttribute('data-id')));
-});
-rowContainer.querySelectorAll('.fiscalizar-btn').forEach(btn => {
-btn.addEventListener('click', () => window.openFiscalizarModal(btn.getAttribute('data-id')));
-});
-rowContainer.querySelectorAll('.delete-btn').forEach(btn => {
-btn.addEventListener('click', () => window.deleteOrder(btn.getAttribute('data-id')));
-});
-rowContainer.querySelectorAll('.map-focus-btn').forEach(btn => {
-btn.addEventListener('click', () => window.focusOrderOnMap(btn.getAttribute('data-id')));
-});
-rowContainer.querySelectorAll('.share-btn').forEach(btn => {
-btn.addEventListener('click', () => window.shareOrderWhatsApp(btn.getAttribute('data-id')));
+​filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize).forEach(o => {
+const card = document.createElement('div');
+card.className = bg-white dark:bg-slate-900 border ${o.fiscalizada ? 'border-emerald-500/50' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs;
+card.innerHTML = <div> <div class="flex items-center gap-2 flex-wrap"> <span class="font-black text-amber-600 dark:text-amber-400">${window.escapeHtml(o.osProject)}</span> <span class="bg-amber-500/10 text-amber-700 px-2 py-0.5 rounded font-bold">${window.escapeHtml(o.category)}</span> <span class="bg-red-500/10 text-red-600 px-2 py-0.5 rounded font-bold">CRIT: ${window.escapeHtml(o.urgencia)}</span> <span class="px-2.5 py-0.5 rounded-full font-bold bg-amber-500/10 text-amber-600">${window.escapeHtml(o.status)}</span> ${o.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-full font-bold">🔍 Fiscalizada</span>' : ''} </div> <div class="text-slate-500 mt-1">PT: <strong>${window.escapeHtml(o.pontoEletrico || 'N/D')}</strong> | Alt: <strong>${window.escapeHtml(o.alimentador || 'N/D')}</strong> | Data: ${window.escapeHtml(o.orderDate)}</div> </div> <div class="flex items-center gap-1.5 self-end md:self-center"> <button onclick="window.openDetailsModal('${o.id}')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">👁️</button> <button onclick="window.openFiscalizarModal('${o.id}')" class="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-black">🔍 Fiscalizar</button> <button onclick="window.deleteOrder('${o.id}')" class="w-8 h-8 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center">🗑️</button> </div>;
+container.appendChild(card);
 });
 };
-​window.focusOrderOnMap = function(id) {
-const order = ordersData.find(o => o.id === id);
-if (!order || order.lat === null || order.lng === null) {
-window.showModal('Aviso', 'Ordem sem coordenadas GPS.');
-return;
-}
-window.switchTab('map');
-if (map) map.setView([order.lat, order.lng], 16);
-};
-​window.shareOrderWhatsApp = function(id) {
-const order = ordersData.find(o => o.id === id);
-if (!order) return;
-const text = *OS: ${order.osProject}*\nCat: ${order.category}\nStatus: ${order.status}\nCriticidade: ${order.urgencia};
-window.open(https://api.whatsapp.com/send?text=${encodeURIComponent(text)}, '_blank');
-};
-​window.filterByDashboard = function(type, param) {
-activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
-document.getElementById('listFilterStatus').value = '';
-document.getElementById('listFilterCategory').value = '';
-document.getElementById('listFilterUrgency').value = '';
-document.getElementById('searchInput').value = '';
-​if (type === 'pendentes') document.getElementById('listFilterStatus').value = 'PENDENTE';
-else if (type === 'concluidas') { window.openArchivedModal(); return; }
-else if (type === 'fiscalizadas') activeFilterState.fiscalizada = true;
-else if (type === 'emergencias') activeFilterState.urgency = 'Emergência';
-​currentPage = 1;
-window.switchTab('list');
-};
-​window.clearDashboardFilters = function() {
-activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
-document.getElementById('listFilterStatus').value = '';
-document.getElementById('listFilterCategory').value = '';
-document.getElementById('listFilterUrgency').value = '';
-document.getElementById('searchInput').value = '';
-window.renderListView();
-};
-​let chartInstances = {};
-window.renderDashboard = function() {
-const isDark = document.documentElement.classList.contains('dark');
-const textColor = isDark ? '#94a3b8' : '#475569';
-const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-​document.getElementById('dashTotal').innerText = activeOrders.length;
-document.getElementById('dashPendentes').innerText = activeOrders.filter(o => o.status === 'PENDENTE').length;
+​window.renderDashboard = () => {
+const active = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+document.getElementById('dashTotal').innerText = active.length;
+document.getElementById('dashPendentes').innerText = active.filter(o => o.status === 'PENDENTE').length;
 document.getElementById('dashConcluidas').innerText = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-​const fisc = ordersData.filter(o => o.fiscalizada).length;
-document.getElementById('dashFiscalizadas').innerText = ${ordersData.length > 0 ? Math.round((fisc/ordersData.length)*100) : 0}%;
-document.getElementById('dashEmergencias').innerText = activeOrders.filter(o => o.urgencia === 'Emergência').length;
-document.getElementById('dashMediaDias').innerText = 2d;
-​const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
-activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
+const fisc = ordersData.filter(o => o.fiscalizada).length;
+document.getElementById('dashFiscalizadas').innerText = ${ordersData.length ? Math.round((fisc/ordersData.length)*100) : 0}%;
+document.getElementById('dashEmergencias').innerText = active.filter(o => o.urgencia === 'Emergência').length;
+​const counts = (key) => { const r = {}; active.forEach(o => r[o[key]] = (r[o[key]] || 0) + 1); return r; };
+const statusC = counts('status'), urgC = counts('urgencia'), catC = counts('category');
 ​if (chartInstances.status) chartInstances.status.destroy();
-chartInstances.status = new Chart(document.getElementById('statusChart'), {
-type: 'doughnut',
-data: { labels: Object.keys(statusCounts), datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'] }] },
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-});
-​const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
-activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
+chartInstances.status = new Chart(document.getElementById('statusChart'), { type: 'doughnut', data: { labels: Object.keys(statusC), datasets: [{ data: Object.values(statusC), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'] }] }, options: { responsive: true, maintainAspectRatio: false } });
 ​if (chartInstances.urgencia) chartInstances.urgencia.destroy();
-chartInstances.urgencia = new Chart(document.getElementById('urgenciaChart'), {
-type: 'bar',
-data: { labels: Object.keys(urgCounts), datasets: [{ data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'] }] },
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
-});
-​const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'EQUIPAMENTO': 0, 'CHAVE': 0, 'BYPASS': 0, 'OUTROS': 0 };
-activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
+chartInstances.urgencia = new Chart(document.getElementById('urgenciaChart'), { type: 'bar', data: { labels: Object.keys(urgC), datasets: [{ data: Object.values(urgC), backgroundColor: '#f59e0b' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 ​if (chartInstances.category) chartInstances.category.destroy();
-chartInstances.category = new Chart(document.getElementById('categoryChart'), {
-type: 'polarArea',
-data: { labels: Object.keys(catCounts), datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'] }] },
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-});
-​const execCounts = { 'Total': ordersData.length, 'Fiscalizadas': fisc, 'Pendentes': activeOrders.length, 'Concluídas': ordersData.filter(o => o.status === 'CONCLUÍDO').length };
-if (chartInstances.executive) chartInstances.executive.destroy();
-chartInstances.executive = new Chart(document.getElementById('executiveChart'), {
-type: 'bar',
-data: { labels: Object.keys(execCounts), datasets: [{ data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#059669'] }] },
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
-});
+chartInstances.category = new Chart(document.getElementById('categoryChart'), { type: 'polarArea', data: { labels: Object.keys(catC), datasets: [{ data: Object.values(catC), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+​if (chartInstances.executive) chartInstances.executive.destroy();
+chartInstances.executive = new Chart(document.getElementById('executiveChart'), { type: 'bar', data: { labels: ['Total', 'Fiscalizadas', 'Pendentes', 'Concluídas'], datasets: [{ data: [ordersData.length, fisc, active.length, ordersData.filter(o => o.status==='CONCLUÍDO').length], backgroundColor: '#10b981' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 };
-​window.openChartFocusModal = function(key) { window.openArchivedModal(); };
-window.closeChartFocusModal = function() {};
-​window.downloadExcel = function() {
-const ws = XLSX.utils.json_to_sheet(ordersData);
-const wb = XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb, ws, "Demandas");
-XLSX.writeFile(wb, "EletroGestao.xlsx");
-};
-​window.generateRoute = function() {
-if (selectedRouteIds.length < 2) { window.showModal('Aviso', 'Selecione pelo menos 2 ordens.'); return; }
-window.switchTab('map');
-};
-​window.toggleCreateScheduledFields = function() {
-const status = document.getElementById('status').value;
-document.getElementById('createScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
-};
-​window.toggleEditScheduledFields = function() {
-const status = document.getElementById('editStatus').value;
-document.getElementById('editScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
-};
-​window.toggleFiscalizarScheduledFields = function() {
-const status = document.getElementById('fiscalizarStatusSelect').value;
-document.getElementById('fiscalizarScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
-};
-​window.handleCreateOrder = function(e) {
+​window.toggleCreateScheduledFields = () => document.getElementById('createScheduledSection').classList.toggle('hidden', document.getElementById('status').value !== 'PROGRAMADO');
+window.toggleFiscalizarScheduledFields = () => document.getElementById('fiscalizarScheduledSection').classList.toggle('hidden', document.getElementById('fiscalizarStatusSelect').value !== 'PROGRAMADO');
+​window.handleCreateOrder = async (e) => {
 e.preventDefault();
-const raw = {
+const raw = window.normalizeOrder({
 id: 'ord_' + Math.random().toString(36).substr(2, 9),
 osProject: document.getElementById('osProject').value.trim(),
 origem: document.getElementById('origem').value,
 category: document.getElementById('category').value,
 status: document.getElementById('status').value,
-urgencia: 'Não Avaliada',
-fiscalizada: false,
 equipeSugerida: document.getElementById('equipeSugerida').value,
 alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
 pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
@@ -1457,154 +592,89 @@ scheduledDate: document.getElementById('scheduledDate').value || null,
 checklist: { croqui: document.getElementById('chkCroqui').checked, apr: document.getElementById('chkApr').checked, sgm: document.getElementById('chkSgm').checked },
 description: document.getElementById('description').value.trim(),
 lat: document.getElementById('lat').value ? parseFloat(document.getElementById('lat').value) : null,
-lng: document.getElementById('lng').value ? parseFloat(document.getElementById('lng').value) : null,
-history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Criado localmente.' }]
-};
-const normalized = window.normalizeOrder(raw);
-ordersData.unshift(normalized);
-window.saveLocalFallback();
+lng: document.getElementById('lng').value ? parseFloat(document.getElementById('lng').value) : null
+});
+ordersData.unshift(raw);
+await window.saveOrderCloud(raw);
 e.target.reset();
 window.showModal('Sucesso', 'Ordem cadastrada com sucesso!');
 window.switchTab('list');
 };
-​window.useCurrentLocation = function() {
-navigator.geolocation?.getCurrentPosition(pos => {
+​window.useCurrentLocation = () => navigator.geolocation?.getCurrentPosition(pos => {
 document.getElementById('lat').value = pos.coords.latitude.toFixed(6);
 document.getElementById('lng').value = pos.coords.longitude.toFixed(6);
 });
-};
-window.useCurrentLocationEdit = function() {
-navigator.geolocation?.getCurrentPosition(pos => {
-document.getElementById('editLat').value = pos.coords.latitude.toFixed(6);
-document.getElementById('editLng').value = pos.coords.longitude.toFixed(6);
-});
-};
-​window.processExcelImport = function(e) {
+​window.processExcelImport = async (e) => {
 const file = e.target.files[0];
 if (!file) return;
 const reader = new FileReader();
-reader.onload = function(evt) {
+reader.onload = async (evt) => {
 try {
-const workbook = XLSX.read(evt.target.result, { type: 'array' });
-const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-json.forEach(row => {
-ordersData.push(window.normalizeOrder(row));
-});
-window.saveLocalFallback();
-window.showModal('Sucesso', ${json.length} ordens importadas com sucesso!);
+const wb = XLSX.read(evt.target.result, { type: 'array' });
+const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+for (let r of rows) {
+const item = window.normalizeOrder(r);
+ordersData.push(item);
+await window.saveOrderCloud(item);
+}
+window.showModal('Sucesso', 'Planilha importada com sucesso!');
 window.switchTab('list');
 } catch(err) { window.showModal('Erro', err.message); }
 };
 reader.readAsArrayBuffer(file);
 };
-​window.openFiscalizarModal = function(id) {
-currentFiscalizarId = id;
-const order = ordersData.find(o => o.id === id);
-if (!order) return;
-document.getElementById('fiscalizarModalTitle').innerText = Fiscalizar: ${order.osProject};
-document.getElementById('fiscalizarStatusSelect').value = order.status;
-document.getElementById('fiscalizarUrgenciaSelect').value = order.urgencia;
-document.getElementById('fiscalizarModal').classList.remove('hidden');
-};
-window.closeFiscalizarModal = function() { document.getElementById('fiscalizarModal').classList.add('hidden'); };
-window.processFiscalizarPhoto = function(e) {
-const file = e.target.files[0];
-if (!file) return;
-const reader = new FileReader();
-reader.onload = evt => { currentFiscalizarPhotoBase64 = evt.target.result; };
-reader.readAsDataURL(file);
-};
-window.saveFiscalizarChanges = function() {
-const order = ordersData.find(o => o.id === currentFiscalizarId);
-if (!order) return;
-order.status = document.getElementById('fiscalizarStatusSelect').value;
-order.urgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
-order.fiscalizada = true;
-if (currentFiscalizarPhotoBase64) order.photo = currentFiscalizarPhotoBase64;
-if (order.status === 'CONCLUÍDO') order.completionDate = window.getLocalTodayDate();
-window.saveLocalFallback();
+​window.openFiscalizarModal = (id) => { currentFiscalizarId = id; document.getElementById('fiscalizarModal').classList.remove('hidden'); };
+window.closeFiscalizarModal = () => document.getElementById('fiscalizarModal').classList.add('hidden');
+window.saveFiscalizarChanges = async () => {
+const o = ordersData.find(x => x.id === currentFiscalizarId);
+if (!o) return;
+o.status = document.getElementById('fiscalizarStatusSelect').value;
+o.urgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
+o.fiscalizada = true;
+if (o.status === 'CONCLUÍDO') o.completionDate = window.getLocalTodayDate();
+await window.saveOrderCloud(o);
 window.closeFiscalizarModal();
 window.renderListView();
-window.showModal('Sucesso', 'Vistoria salva com sucesso!');
+window.showModal('Sucesso', 'Vistoria salva!');
 };
-​window.openEditModal = function(id) {
-const order = ordersData.find(o => o.id === id);
-if (!order) return;
-document.getElementById('editInternalId').value = order.id;
-document.getElementById('editOsProject').value = order.osProject;
-document.getElementById('editOrigem').value = order.origem;
-document.getElementById('editCategory').value = order.category;
-document.getElementById('editEquipe').value = order.equipeSugerida;
-document.getElementById('editAlimentador').value = order.alimentador || '';
-document.getElementById('editPonto').value = order.pontoEletrico || '';
-document.getElementById('editDate').value = order.orderDate;
-document.getElementById('editStatus').value = order.status;
-document.getElementById('editLat').value = order.lat !== null ? order.lat : '';
-document.getElementById('editLng').value = order.lng !== null ? order.lng : '';
-document.getElementById('editDescription').value = order.description || '';
-document.getElementById('editModal').classList.remove('hidden');
-};
-window.closeEditModal = function() { document.getElementById('editModal').classList.add('hidden'); };
-window.saveEditedOrder = function() {
-const id = document.getElementById('editInternalId').value;
-const order = ordersData.find(o => o.id === id);
-if (!order) return;
-order.osProject = document.getElementById('editOsProject').value;
-order.category = document.getElementById('editCategory').value;
-order.status = document.getElementById('editStatus').value;
-order.description = document.getElementById('editDescription').value;
-window.saveLocalFallback();
-window.closeEditModal();
-window.renderListView();
-window.showModal('Sucesso', 'Ordem atualizada!');
-};
-​window.openDetailsModal = function(id) {
-const order = ordersData.find(o => o.id === id);
-if (!order) return;
-document.getElementById('detOsTitle').innerText = order.osProject;
-document.getElementById('detOrigem').innerText = order.origem;
-document.getElementById('detUrgencia').innerText = order.urgencia;
-document.getElementById('detStatus').innerText = order.status;
-document.getElementById('detEquipe').innerText = order.equipeSugerida;
-document.getElementById('detPonto').innerText = order.pontoEletrico || 'N/D';
-document.getElementById('detAlimentador').innerText = order.alimentador || 'N/D';
-document.getElementById('detDate').innerText = order.orderDate;
-document.getElementById('detDescription').innerText = order.description || 'N/D';
-​document.getElementById('detEditBtn').onclick = () => { window.closeDetailsModal(); window.openEditModal(order.id); };
-document.getElementById('detFiscalizarBtn').onclick = () => { window.closeDetailsModal(); window.openFiscalizarModal(order.id); };
+​window.openDetailsModal = (id) => {
+const o = ordersData.find(x => x.id === id);
+if (!o) return;
+document.getElementById('detOsTitle').innerText = o.osProject;
+document.getElementById('detOrigem').innerText = o.origem;
+document.getElementById('detUrgencia').innerText = o.urgencia;
+document.getElementById('detStatus').innerText = o.status;
+document.getElementById('detEquipe').innerText = o.equipeSugerida;
+document.getElementById('detPonto').innerText = o.pontoEletrico || 'N/D';
+document.getElementById('detAlimentador').innerText = o.alimentador || 'N/D';
+document.getElementById('detDate').innerText = o.orderDate;
+document.getElementById('detDescription').innerText = o.description || 'N/D';
 document.getElementById('detailsModal').classList.remove('hidden');
 };
-window.closeDetailsModal = function() { document.getElementById('detailsModal').classList.add('hidden'); };
-​window.deleteOrder = async function(id) {
-const ok = await window.showConfirmModal('Excluir', 'Tem certeza?');
-if (!ok) return;
-ordersData = ordersData.filter(o => o.id !== id);
-window.saveLocalFallback();
-window.renderListView();
+window.closeDetailsModal = () => document.getElementById('detailsModal').classList.add('hidden');
+​window.openArchivedModal = () => {
+const c = document.getElementById('archivedModalList'); c.innerHTML = '';
+const arch = ordersData.filter(o => o.status === 'CONCLUÍDO');
+if (!arch.length) c.innerHTML = <p class="text-xs text-slate-500 text-center py-4">Nenhuma ordem concluída.</p>;
+arch.forEach(o => c.innerHTML += <div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl flex justify-between items-center text-xs"><span><strong>${window.escapeHtml(o.osProject)}</strong> (${window.escapeHtml(o.category)})</span><button onclick="window.openDetailsModal('${o.id}')" class="text-emerald-500 font-bold">Ver</button></div>);
+document.getElementById('archivedModal').classList.remove('hidden');
 };
-​window.handleAuthAction = function() {
-if (auth && auth.currentUser) auth.signOut();
-else if (auth) {
-const provider = new firebase.auth.GoogleAuthProvider();
-auth.signInWithRedirect(provider).catch(e => window.showModal('Erro', e.message));
-} else {
-window.showModal('Aviso', 'Modo offline operando com armazenamento local.');
+window.closeArchivedModal = () => document.getElementById('archivedModal').classList.add('hidden');
+​window.deleteOrder = async (id) => {
+if (await window.showConfirmModal('Excluir', 'Tem certeza?')) {
+ordersData = ordersData.filter(o => o.id !== id);
+await window.deleteOrderCloud(id);
+window.renderListView();
 }
+};
+​window.downloadExcel = () => {
+const ws = XLSX.utils.json_to_sheet(ordersData), wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, "Demandas");
+XLSX.writeFile(wb, "EletroGestao.xlsx");
 };
 ​window.addEventListener('DOMContentLoaded', () => {
-const dateInp = document.getElementById('orderDate');
-if (dateInp) dateInp.value = window.getLocalTodayDate();
+document.getElementById('orderDate').value = window.getLocalTodayDate();
 window.renderListView();
-​if (auth) {
-auth.onAuthStateChanged(user => {
-const btnText = document.getElementById('userAuthBtnText');
-if (user) {
-btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Conta';
-} else {
-btnText.innerText = 'Entrar com Google';
-}
-});
-}
 });
 </script>
 </body>
