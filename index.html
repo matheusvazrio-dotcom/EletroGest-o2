@@ -963,7 +963,9 @@ measurementId: "G-B7ZDW50Y4X"
 let auth = null;
 ​try {
 if (typeof firebase !== 'undefined') {
+if (!firebase.apps.length) {
 firebase.initializeApp(firebaseConfig);
+}
 db = firebase.firestore();
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
 console.warn("Firestore offline persistence notice:", err.code);
@@ -2312,11 +2314,22 @@ document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.ad
 });
 ​const dateInp = document.getElementById('orderDate');
 if (dateInp) dateInp.value = window.getLocalTodayDate();
+​// Timeout preventivo: se o Firebase demorar mais de 2s para responder, libera a interface
+const initTimeout = setTimeout(() => {
+if (document.getElementById('syncStatusBadge').innerText.includes('Conectando')) {
+window.updateSyncBadge('⚠️ Modo Offline', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
+const loggedOutView = document.getElementById('loggedOutView');
+if (loggedOutView && (!auth || !auth.currentUser)) {
+loggedOutView.classList.remove('hidden');
+}
+}
+}, 2000);
 ​if (auth) {
 auth.getRedirectResult().catch(err => {
 console.error("Redirect auth error:", err);
 });
 ​auth.onAuthStateChanged(user => {
+clearTimeout(initTimeout);
 authUser = user;
 const btnText = document.getElementById('userAuthBtnText');
 const desktopNav = document.getElementById('desktopNav');
