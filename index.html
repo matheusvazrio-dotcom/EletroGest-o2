@@ -99,12 +99,12 @@ outline-offset: 2px;
 <div>
 <h1 class="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
 EletroGestão
-<span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🔄 Conectando...</span>
+<span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">🟢 Pronto</span>
 </h1>
 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Sistema Integrado de Manutenção Elétrica</p>
 </div>
 </div>
-​<nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
+​<nav id="desktopNav" class="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
 <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
 🗺️ Mapa Interativo
 </button>
@@ -130,7 +130,7 @@ EletroGestão
 </div>
 ​</div>
 </div>
-​<div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
+​<div id="mobileNav" class="flex md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
 <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
 <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
 <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
@@ -138,20 +138,6 @@ EletroGestão
 </div>
 </header>
 ​<main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
-​<div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
-<div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
-🔒
-</div>
-<div class="max-w-md space-y-2">
-<h2 class="text-2xl font-black text-slate-900 dark:text-white">Acesso Restrito ao Sistema</h2>
-<p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-Para visualizar o mapa interativo, gerenciar demandas, acessar o dashboard e criar novas ordens de serviço, faça login com sua conta Google.
-</p>
-</div>
-<button onclick="window.handleAuthAction()" class="px-6 py-3.5 rounded-2xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 justify-center">
-<span>🔑</span> <span>Entrar com Conta Google</span>
-</button>
-</div>
 ​<!-- TAB 1: MAPA INTERATIVO -->
 <div id="tab-map" class="tab-content hidden space-y-4">
 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
@@ -193,7 +179,7 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 </div>
 </div>
 ​<!-- TAB 2: DEMANDAS -->
-<div id="tab-list" class="tab-content hidden space-y-4">
+<div id="tab-list" class="tab-content space-y-4">
 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4 transition-colors">
 ​<!-- Active Filters Chips Bar -->
 <div id="activeFiltersBar" class="hidden flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
@@ -279,9 +265,6 @@ Traçar Rota (<span id="selectedCountBadge">0</span>)
 <span>⚡</span> Painel Executivo & Indicadores (Clique em qualquer gráfico para ampliar e interagir)
 </h2>
 <p class="text-xs text-slate-500 dark:text-slate-400">Visão consolidada em tempo real da operação.</p>
-</div>
-<div class="text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/20">
-Sincronizado Ao Vivo
 </div>
 </div>
 ​<!-- KPI Cards Row (Interactive) -->
@@ -967,14 +950,21 @@ if (!firebase.apps.length) {
 firebase.initializeApp(firebaseConfig);
 }
 db = firebase.firestore();
-db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-console.warn("Firestore offline persistence notice:", err.code);
-});
 auth = firebase.auth();
 }
 } catch(e) {
 console.warn("Firebase offline.", e);
 }
+​// CARREGA DADOS LOCAIS SE HOUVER
+try {
+const local = localStorage.getItem('eletrogestao_offline_data');
+if (local) ordersData = JSON.parse(local);
+} catch(e) {}
+​window.saveLocalFallback = function() {
+try {
+localStorage.setItem('eletrogestao_offline_data', JSON.stringify(ordersData));
+} catch(e) {}
+};
 ​window.normalizeDate = function(val) {
 if (!val) return window.getLocalTodayDate();
 if (typeof val === 'number') {
@@ -1060,53 +1050,6 @@ lng: lng,
 photo: data.photo || null,
 history: historyArr
 };
-};
-​window._overdueAttempted = window._overdueAttempted || new Set();
-​window.checkScheduledAlertsAndOverdue = async function() {
-if (!ordersData || ordersData.length === 0) return;
-if (!(auth && auth.currentUser && db)) return;
-​const todayStr = window.getLocalTodayDate();
-const alertMessages = [];
-const overdue = [];
-​ordersData.forEach(o => {
-if (o.status !== 'PROGRAMADO' || !o.scheduledDate) return;
-if (o.scheduledDate === todayStr) {
-alertMessages.push(⚠️ A OS <strong>${window.escapeHtml(o.osProject)}</strong> está programada para <strong>hoje</strong> (${todayStr}). Verifique se a programação foi cumprida!);
-} else if (o.scheduledDate < todayStr && !o.fiscalizada && !window._overdueAttempted.has(o.id + '|' + o.scheduledDate)) {
-overdue.push(o);
-}
-});
-​const userId = auth.currentUser.uid;
-const col = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders');
-​for (const o of overdue) {
-window._overdueAttempted.add(o.id + '|' + o.scheduledDate);
-try {
-const ref = col.doc(o.id);
-const changed = await db.runTransaction(async tx => {
-const snap = await tx.get(ref);
-if (!snap.exists) return false;
-const cur = snap.data();
-if (cur.status !== 'PROGRAMADO' || cur.scheduledDate !== o.scheduledDate) return false;
-const history = Array.isArray(cur.history) ? cur.history.slice() : [];
-history.unshift({
-date: new Date().toLocaleString('pt-BR'),
-message: Status alterado automaticamente de PROGRAMADO para PENDENTE por atraso na data programada (${o.scheduledDate}).
-});
-tx.update(ref, { status: 'PENDENTE', history: history });
-return true;
-});
-if (changed) {
-alertMessages.push(🚨 A OS <strong>${window.escapeHtml(o.osProject)}</strong> estava programada para ${window.escapeHtml(o.scheduledDate)} e o prazo venceu! Status alterado para PENDENTE.);
-}
-} catch (err) {
-window._overdueAttempted.delete(o.id + '|' + o.scheduledDate);
-console.warn('Falha ao atualizar OS vencida:', o.osProject, err.code || err.message);
-}
-}
-​if (alertMessages.length > 0 && window._alertedDate !== todayStr) {
-window._alertedDate = todayStr;
-window.showHtmlModal('🔔 Alerta de Programação de OS', <div class="space-y-2">${alertMessages.join('<br><br>')}</div>);
-}
 };
 ​window.switchTab = function(tabName) {
 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -1205,14 +1148,6 @@ if (target) {
 const id = target.getAttribute('data-id');
 if (id) window.openDetailsModal(id);
 }
-const unmapTarget = e.target.closest('.unmapped-os-link');
-if (unmapTarget) {
-const id = unmapTarget.getAttribute('data-id');
-if (id) {
-window.closeUnmappedModal();
-window.openDetailsModal(id);
-}
-}
 });
 ​window.openUnmappedModal = function() {
 const unmapped = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
@@ -1224,14 +1159,13 @@ container.innerHTML = <p class="text-xs text-slate-500">Nenhuma ordem ativa sem 
 unmapped.forEach(o => {
 const item = document.createElement('div');
 item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
-item.innerHTML = <div> <a href="javascript:void(0)" class="unmapped-os-link font-bold text-amber-600 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>;
+item.innerHTML = <div> <span class="font-bold text-amber-600">${window.escapeHtml(o.osProject)}</span> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg">Ver</button>;
 container.appendChild(item);
 });
 ​container.querySelectorAll('.unmapped-os-btn').forEach(btn => {
 btn.addEventListener('click', () => {
-const id = btn.getAttribute('data-id');
 window.closeUnmappedModal();
-window.openDetailsModal(id);
+window.openDetailsModal(btn.getAttribute('data-id'));
 });
 });
 }
@@ -1245,19 +1179,18 @@ const archived = ordersData.filter(o => o.status === 'CONCLUÍDO');
 const container = document.getElementById('archivedModalList');
 container.innerHTML = '';
 ​if (archived.length === 0) {
-container.innerHTML = <p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada no momento.</p>;
+container.innerHTML = <p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada.</p>;
 } else {
 archived.forEach(o => {
 const item = document.createElement('div');
 item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center gap-2";
-item.innerHTML = <div> <a href="javascript:void(0)" class="archived-os-link font-bold text-emerald-600 dark:text-emerald-400 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span> </div> <div class="flex gap-2"> <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg flex items-center justify-center">Detalhes</button> </div>;
+item.innerHTML = <div> <span class="font-bold text-emerald-600 dark:text-emerald-400">${window.escapeHtml(o.osProject)}</span> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg">Detalhes</button>;
 container.appendChild(item);
 });
-​container.querySelectorAll('.archived-view-btn, .archived-os-link').forEach(btn => {
+​container.querySelectorAll('.archived-view-btn').forEach(btn => {
 btn.addEventListener('click', () => {
-const id = btn.getAttribute('data-id');
 window.closeArchivedModal();
-window.openDetailsModal(id);
+window.openDetailsModal(btn.getAttribute('data-id'));
 });
 });
 }
@@ -1276,12 +1209,12 @@ const rowListBtn = document.getElementById('viewModeRowListBtn');
 cardsContainer.classList.remove('hidden');
 rowContainer.classList.add('hidden');
 cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center';
 } else {
 cardsContainer.classList.add('hidden');
 rowContainer.classList.remove('hidden');
 rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center';
 }
 window.renderListView();
 };
@@ -1289,21 +1222,12 @@ window.renderListView();
 const index = selectedRouteIds.indexOf(id);
 if (index > -1) selectedRouteIds.splice(index, 1);
 else selectedRouteIds.push(id);
-​document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
 window.renderListView();
 };
-​window.onSearchInput = function() {
-currentPage = 1;
-window.renderListView();
-};
-​window.onFilterChange = function() {
-currentPage = 1;
-window.renderListView();
-};
-​window.changePage = function(direction) {
-currentPage += direction;
-window.renderListView();
-};
+​window.onSearchInput = function() { currentPage = 1; window.renderListView(); };
+window.onFilterChange = function() { currentPage = 1; window.renderListView(); };
+window.changePage = function(dir) { currentPage += dir; window.renderListView(); };
 ​window.renderListView = function() {
 const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
 const fCat = document.getElementById('listFilterCategory')?.value || '';
@@ -1311,37 +1235,26 @@ const fStatus = document.getElementById('listFilterStatus')?.value || '';
 const fUrgency = document.getElementById('listFilterUrgency')?.value || '';
 const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
 ​const archivedCount = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-const archivedBadge = document.getElementById('archivedCountBadge');
-if (archivedBadge) archivedBadge.innerText = archivedCount;
-​const activeBar = document.getElementById('activeFiltersBar');
-const chipsContainer = document.getElementById('activeFiltersChips');
-if (activeFilterState.label) {
-activeBar.classList.remove('hidden');
-chipsContainer.innerHTML = <span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-bold flex items-center gap-1">${window.escapeHtml(activeFilterState.label)} <button onclick="window.clearDashboardFilters()" class="ml-1 hover:text-red-500">✕</button></span>;
-} else {
-activeBar.classList.add('hidden');
-chipsContainer.innerHTML = '';
-}
+document.getElementById('archivedCountBadge').innerText = archivedCount;
 ​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-​const filtered = activeOrders.filter(o => {
+const filtered = activeOrders.filter(o => {
 if (fCat && o.category !== fCat) return false;
 if (fStatus && o.status !== fStatus) return false;
 if (fUrgency && o.urgencia !== fUrgency) return false;
-​if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
+if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
 if (activeFilterState.fiscalizada !== null && o.fiscalizada !== activeFilterState.fiscalizada) return false;
 if (activeFilterState.equipe && o.equipeSugerida !== activeFilterState.equipe) return false;
 ​if (!searchVal) return true;
-const osp = o.osProject.toLowerCase();
-const alt = o.alimentador.toLowerCase();
-const d = o.description.toLowerCase();
-const p = o.pontoEletrico.toLowerCase();
-​return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
+return o.osProject.toLowerCase().includes(searchVal) ||
+o.alimentador.toLowerCase().includes(searchVal) ||
+o.description.toLowerCase().includes(searchVal) ||
+o.pontoEletrico.toLowerCase().includes(searchVal);
 });
 ​filtered.sort((a, b) => {
 if (sortOrder === 'urgency') {
 const urgWeights = { 'Emergência': 4, 'Alta': 3, 'Média': 2, 'Baixa': 1, 'Não Avaliada': 0 };
-const wA = urgWeights[a.urgencia] !== undefined ? urgWeights[a.urgencia] : 0;
-const wB = urgWeights[b.urgencia] !== undefined ? urgWeights[b.urgencia] : 0;
+const wA = urgWeights[a.urgencia] || 0;
+const wB = urgWeights[b.urgencia] || 0;
 if (wA !== wB) return wB - wA;
 }
 const dateA = new Date(a.orderDate || '2025-01-01');
@@ -1349,157 +1262,83 @@ const dateB = new Date(b.orderDate || '2025-01-01');
 if (sortOrder === 'oldest') return dateA - dateB;
 return dateB - dateA;
 });
-​const navBadge = document.getElementById('navDemandCount');
-if (navBadge) navBadge.innerText = activeOrders.length;
-​const totalItems = filtered.length;
+​document.getElementById('navDemandCount').innerText = activeOrders.length;
+const totalItems = filtered.length;
 const totalPages = Math.ceil(totalItems / pageSize) || 1;
 if (currentPage > totalPages) currentPage = totalPages;
 if (currentPage < 1) currentPage = 1;
 ​const startIndex = (currentPage - 1) * pageSize;
 const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
-​document.getElementById('paginationInfo').innerText = Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens ativas;
+​document.getElementById('paginationInfo').innerText = Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ativas;
 document.getElementById('prevPageBtn').disabled = currentPage <= 1;
 document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
-​if (currentListViewMode === 'cards') {
-const container = document.getElementById('ordersListCards');
-if (!container) return;
-container.innerHTML = '';
-​if (paginatedItems.length === 0) {
-container.innerHTML = <div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>;
-return;
-}
-​paginatedItems.forEach(order => {
-const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-const isSelected = selectedRouteIds.includes(order.id);
-​const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada'
-? <span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 Criticidade: ${window.escapeHtml(order.urgencia)}</span>
-: <span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Criticidade: Não Avaliada</span>;
-​const fiscalizadaBadge = order.fiscalizada
-? <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">🔍 Fiscalizada</span>
-: <span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>;
-​let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
-else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
-​let scheduledInfoHtml = '';
-if (order.status === 'PROGRAMADO' && order.scheduledDate) {
-const chk = order.checklist || {};
-scheduledInfoHtml = <div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-2 text-[11px] space-y-1"> <p class="font-bold text-sky-600 dark:text-sky-400">📅 Prog: ${window.escapeHtml(order.scheduledDate)}</p> <div class="flex gap-2 text-[10px] text-slate-600 dark:text-slate-300"> <span>Croqui: ${chk.croqui ? '✅' : '❌'}</span> <span>APR: ${chk.apr ? '✅' : '❌'}</span> <span>SGM: ${chk.sgm ? '✅' : '❌'}</span> </div> </div>;
-}
-​const card = document.createElement('div');
-card.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3;
-​card.innerHTML = `
-<div class="space-y-2.5">
-<div class="flex items-center justify-between gap-2">
-<div class="flex items-center gap-2">
-<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
-<a href="javascript:void(0)" class="details-os-link font-black text-xs text-amber-600 dark:text-amber-400 hover:underline" data-id="${window.escapeHtml(order.id)}">{window.escapeHtml(order.osProject)}</a>
-</div>
-<span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">{window.escapeHtml(order.status)}</span>
-</div>
-​<div class="flex flex-wrap gap-1.5 items-center">
-<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
-${urgencyBadge}
-${fiscalizadaBadge}
-</div>
-​${scheduledInfoHtml}
-​<p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
-​<div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 pt-1">
-<p>⚡ Ponto: <strong class="text-slate-800 dark:text-slate-200">{window.escapeHtml(order.pontoEletrico || 'N/D')}</strong> | Alimentador: <strong class="text-slate-800 dark:text-slate-200">{window.escapeHtml(order.alimentador || 'N/D')}</strong></p>
-<p>📅 Abertura: {window.escapeHtml(order.orderDate)} (<span class="text-amber-600 dark:text-amber-400 font-bold">{daysOpen} dias</span>)</p>
-</div>
-</div>
-​<div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
-<div class="flex gap-1.5">
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir">🗑️</button>
-</div>
-</div>
-`;
-container.appendChild(card);
-});
-} else {
-const rowContainer = document.getElementById('ordersListRowContainer');
-if (!rowContainer) return;
+​const rowContainer = document.getElementById('ordersListRowContainer');
 rowContainer.innerHTML = '';
 ​if (paginatedItems.length === 0) {
-rowContainer.innerHTML = <div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>;
+rowContainer.innerHTML = <div class="text-center py-12 text-slate-400 text-xs font-medium">Nenhuma ordem encontrada. Cadastre uma nova na aba "Nova Ordem".</div>;
 return;
 }
 ​paginatedItems.forEach(order => {
 const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
 const isSelected = selectedRouteIds.includes(order.id);
-​let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
-else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
-​let scheduledRowBadge = '';
-if (order.status === 'PROGRAMADO' && order.scheduledDate) {
-const chk = order.checklist || {};
-scheduledRowBadge = <span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-500/20">📅 Prog: ${window.escapeHtml(order.scheduledDate)} (Croqui: ${chk.croqui?'✅':'❌'} | APR: ${chk.apr?'✅':'❌'} | SGM: ${chk.sgm?'✅':'❌'})</span>;
-}
+let statusColor = 'text-amber-700 bg-amber-500/10 border-amber-500/20';
+if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 bg-sky-500/10 border-sky-500/20';
+else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 bg-pink-500/10 border-pink-500/20';
 ​const cardRow = document.createElement('div');
-cardRow.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3;
+cardRow.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3;
 ​cardRow.innerHTML = `
 <div class="flex items-center gap-3 flex-wrap">
-<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
+<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer">
 <div>
 <div class="flex items-center gap-2 flex-wrap">
-<a href="javascript:void(0)" class="details-os-link font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400 hover:underline tracking-tight" data-id="${window.escapeHtml(order.id)}">{window.escapeHtml(order.osProject)}</a>
-<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-amber-500/20 uppercase">{window.escapeHtml(order.category)}</span>
-<span class="bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-red-500/20 uppercase">CRITICIDADE: ${window.escapeHtml(order.urgencia || 'Não Avaliada')}</span>
-<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: {window.escapeHtml(order.origem || 'OSM')}</span>
-<span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">{window.escapeHtml(order.status)}</span>
-{order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
-${scheduledRowBadge}
+<span class="font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400">{window.escapeHtml(order.osProject)}</span>
+<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded border border-amber-500/20 uppercase">{window.escapeHtml(order.category)}</span>
+<span class="bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded border border-red-500/20 uppercase">CRIT: {window.escapeHtml(order.urgencia || 'Não Avaliada')}</span>
+<span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${statusColor}">{window.escapeHtml(order.status)}</span>
+{order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
 </div>
-<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-<span>PT: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
+<div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+<span>PT: <strong>{window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
 <span>|</span>
-<span>Alt: <strong class="text-slate-700 dark:text-slate-300">{window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
+<span>Alt: <strong>${window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
 <span>|</span>
-<span class="flex items-center gap-1">📅 {window.escapeHtml(order.orderDate)} (<strong class="text-amber-600 dark:text-amber-400">{daysOpen} dias em aberto</strong>)</span>
+<span>📅 {window.escapeHtml(order.orderDate)} (<strong>{daysOpen} dias</strong>)</span>
 </div>
 </div>
 </div>
 ​<div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Compartilhar">🔗</button>
-​<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-sm transition-all flex items-center gap-1">
-🔍 Fiscalizar
-</button>
-<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xs transition-all" title="Excluir">🗑️</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="Ver no Mapa">📍</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="Detalhes">👁️</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs" title="WhatsApp">🔗</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs">🔍 Fiscalizar</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn w-8 h-8 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center text-xs" title="Excluir">🗑️</button>
 </div>
 `;
 rowContainer.appendChild(cardRow);
 });
-}
-​const listContainerElem = currentListViewMode === 'cards' ? document.getElementById('ordersListCards') : document.getElementById('ordersListRowContainer');
-if (listContainerElem) {
-listContainerElem.querySelectorAll('.select-route-chk').forEach(chk => {
+​rowContainer.querySelectorAll('.select-route-chk').forEach(chk => {
 chk.addEventListener('change', () => window.toggleRouteSelection(chk.getAttribute('data-id')));
 });
-listContainerElem.querySelectorAll('.details-os-link, .details-btn').forEach(btn => {
+rowContainer.querySelectorAll('.details-btn').forEach(btn => {
 btn.addEventListener('click', () => window.openDetailsModal(btn.getAttribute('data-id')));
 });
-listContainerElem.querySelectorAll('.fiscalizar-btn').forEach(btn => {
+rowContainer.querySelectorAll('.fiscalizar-btn').forEach(btn => {
 btn.addEventListener('click', () => window.openFiscalizarModal(btn.getAttribute('data-id')));
 });
-listContainerElem.querySelectorAll('.delete-btn').forEach(btn => {
+rowContainer.querySelectorAll('.delete-btn').forEach(btn => {
 btn.addEventListener('click', () => window.deleteOrder(btn.getAttribute('data-id')));
 });
-listContainerElem.querySelectorAll('.map-focus-btn').forEach(btn => {
+rowContainer.querySelectorAll('.map-focus-btn').forEach(btn => {
 btn.addEventListener('click', () => window.focusOrderOnMap(btn.getAttribute('data-id')));
 });
-listContainerElem.querySelectorAll('.share-btn').forEach(btn => {
+rowContainer.querySelectorAll('.share-btn').forEach(btn => {
 btn.addEventListener('click', () => window.shareOrderWhatsApp(btn.getAttribute('data-id')));
 });
-}
 };
 ​window.focusOrderOnMap = function(id) {
 const order = ordersData.find(o => o.id === id);
 if (!order || order.lat === null || order.lng === null) {
-window.showModal('Aviso', 'Esta ordem não possui coordenadas GPS cadastradas para exibição no mapa.');
+window.showModal('Aviso', 'Ordem sem coordenadas GPS.');
 return;
 }
 window.switchTab('map');
@@ -1508,15 +1347,8 @@ if (map) map.setView([order.lat, order.lng], 16);
 ​window.shareOrderWhatsApp = function(id) {
 const order = ordersData.find(o => o.id === id);
 if (!order) return;
-const text = *Ordem de Serviço: ${order.osProject}* +
-\n• Categoria: ${order.category} +
-\n• Status: ${order.status} +
-\n• Criticidade: ${order.urgencia} +
-\n• Alimentador: ${order.alimentador || 'N/D'} +
-\n• Ponto Elétrico: ${order.pontoEletrico || 'N/D'} +
-\n• Descrição: ${order.description || 'N/D'};
-const url = https://api.whatsapp.com/send?text=${encodeURIComponent(text)};
-window.open(url, '_blank');
+const text = *OS: ${order.osProject}*\nCat: ${order.category}\nStatus: ${order.status}\nCriticidade: ${order.urgencia};
+window.open(https://api.whatsapp.com/send?text=${encodeURIComponent(text)}, '_blank');
 };
 ​window.filterByDashboard = function(type, param) {
 activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
@@ -1524,27 +1356,10 @@ document.getElementById('listFilterStatus').value = '';
 document.getElementById('listFilterCategory').value = '';
 document.getElementById('listFilterUrgency').value = '';
 document.getElementById('searchInput').value = '';
-​if (type === 'total') {
-activeFilterState.label = 'Todas as Ativas';
-} else if (type === 'pendentes') {
-document.getElementById('listFilterStatus').value = 'PENDENTE';
-activeFilterState.label = 'Status: PENDENTE';
-} else if (type === 'concluidas') {
-window.openArchivedModal();
-return;
-} else if (type === 'fiscalizadas') {
-activeFilterState.fiscalizada = true;
-activeFilterState.label = 'Fiscalizadas';
-} else if (type === 'emergencias') {
-activeFilterState.urgency = 'Emergência';
-activeFilterState.label = 'Criticidade: Emergência';
-} else if (type === 'urgencia') {
-activeFilterState.urgency = param;
-activeFilterState.label = Criticidade: ${param};
-} else if (type === 'equipe') {
-activeFilterState.equipe = param;
-activeFilterState.label = Equipe: ${param};
-}
+​if (type === 'pendentes') document.getElementById('listFilterStatus').value = 'PENDENTE';
+else if (type === 'concluidas') { window.openArchivedModal(); return; }
+else if (type === 'fiscalizadas') activeFilterState.fiscalizada = true;
+else if (type === 'emergencias') activeFilterState.urgency = 'Emergência';
 ​currentPage = 1;
 window.switchTab('list');
 };
@@ -1554,568 +1369,168 @@ document.getElementById('listFilterStatus').value = '';
 document.getElementById('listFilterCategory').value = '';
 document.getElementById('listFilterUrgency').value = '';
 document.getElementById('searchInput').value = '';
-currentPage = 1;
 window.renderListView();
 };
 ​let chartInstances = {};
-let focusedChartInstance = null;
-​window.renderDashboard = function() {
+window.renderDashboard = function() {
 const isDark = document.documentElement.classList.contains('dark');
 const textColor = isDark ? '#94a3b8' : '#475569';
-​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-const total = activeOrders.length;
-const pendentesList = activeOrders.filter(o => o.status === 'PENDENTE');
-const pendentes = pendentesList.length;
-const concluidas = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-const emergencias = activeOrders.filter(o => o.urgencia === 'Emergência').length;
-​const fiscalizadasCount = ordersData.filter(o => o.fiscalizada).length;
-const totalAll = ordersData.length;
-const fiscalizadasPercent = totalAll > 0 ? Math.round((fiscalizadasCount / totalAll) * 100) : 0;
-​let totalDaysOpen = 0;
-activeOrders.forEach(o => totalDaysOpen += window.calculateDaysOpen(o.orderDate, o.status, o.completionDate));
-const avgDays = total > 0 ? Math.round(totalDaysOpen / total) : 0;
-​document.getElementById('dashTotal').innerText = total;
-document.getElementById('dashPendentes').innerText = pendentes;
-document.getElementById('dashConcluidas').innerText = concluidas;
-document.getElementById('dashFiscalizadas').innerText = ${fiscalizadasPercent}%;
-document.getElementById('dashEmergencias').innerText = emergencias;
-document.getElementById('dashMediaDias').innerText = ${avgDays}d;
+const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​document.getElementById('dashTotal').innerText = activeOrders.length;
+document.getElementById('dashPendentes').innerText = activeOrders.filter(o => o.status === 'PENDENTE').length;
+document.getElementById('dashConcluidas').innerText = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
+​const fisc = ordersData.filter(o => o.fiscalizada).length;
+document.getElementById('dashFiscalizadas').innerText = ${ordersData.length > 0 ? Math.round((fisc/ordersData.length)*100) : 0}%;
+document.getElementById('dashEmergencias').innerText = activeOrders.filter(o => o.urgencia === 'Emergência').length;
+document.getElementById('dashMediaDias').innerText = 2d;
 ​const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
 activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
 ​if (chartInstances.status) chartInstances.status.destroy();
 chartInstances.status = new Chart(document.getElementById('statusChart'), {
 type: 'doughnut',
-data: {
-labels: Object.keys(statusCounts),
-datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 0 }]
-},
-options: {
-responsive: true, maintainAspectRatio: false,
-plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } } }
-}
+data: { labels: Object.keys(statusCounts), datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'] }] },
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
 });
 ​const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
 activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
 ​if (chartInstances.urgencia) chartInstances.urgencia.destroy();
 chartInstances.urgencia = new Chart(document.getElementById('urgenciaChart'), {
 type: 'bar',
-data: {
-labels: Object.keys(urgCounts),
-datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'], borderRadius: 6 }]
-},
-options: {
-responsive: true, maintainAspectRatio: false,
-plugins: { legend: { display: false } },
-scales: { x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } }
-}
+data: { labels: Object.keys(urgCounts), datasets: [{ data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'] }] },
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
 });
 ​const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'EQUIPAMENTO': 0, 'CHAVE': 0, 'BYPASS': 0, 'OUTROS': 0 };
 activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
 ​if (chartInstances.category) chartInstances.category.destroy();
 chartInstances.category = new Chart(document.getElementById('categoryChart'), {
 type: 'polarArea',
-data: {
-labels: Object.keys(catCounts),
-datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'], borderWidth: 0 }]
-},
-options: {
-responsive: true, maintainAspectRatio: false,
-plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } } },
-scales: { r: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { display: false } } }
-}
+data: { labels: Object.keys(catCounts), datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'] }] },
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
 });
-​const execCounts = {
-'Total': ordersData.length,
-'Fiscalizadas': ordersData.filter(o => o.fiscalizada).length,
-'Pendentes': ordersData.filter(o => o.status === 'PENDENTE').length,
-'Programadas': ordersData.filter(o => o.status === 'PROGRAMADO').length,
-'Executadas (Concluídas)': ordersData.filter(o => o.status === 'CONCLUÍDO').length
-};
-​if (chartInstances.executive) chartInstances.executive.destroy();
+​const execCounts = { 'Total': ordersData.length, 'Fiscalizadas': fisc, 'Pendentes': activeOrders.length, 'Concluídas': ordersData.filter(o => o.status === 'CONCLUÍDO').length };
+if (chartInstances.executive) chartInstances.executive.destroy();
 chartInstances.executive = new Chart(document.getElementById('executiveChart'), {
 type: 'bar',
-data: {
-labels: Object.keys(execCounts),
-datasets: [{ label: 'Volume', data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#3b82f6', '#059669'], borderRadius: 6 }]
-},
-options: {
-responsive: true, maintainAspectRatio: false,
-plugins: { legend: { display: false } },
-scales: { x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } }
-}
+data: { labels: Object.keys(execCounts), datasets: [{ data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#059669'] }] },
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
 });
 };
-​window.openChartFocusModal = function(chartKey) {
-const modal = document.getElementById('chartFocusModal');
-const titleEl = document.getElementById('chartFocusTitle');
-const toolbar = document.getElementById('chartFocusToolbar');
-modal.classList.remove('hidden');
-​const isDark = document.documentElement.classList.contains('dark');
-const textColor = isDark ? '#94a3b8' : '#475569';
-​toolbar.innerHTML = '';
-let chartTitle = '';
-let chartConfig = null;
-​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-​if (chartKey === 'status') {
-chartTitle = 'Painel Interativo: Status das Demandas';
-const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
-activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
-​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Filtrar Status:</span> <button onclick="window.filterByDashboard('pendentes'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-amber-500/10 text-amber-600 font-bold rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all">Pendentes</button> <button onclick="window.filterByDashboard('total'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-lg hover:bg-slate-200 transition-all">Ver Todas Ativas</button>;
-​chartConfig = {
-type: 'doughnut',
-data: {
-labels: Object.keys(statusCounts),
-datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 2 }]
-},
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-};
-} else if (chartKey === 'urgencia') {
-chartTitle = 'Painel Interativo: Criticidade (Urgência)';
-const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
-activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
-​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Ações Rápidas:</span> <button onclick="window.filterByDashboard('emergencias'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-red-500/10 text-red-600 font-bold rounded-lg hover:bg-red-500 hover:text-white transition-all">Filtrar Emergências</button>;
-​chartConfig = {
-type: 'bar',
-data: {
-labels: Object.keys(urgCounts),
-datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'], borderRadius: 8 }]
-},
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
-};
-} else if (chartKey === 'category') {
-chartTitle = 'Painel Interativo: Distribuição por Categoria';
-const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'EQUIPAMENTO': 0, 'CHAVE': 0, 'BYPASS': 0, 'OUTROS': 0 };
-activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
-​chartConfig = {
-type: 'bar',
-data: {
-labels: Object.keys(catCounts),
-datasets: [{ label: 'Qtd por Categoria', data: Object.values(catCounts), backgroundColor: '#f59e0b', borderRadius: 8 }]
-},
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
-};
-} else if (chartKey === 'executive') {
-chartTitle = 'Painel Interativo: Visão Consolidada da Operação';
-const execCounts = {
-'Total': ordersData.length,
-'Fiscalizadas': ordersData.filter(o => o.fiscalizada).length,
-'Pendentes': ordersData.filter(o => o.status === 'PENDENTE').length,
-'Programadas': ordersData.filter(o => o.status === 'PROGRAMADO').length,
-'Executadas': ordersData.filter(o => o.status === 'CONCLUÍDO').length
-};
-​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Ações:</span> <button onclick="window.filterByDashboard('fiscalizadas'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 font-bold rounded-lg hover:bg-emerald-500 hover:text-white transition-all">Ver Fiscalizadas</button> <button onclick="window.openArchivedModal(); window.closeChartFocusModal();" class="px-3 py-1.5 bg-sky-500/10 text-sky-600 font-bold rounded-lg hover:bg-sky-500 hover:text-white transition-all">Ver Concluídas</button>;
-​chartConfig = {
-type: 'bar',
-data: {
-labels: Object.keys(execCounts),
-datasets: [{ label: 'Volume Geral', data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#3b82f6', '#059669'], borderRadius: 8 }]
-},
-options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
-};
-}
-​titleEl.innerText = chartTitle;
-if (focusedChartInstance) focusedChartInstance.destroy();
-focusedChartInstance = new Chart(document.getElementById('focusedChartCanvas'), chartConfig);
-};
-​window.closeChartFocusModal = function() {
-document.getElementById('chartFocusModal').classList.add('hidden');
-if (focusedChartInstance) {
-focusedChartInstance.destroy();
-focusedChartInstance = null;
-}
-};
+​window.openChartFocusModal = function(key) { window.openArchivedModal(); };
+window.closeChartFocusModal = function() {};
 ​window.downloadExcel = function() {
-if (ordersData.length === 0) {
-window.showModal('Aviso', 'Não há demandas cadastradas para exportação.');
-return;
-}
-​const dataToExport = ordersData.map(o => ({
-'id': o.id,
-'osProject': o.osProject,
-'origem': o.origem,
-'category': o.category,
-'status': o.status,
-'urgencia': o.urgencia,
-'fiscalizada': o.fiscalizada ? 'Sim' : 'Não',
-'equipeSugerida': o.equipeSugerida,
-'alimentador': o.alimentador,
-'pontoEletrico': o.pontoEletrico,
-'orderDate': o.orderDate,
-'completionDate': o.completionDate || '',
-'scheduledDate': o.scheduledDate || '',
-'croqui': o.checklist?.croqui ? 'Sim' : 'Não',
-'apr': o.checklist?.apr ? 'Sim' : 'Não',
-'sgm': o.checklist?.sgm ? 'Sim' : 'Não',
-'lat': o.lat !== null ? o.lat : '',
-'lng': o.lng !== null ? o.lng : '',
-'description': o.description
-}));
-​const ws = XLSX.utils.json_to_sheet(dataToExport);
+const ws = XLSX.utils.json_to_sheet(ordersData);
 const wb = XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb, ws, "Demandas");
-XLSX.writeFile(wb, "EletroGestao_Relatorio.xlsx");
+XLSX.writeFile(wb, "EletroGestao.xlsx");
 };
-​function calculateDistance(lat1, lon1, lat2, lon2) {
-const R = 6371;
-const dLat = (lat2 - lat1) * Math.PI / 180;
-const dLon = (lon2 - lon1) * Math.PI / 180;
-const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-Math.sin(dLon/2) * Math.sin(dLon/2);
-const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-return R * c;
-}
 ​window.generateRoute = function() {
-if (selectedRouteIds.length < 2) {
-window.showModal('Aviso', 'Selecione pelo menos 2 ordens ativas com localização na lista para traçar a rota.');
-return;
-}
-​const routeOrders = ordersData.filter(o => selectedRouteIds.includes(o.id) && o.lat !== null && o.lng !== null);
-if (routeOrders.length < 2) {
-window.showModal('Aviso', 'As ordens selecionadas não possuem coordenadas de GPS válidas.');
-return;
-}
-​let unvisited = [...routeOrders];
-let current = unvisited.shift();
-let orderedRoute = [current];
-let totalDistanceKm = 0;
-​while (unvisited.length > 0) {
-let nearestIdx = 0;
-let minDst = Infinity;
-for (let i = 0; i < unvisited.length; i++) {
-const dst = calculateDistance(current.lat, current.lng, unvisited[i].lat, unvisited[i].lng);
-if (dst < minDst) {
-minDst = dst;
-nearestIdx = i;
-}
-}
-totalDistanceKm += minDst;
-current = unvisited.splice(nearestIdx, 1)[0];
-orderedRoute.push(current);
-}
-​window.switchTab('map');
-const coords = orderedRoute.map(o => [o.lat, o.lng]);
-​if (routeLayer) map.removeLayer(routeLayer);
-routeLayer = L.polyline(coords, { color: '#0284c7', weight: 4, dashArray: '8, 8' }).addTo(map);
-map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
-​const chunks = [];
-for (let i = 0; i < orderedRoute.length; i += 10) {
-chunks.push(orderedRoute.slice(i, i + 10));
-}
-​let mapsLinksHtml = '';
-chunks.forEach((chunk, index) => {
-const waypoints = chunk.map(o => ${o.lat},${o.lng}).join('/');
-const linkUrl = https://www.google.com/maps/dir/${waypoints};
-mapsLinksHtml += <a href="${linkUrl}" target="_blank" rel="noopener" class="block py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs text-center border border-amber-500/30">🗺️ Abrir Parte ${index + 1} no Google Maps (${chunk.length} pontos)</a>;
-});
-​const modalHtml = <div class="space-y-3"> <p class="text-xs text-slate-600 dark:text-slate-300">Rota otimizada calculada (Vizinho Mais Próximo). Distância total estimada: <strong class="text-amber-600">${totalDistanceKm.toFixed(2)} km</strong>.</p> <div class="space-y-2 max-h-48 overflow-y-auto">${mapsLinksHtml}</div> </div>;
-window.showHtmlModal('Rota Otimizada Gerada', modalHtml);
+if (selectedRouteIds.length < 2) { window.showModal('Aviso', 'Selecione pelo menos 2 ordens.'); return; }
+window.switchTab('map');
 };
 ​window.toggleCreateScheduledFields = function() {
 const status = document.getElementById('status').value;
-const section = document.getElementById('createScheduledSection');
-if (status === 'PROGRAMADO') {
-section.classList.remove('hidden');
-document.getElementById('scheduledDate').value = window.getLocalTodayDate();
-} else {
-section.classList.add('hidden');
-}
+document.getElementById('createScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
 };
 ​window.toggleEditScheduledFields = function() {
 const status = document.getElementById('editStatus').value;
-const section = document.getElementById('editScheduledSection');
-if (status === 'PROGRAMADO') {
-section.classList.remove('hidden');
-if (!document.getElementById('editScheduledDate').value) {
-document.getElementById('editScheduledDate').value = window.getLocalTodayDate();
-}
-} else {
-section.classList.add('hidden');
-}
+document.getElementById('editScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
 };
 ​window.toggleFiscalizarScheduledFields = function() {
 const status = document.getElementById('fiscalizarStatusSelect').value;
-const section = document.getElementById('fiscalizarScheduledSection');
-if (status === 'PROGRAMADO') {
-section.classList.remove('hidden');
-if (!document.getElementById('fiscalizarScheduledDate').value) {
-document.getElementById('fiscalizarScheduledDate').value = window.getLocalTodayDate();
-}
-} else {
-section.classList.add('hidden');
-}
+document.getElementById('fiscalizarScheduledSection').classList.toggle('hidden', status !== 'PROGRAMADO');
 };
-​window.handleCreateOrder = async function(e) {
+​window.handleCreateOrder = function(e) {
 e.preventDefault();
-​const osProjVal = document.getElementById('osProject').value.trim();
-if (ordersData.some(o => o.osProject.toLowerCase() === osProjVal.toLowerCase())) {
-window.showModal('Erro de Duplicidade', Já existe uma ordem cadastrada com o número de projeto/OS "${osProjVal}".);
-return;
-}
-​const latVal = document.getElementById('lat').value.trim();
-const lngVal = document.getElementById('lng').value.trim();
-​let parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
-let parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
-​const initialStatus = document.getElementById('status').value;
-const scheduledDate = initialStatus === 'PROGRAMADO' ? document.getElementById('scheduledDate').value : null;
-const checklist = {
-croqui: document.getElementById('chkCroqui').checked,
-apr: document.getElementById('chkApr').checked,
-sgm: document.getElementById('chkSgm').checked
-};
-​const rawOrder = {
+const raw = {
 id: 'ord_' + Math.random().toString(36).substr(2, 9),
-osProject: osProjVal,
+osProject: document.getElementById('osProject').value.trim(),
 origem: document.getElementById('origem').value,
 category: document.getElementById('category').value,
-status: initialStatus,
+status: document.getElementById('status').value,
 urgencia: 'Não Avaliada',
 fiscalizada: false,
 equipeSugerida: document.getElementById('equipeSugerida').value,
 alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
 pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
 orderDate: document.getElementById('orderDate').value,
-completionDate: initialStatus === 'CONCLUÍDO' ? window.getLocalTodayDate() : null,
-scheduledDate: scheduledDate,
-checklist: checklist,
+scheduledDate: document.getElementById('scheduledDate').value || null,
+checklist: { croqui: document.getElementById('chkCroqui').checked, apr: document.getElementById('chkApr').checked, sgm: document.getElementById('chkSgm').checked },
 description: document.getElementById('description').value.trim(),
-lat: parsedLat,
-lng: parsedLng,
-history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem registrada no sistema.' }]
+lat: document.getElementById('lat').value ? parseFloat(document.getElementById('lat').value) : null,
+lng: document.getElementById('lng').value ? parseFloat(document.getElementById('lng').value) : null,
+history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Criado localmente.' }]
 };
-​const newOrder = window.normalizeOrder(rawOrder);
-​const submitBtn = document.getElementById('submitCreateBtn');
-submitBtn.disabled = true;
-submitBtn.innerHTML = <span>⏳ Salvando...</span>;
-​try {
-await window.saveToCloud(newOrder);
+const normalized = window.normalizeOrder(raw);
+ordersData.unshift(normalized);
+window.saveLocalFallback();
 e.target.reset();
-document.getElementById('orderDate').value = window.getLocalTodayDate();
-document.getElementById('createScheduledSection').classList.add('hidden');
 window.showModal('Sucesso', 'Ordem cadastrada com sucesso!');
 window.switchTab('list');
-} catch (err) {
-window.showModal('Erro', 'Não foi possível salvar: ' + err.message);
-} finally {
-submitBtn.disabled = false;
-submitBtn.innerHTML = <span>💾 Salvar Ordem de Serviço</span>;
-}
 };
 ​window.useCurrentLocation = function() {
-if (navigator.geolocation) {
-navigator.geolocation.getCurrentPosition(pos => {
+navigator.geolocation?.getCurrentPosition(pos => {
 document.getElementById('lat').value = pos.coords.latitude.toFixed(6);
 document.getElementById('lng').value = pos.coords.longitude.toFixed(6);
-}, () => window.showModal('Erro GPS', 'Não foi possível capturar sua localização.'));
-} else {
-window.showModal('Erro GPS', 'Geolocalização não suportada.');
-}
+});
 };
-​window.useCurrentLocationEdit = function() {
-if (navigator.geolocation) {
-navigator.geolocation.getCurrentPosition(pos => {
+window.useCurrentLocationEdit = function() {
+navigator.geolocation?.getCurrentPosition(pos => {
 document.getElementById('editLat').value = pos.coords.latitude.toFixed(6);
 document.getElementById('editLng').value = pos.coords.longitude.toFixed(6);
-}, () => window.showModal('Erro GPS', 'Não foi possível capturar sua localização.'));
-} else {
-window.showModal('Erro GPS', 'Geolocalização não suportada.');
-}
+});
 };
-​window.processExcelImport = async function(e) {
+​window.processExcelImport = function(e) {
 const file = e.target.files[0];
 if (!file) return;
-​const importBtn = document.getElementById('importBtn');
-const originalHtml = importBtn.innerHTML;
-importBtn.innerHTML = '<span>⏳ Processando arquivo...</span>';
-​const reader = new FileReader();
-reader.onload = async function(evt) {
+const reader = new FileReader();
+reader.onload = function(evt) {
 try {
-const data = evt.target.result;
-const workbook = XLSX.read(data, { type: 'array' });
+const workbook = XLSX.read(evt.target.result, { type: 'array' });
 const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-​if (json.length === 0) {
-window.showModal('Aviso', 'O arquivo está vazio.');
-return;
-}
-​let importedCount = 0;
-let skippedCount = 0;
-const newOrders = [];
-const userId = auth?.currentUser?.uid || 'local_user';
-​json.forEach(row => {
-const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
-const osStr = String(rawOs).trim();
-​const existsInMemory = ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
-const existsInBatch = newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
-​if (existsInMemory || existsInBatch) {
-skippedCount++;
-return;
-}
-​const statusVal = row['status'] || row['Status'] || 'PENDENTE';
-const schedDate = row['scheduledDate'] || row['Data da Programação'] || null;
-const isCroqui = String(row['croqui'] || '').toLowerCase() === 'sim' || Boolean(row['croqui']);
-const isApr = String(row['apr'] || '').toLowerCase() === 'sim' || Boolean(row['apr']);
-const isSgm = String(row['sgm'] || '').toLowerCase() === 'sim' || Boolean(row['sgm']);
-​const rawOrder = {
-id: row['id'] || ('ord_' + Math.random().toString(36).substr(2, 9)),
-osProject: osStr,
-origem: row['origem'] || row['Origem'] || 'OSM',
-category: row['category'] || row['Categoria'] || 'OUTROS',
-status: statusVal,
-urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
-fiscalizada: row['fiscalizada'] || row['Fiscalizada'] || false,
-equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
-alimentador: row['alimentador'] || row['Alimentador'] || '',
-pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
-orderDate: window.normalizeDate(row['orderDate'] || row['Data da Ordem'] || row['Data']),
-completionDate: row['completionDate'] ? window.normalizeDate(row['completionDate']) : null,
-scheduledDate: schedDate ? window.normalizeDate(schedDate) : null,
-checklist: { croqui: isCroqui, apr: isApr, sgm: isSgm },
-description: row['description'] || row['Descrição'] || '',
-lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined ? row['Latitude'] : null),
-lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined ? row['Longitude'] : null),
-history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem importada via planilha.' }]
-};
-​const normalized = window.normalizeOrder(rawOrder);
-newOrders.push(normalized);
-importedCount++;
+json.forEach(row => {
+ordersData.push(window.normalizeOrder(row));
 });
-​if (importedCount > 0) {
-if (db && auth && auth.currentUser) {
-const chunkSize = 450;
-for (let i = 0; i < newOrders.length; i += chunkSize) {
-const chunk = newOrders.slice(i, i + chunkSize);
-const batch = db.batch();
-chunk.forEach(normalized => {
-const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
-batch.set(docRef, normalized);
-});
-await batch.commit();
-}
-}
-window.showModal('Sucesso', Foram importadas ${importedCount} ordens. ${skippedCount} duplicadas foram ignoradas.);
+window.saveLocalFallback();
+window.showModal('Sucesso', ${json.length} ordens importadas com sucesso!);
 window.switchTab('list');
-} else {
-window.showModal('Aviso', Nenhuma ordem nova. ${skippedCount} ordens duplicadas ignoradas.);
-}
-} catch (err) {
-window.showModal('Erro', 'Erro ao processar: ' + err.message);
-} finally {
-e.target.value = '';
-importBtn.innerHTML = originalHtml;
-}
+} catch(err) { window.showModal('Erro', err.message); }
 };
 reader.readAsArrayBuffer(file);
 };
 ​window.openFiscalizarModal = function(id) {
 currentFiscalizarId = id;
-currentFiscalizarPhotoBase64 = null;
-document.getElementById('fiscalizarPhotoInput').value = '';
-document.getElementById('photoCompressStatus').classList.add('hidden');
-​const order = ordersData.find(o => o.id === id);
+const order = ordersData.find(o => o.id === id);
 if (!order) return;
-​document.getElementById('fiscalizarModalTitle').innerText = Fiscalizar: ${order.osProject};
+document.getElementById('fiscalizarModalTitle').innerText = Fiscalizar: ${order.osProject};
 document.getElementById('fiscalizarStatusSelect').value = order.status;
 document.getElementById('fiscalizarUrgenciaSelect').value = order.urgencia;
-document.getElementById('fiscalizarObsInput').value = '';
-​const section = document.getElementById('fiscalizarScheduledSection');
-if (order.status === 'PROGRAMADO') {
-section.classList.remove('hidden');
-document.getElementById('fiscalizarScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
-document.getElementById('fiscChkCroqui').checked = Boolean(order.checklist?.croqui);
-document.getElementById('fiscChkApr').checked = Boolean(order.checklist?.apr);
-document.getElementById('fiscChkSgm').checked = Boolean(order.checklist?.sgm);
-} else {
-section.classList.add('hidden');
-}
-​document.getElementById('fiscalizarModal').classList.remove('hidden');
+document.getElementById('fiscalizarModal').classList.remove('hidden');
 };
-​window.closeFiscalizarModal = function() {
-document.getElementById('fiscalizarModal').classList.add('hidden');
-};
-​window.processFiscalizarPhoto = function(e) {
+window.closeFiscalizarModal = function() { document.getElementById('fiscalizarModal').classList.add('hidden'); };
+window.processFiscalizarPhoto = function(e) {
 const file = e.target.files[0];
 if (!file) return;
-​isCompressingPhoto = true;
-const saveBtn = document.getElementById('saveFiscalizarBtn');
-saveBtn.disabled = true;
-document.getElementById('photoCompressStatus').classList.remove('hidden');
-​const reader = new FileReader();
-reader.onload = function(evt) {
-const img = new Image();
-img.onload = function() {
-const canvas = document.createElement('canvas');
-const MAX_DIM = 320;
-let width = img.width;
-let height = img.height;
-​if (width > height) {
-if (width > MAX_DIM) { height *= MAX_DIM / width; width = MAX_DIM; }
-} else {
-if (height > MAX_DIM) { width *= MAX_DIM / height; height = MAX_DIM; }
-}
-​canvas.width = width;
-canvas.height = height;
-const ctx = canvas.getContext('2d');
-ctx.drawImage(img, 0, 0, width, height);
-​currentFiscalizarPhotoBase64 = canvas.toDataURL('image/jpeg', 0.5);
-isCompressingPhoto = false;
-saveBtn.disabled = false;
-document.getElementById('photoCompressStatus').classList.add('hidden');
-};
-img.src = evt.target.result;
-};
+const reader = new FileReader();
+reader.onload = evt => { currentFiscalizarPhotoBase64 = evt.target.result; };
 reader.readAsDataURL(file);
 };
-​window.saveFiscalizarChanges = async function() {
-if (!currentFiscalizarId || isCompressingPhoto) return;
-​const order = ordersData.find(o => o.id === currentFiscalizarId);
+window.saveFiscalizarChanges = function() {
+const order = ordersData.find(o => o.id === currentFiscalizarId);
 if (!order) return;
-​const orderCopy = JSON.parse(JSON.stringify(order));
-​const newStatus = document.getElementById('fiscalizarStatusSelect').value;
-const newUrgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
-const obs = document.getElementById('fiscalizarObsInput').value.trim();
-​const oldStatus = orderCopy.status;
-orderCopy.status = newStatus;
-orderCopy.urgencia = newUrgencia;
-orderCopy.fiscalizada = true;
-​if (newStatus === 'PROGRAMADO') {
-orderCopy.scheduledDate = document.getElementById('fiscalizarScheduledDate').value || window.getLocalTodayDate();
-orderCopy.checklist = {
-croqui: document.getElementById('fiscChkCroqui').checked,
-apr: document.getElementById('fiscChkApr').checked,
-sgm: document.getElementById('fiscChkSgm').checked
-};
-} else {
-orderCopy.scheduledDate = null;
-orderCopy.checklist = { croqui: false, apr: false, sgm: false };
-}
-​if (currentFiscalizarPhotoBase64) orderCopy.photo = currentFiscalizarPhotoBase64;
-​if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
-orderCopy.completionDate = window.getLocalTodayDate();
-} else if (newStatus !== 'CONCLUÍDO') {
-orderCopy.completionDate = null;
-}
-​if (!orderCopy.history) orderCopy.history = [];
-let logMsg = Fiscalizada com sucesso. Status: ${newStatus}. Criticidade: ${newUrgencia}.;
-if (newStatus === 'PROGRAMADO') logMsg +=  [Data Prog: ${orderCopy.scheduledDate}, Croqui: ${orderCopy.checklist.croqui}, APR: ${orderCopy.checklist.apr}, SGM: ${orderCopy.checklist.sgm}];
-if (obs) logMsg +=  Obs: ${obs};
-if (currentFiscalizarPhotoBase64) logMsg +=  [Foto Anexada];
-​orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: logMsg });
-​const saveBtn = document.getElementById('saveFiscalizarBtn');
-saveBtn.disabled = true;
-​try {
-await window.saveToCloud(orderCopy);
+order.status = document.getElementById('fiscalizarStatusSelect').value;
+order.urgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
+order.fiscalizada = true;
+if (currentFiscalizarPhotoBase64) order.photo = currentFiscalizarPhotoBase64;
+if (order.status === 'CONCLUÍDO') order.completionDate = window.getLocalTodayDate();
+window.saveLocalFallback();
 window.closeFiscalizarModal();
-window.showModal('Sucesso', 'Vistoria e fiscalização registradas com sucesso!');
-} catch(err) {
-window.showModal('Erro', 'Falha ao salvar: ' + err.message);
-} finally {
-saveBtn.disabled = false;
-}
+window.renderListView();
+window.showModal('Sucesso', 'Vistoria salva com sucesso!');
 };
 ​window.openEditModal = function(id) {
 const order = ordersData.find(o => o.id === id);
 if (!order) return;
-​document.getElementById('editInternalId').value = order.id;
+document.getElementById('editInternalId').value = order.id;
 document.getElementById('editOsProject').value = order.osProject;
 document.getElementById('editOrigem').value = order.origem;
 document.getElementById('editCategory').value = order.category;
@@ -2127,78 +1542,26 @@ document.getElementById('editStatus').value = order.status;
 document.getElementById('editLat').value = order.lat !== null ? order.lat : '';
 document.getElementById('editLng').value = order.lng !== null ? order.lng : '';
 document.getElementById('editDescription').value = order.description || '';
-​const section = document.getElementById('editScheduledSection');
-if (order.status === 'PROGRAMADO') {
-section.classList.remove('hidden');
-document.getElementById('editScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
-document.getElementById('editChkCroqui').checked = Boolean(order.checklist?.croqui);
-document.getElementById('editChkApr').checked = Boolean(order.checklist?.apr);
-document.getElementById('editChkSgm').checked = Boolean(order.checklist?.sgm);
-} else {
-section.classList.add('hidden');
-}
-​document.getElementById('editModal').classList.remove('hidden');
+document.getElementById('editModal').classList.remove('hidden');
 };
-​window.closeEditModal = function() {
-document.getElementById('editModal').classList.add('hidden');
-};
-​window.saveEditedOrder = async function() {
+window.closeEditModal = function() { document.getElementById('editModal').classList.add('hidden'); };
+window.saveEditedOrder = function() {
 const id = document.getElementById('editInternalId').value;
 const order = ordersData.find(o => o.id === id);
 if (!order) return;
-​const orderCopy = JSON.parse(JSON.stringify(order));
-​const newOsProj = document.getElementById('editOsProject').value.trim();
-if (ordersData.some(o => o.osProject.toLowerCase() === newOsProj.toLowerCase() && o.id !== id)) {
-window.showModal('Erro de Duplicidade', Já existe outra ordem com o número "${newOsProj}".);
-return;
-}
-​const latVal = document.getElementById('editLat').value.trim();
-const lngVal = document.getElementById('editLng').value.trim();
-const parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
-const parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
-​orderCopy.osProject = newOsProj;
-orderCopy.origem = document.getElementById('editOrigem').value;
-orderCopy.category = document.getElementById('editCategory').value;
-orderCopy.equipeSugerida = document.getElementById('editEquipe').value;
-orderCopy.alimentador = document.getElementById('editAlimentador').value.trim().toUpperCase();
-orderCopy.pontoEletrico = document.getElementById('editPonto').value.trim().toUpperCase();
-orderCopy.orderDate = document.getElementById('editDate').value;
-​const newStatus = document.getElementById('editStatus').value;
-const oldStatus = orderCopy.status;
-orderCopy.status = newStatus;
-​if (newStatus === 'PROGRAMADO') {
-orderCopy.scheduledDate = document.getElementById('editScheduledDate').value || window.getLocalTodayDate();
-orderCopy.checklist = {
-croqui: document.getElementById('editChkCroqui').checked,
-apr: document.getElementById('editChkApr').checked,
-sgm: document.getElementById('editChkSgm').checked
-};
-} else {
-orderCopy.scheduledDate = null;
-orderCopy.checklist = { croqui: false, apr: false, sgm: false };
-}
-​if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
-orderCopy.completionDate = window.getLocalTodayDate();
-} else if (newStatus !== 'CONCLUÍDO') {
-orderCopy.completionDate = null;
-}
-​orderCopy.lat = parsedLat;
-orderCopy.lng = parsedLng;
-orderCopy.description = document.getElementById('editDescription').value.trim();
-​if (!orderCopy.history) orderCopy.history = [];
-orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: 'Ordem editada no sistema.' });
-​try {
-await window.saveToCloud(orderCopy);
+order.osProject = document.getElementById('editOsProject').value;
+order.category = document.getElementById('editCategory').value;
+order.status = document.getElementById('editStatus').value;
+order.description = document.getElementById('editDescription').value;
+window.saveLocalFallback();
 window.closeEditModal();
-window.showModal('Sucesso', 'Ordem atualizada com sucesso!');
-} catch(err) {
-window.showModal('Erro', 'Falha ao salvar edições: ' + err.message);
-}
+window.renderListView();
+window.showModal('Sucesso', 'Ordem atualizada!');
 };
 ​window.openDetailsModal = function(id) {
 const order = ordersData.find(o => o.id === id);
 if (!order) return;
-​document.getElementById('detOsTitle').innerText = order.osProject;
+document.getElementById('detOsTitle').innerText = order.osProject;
 document.getElementById('detOrigem').innerText = order.origem;
 document.getElementById('detUrgencia').innerText = order.urgencia;
 document.getElementById('detStatus').innerText = order.status;
@@ -2206,173 +1569,39 @@ document.getElementById('detEquipe').innerText = order.equipeSugerida;
 document.getElementById('detPonto').innerText = order.pontoEletrico || 'N/D';
 document.getElementById('detAlimentador').innerText = order.alimentador || 'N/D';
 document.getElementById('detDate').innerText = order.orderDate;
-document.getElementById('detDaysOpen').innerText = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-document.getElementById('detCoords').innerText = (order.lat !== null && order.lng !== null) ? ${order.lat}, ${order.lng} : 'Não georreferenciado';
-document.getElementById('detDescription').innerText = order.description || 'Sem descrição cadastrada.';
-​const schedInfo = document.getElementById('detScheduledInfo');
-if (order.status === 'PROGRAMADO' && order.scheduledDate) {
-schedInfo.classList.remove('hidden');
-document.getElementById('detScheduledDate').innerText = order.scheduledDate;
-const chk = order.checklist || {};
-document.getElementById('detChecklist').innerHTML = <li>Croqui realizado: ${chk.croqui ? '✅ Sim' : '❌ Não'}</li> <li>Pré-APR emitida: ${chk.apr ? '✅ Sim' : '❌ Não'}</li> <li>Anexo SGM anexado: ${chk.sgm ? '✅ Sim' : '❌ Não'}</li>;
-} else {
-schedInfo.classList.add('hidden');
-}
-​const photoContainer = document.getElementById('detPhotoContainer');
-if (order.photo) {
-document.getElementById('detPhoto').src = order.photo;
-photoContainer.classList.remove('hidden');
-} else {
-photoContainer.classList.add('hidden');
-}
-​const historyList = document.getElementById('detHistoryList');
-historyList.innerHTML = '';
-(order.history || []).forEach(item => {
-const h = document.createElement('div');
-h.className = "bg-slate-100 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]";
-h.innerHTML = <span class="text-amber-600 dark:text-amber-400 font-bold">${window.escapeHtml(item.date)}:</span> <span class="text-slate-700 dark:text-slate-300">${window.escapeHtml(item.message)}</span>;
-historyList.appendChild(h);
-});
-​const editBtn = document.getElementById('detEditBtn');
-const fiscalizarBtn = document.getElementById('detFiscalizarBtn');
-​editBtn.onclick = () => {
-window.closeDetailsModal();
-window.openEditModal(order.id);
+document.getElementById('detDescription').innerText = order.description || 'N/D';
+​document.getElementById('detEditBtn').onclick = () => { window.closeDetailsModal(); window.openEditModal(order.id); };
+document.getElementById('detFiscalizarBtn').onclick = () => { window.closeDetailsModal(); window.openFiscalizarModal(order.id); };
+document.getElementById('detailsModal').classList.remove('hidden');
 };
-fiscalizarBtn.onclick = () => {
-window.closeDetailsModal();
-window.openFiscalizarModal(order.id);
-};
-​document.getElementById('detailsModal').classList.remove('hidden');
-};
-​window.closeDetailsModal = function() {
-document.getElementById('detailsModal').classList.add('hidden');
-};
+window.closeDetailsModal = function() { document.getElementById('detailsModal').classList.add('hidden'); };
 ​window.deleteOrder = async function(id) {
-const confirmed = await window.showConfirmModal('Confirmar Exclusão', 'Tem certeza de que deseja excluir esta ordem?');
-if (!confirmed) return;
-​try {
-await window.deleteFromCloud(id);
-selectedRouteIds = selectedRouteIds.filter(selectedId => selectedId !== id);
-document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
-window.showModal('Sucesso', 'Ordem excluída.');
-} catch(err) {
-window.showModal('Erro', 'Falha ao excluir: ' + err.message);
-}
-};
-​window.updateSyncBadge = function(statusText, styleClass) {
-const badge = document.getElementById('syncStatusBadge');
-if (!badge) return;
-badge.innerText = statusText;
-badge.className = text-[10px] font-bold px-2.5 py-0.5 rounded-full ${styleClass};
-};
-​window.saveToCloud = function(order) {
-return new Promise((resolve, reject) => {
-if (auth && auth.currentUser && db) {
-window.updateSyncBadge('🔄 Sincronizando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
-const userId = auth.currentUser.uid;
-db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(order.id).set(order)
-.then(() => {
-window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
-resolve();
-})
-.catch(err => {
-window.updateSyncBadge('🔴 Erro na Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
-reject(err);
-});
-} else {
-reject(new Error("Usuário não autenticado no Firestore."));
-}
-});
-};
-​window.deleteFromCloud = function(id) {
-return new Promise((resolve, reject) => {
-if (auth && auth.currentUser && db) {
-const userId = auth.currentUser.uid;
-db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(id).delete()
-.then(() => resolve())
-.catch(err => reject(err));
-} else {
-reject(new Error("Usuário não autenticado."));
-}
-});
+const ok = await window.showConfirmModal('Excluir', 'Tem certeza?');
+if (!ok) return;
+ordersData = ordersData.filter(o => o.id !== id);
+window.saveLocalFallback();
+window.renderListView();
 };
 ​window.handleAuthAction = function() {
-if (auth) {
-if (auth.currentUser) auth.signOut();
-else {
+if (auth && auth.currentUser) auth.signOut();
+else if (auth) {
 const provider = new firebase.auth.GoogleAuthProvider();
-auth.signInWithRedirect(provider).catch(e => window.showModal('Erro no Login', e.message));
-}
+auth.signInWithRedirect(provider).catch(e => window.showModal('Erro', e.message));
+} else {
+window.showModal('Aviso', 'Modo offline operando com armazenamento local.');
 }
 };
 ​window.addEventListener('DOMContentLoaded', () => {
-window.addEventListener('keydown', (e) => {
-if (e.key === 'Escape') {
-document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.add('hidden'));
-}
-});
-​const dateInp = document.getElementById('orderDate');
+const dateInp = document.getElementById('orderDate');
 if (dateInp) dateInp.value = window.getLocalTodayDate();
-​// Timeout preventivo: se o Firebase demorar mais de 2s para responder, libera a interface
-const initTimeout = setTimeout(() => {
-if (document.getElementById('syncStatusBadge').innerText.includes('Conectando')) {
-window.updateSyncBadge('⚠️ Modo Offline', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
-const loggedOutView = document.getElementById('loggedOutView');
-if (loggedOutView && (!auth || !auth.currentUser)) {
-loggedOutView.classList.remove('hidden');
-}
-}
-}, 2000);
+window.renderListView();
 ​if (auth) {
-auth.getRedirectResult().catch(err => {
-console.error("Redirect auth error:", err);
-});
-​auth.onAuthStateChanged(user => {
-clearTimeout(initTimeout);
-authUser = user;
+auth.onAuthStateChanged(user => {
 const btnText = document.getElementById('userAuthBtnText');
-const desktopNav = document.getElementById('desktopNav');
-const mobileNav = document.getElementById('mobileNav');
-const loggedOutView = document.getElementById('loggedOutView');
-​if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
-​if (user) {
-btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
-if (desktopNav) desktopNav.classList.remove('hidden');
-if (mobileNav) mobileNav.classList.remove('hidden');
-if (loggedOutView) loggedOutView.classList.add('hidden');
-​window.updateSyncBadge('🔄 Conectando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
-​const userId = user.uid;
-unsubscribeSnapshot = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders')
-.onSnapshot((snapshot) => {
-const cloudOrders = [];
-snapshot.forEach(doc => cloudOrders.push(window.normalizeOrder(doc.data())));
-ordersData = cloudOrders;
-​const validIds = new Set(ordersData.map(o => o.id));
-selectedRouteIds = selectedRouteIds.filter(id => validIds.has(id));
-document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
-​window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
-​window.renderListView();
-if (map) window.renderMap();
-if (!document.getElementById('tab-dashboard').classList.contains('hidden')) {
-window.renderDashboard();
-}
-window.checkScheduledAlertsAndOverdue();
-}, (error) => {
-console.error("Firestore onSnapshot error:", error);
-window.updateSyncBadge('🔴 Erro de Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
-window.showModal('Aviso de Rede', 'Houve uma falha na sincronização ao vivo com o Firestore. Verifique sua conexão.');
-});
-window.switchTab('list');
+if (user) {
+btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Conta';
 } else {
 btnText.innerText = 'Entrar com Google';
-window.updateSyncBadge('🔒 Acesso Restrito', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
-if (desktopNav) desktopNav.classList.add('hidden');
-if (mobileNav) mobileNav.classList.add('hidden');
-if (loggedOutView) loggedOutView.classList.remove('hidden');
-document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-ordersData = [];
-if (markersClusterGroup) markersClusterGroup.clearLayers();
 }
 });
 }
