@@ -2300,7 +2300,7 @@ if (auth) {
 if (auth.currentUser) auth.signOut();
 else {
 const provider = new firebase.auth.GoogleAuthProvider();
-auth.signInWithPopup(provider).catch(e => window.showModal('Erro no Login', e.message));
+auth.signInWithRedirect(provider).catch(e => window.showModal('Erro no Login', e.message));
 }
 }
 };
@@ -2313,7 +2313,10 @@ document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.ad
 ​const dateInp = document.getElementById('orderDate');
 if (dateInp) dateInp.value = window.getLocalTodayDate();
 ​if (auth) {
-auth.onAuthStateChanged(user => {
+auth.getRedirectResult().catch(err => {
+console.error("Redirect auth error:", err);
+});
+​auth.onAuthStateChanged(user => {
 authUser = user;
 const btnText = document.getElementById('userAuthBtnText');
 const desktopNav = document.getElementById('desktopNav');
