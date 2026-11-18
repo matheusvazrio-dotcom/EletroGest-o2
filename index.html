@@ -4,12 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EletroGestão | Sistema de Ordens de Manutenção</title>
-
-<!-- Manifest PWA -->
+​<!-- Manifest PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f59e0b">
-
-<!-- Tailwind CSS -->
+​<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com/3.4.1"></script>
 <script>
 tailwind.config = {
@@ -29,28 +27,22 @@ brand: {
 }
 }
 </script>
-
-<!-- Leaflet Maps CSS & JS -->
+​<!-- Leaflet Maps CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-<!-- Leaflet MarkerCluster CSS & JS -->
+​<!-- Leaflet MarkerCluster CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="" />
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
-
-<!-- SheetJS -->
+​<!-- SheetJS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
-
-<!-- Chart.js -->
+​<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-
-<!-- Firebase Compat SDKs -->
+​<!-- Firebase Compat SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
-
-<style>
+​<style>
 .leaflet-container {
 width: 100%;
 height: 100%;
@@ -58,24 +50,21 @@ min-height: 500px;
 border-radius: 1rem;
 z-index: 10;
 }
-
-.dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip {
+​.dark .leaflet-popup-content-wrapper, .dark .leaflet-popup-tip {
 background-color: #0f172a !important;
 color: #f8fafc !important;
 border: 1px solid #334155 !important;
 box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
 border-radius: 0.875rem !important;
 }
-
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+​.leaflet-popup-content-wrapper, .leaflet-popup-tip {
 background-color: #ffffff !important;
 color: #0f172a !important;
 border: 1px solid #e2e8f0 !important;
 box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
 border-radius: 0.875rem !important;
 }
-
-::-webkit-scrollbar {
+​::-webkit-scrollbar {
 width: 6px;
 height: 6px;
 }
@@ -99,13 +88,11 @@ outline-offset: 2px;
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-200">
-
-<!-- HEADER / NAVIGATION BAR (ALWAYS FIXED / STICKY) -->
+​<!-- HEADER / NAVIGATION BAR (ALWAYS FIXED / STICKY) -->
 <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-50 transition-colors duration-200 shadow-sm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-16">
-
-<div class="flex items-center gap-3">
+​<div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-xl font-black shadow-md shadow-amber-500/20">
 ⚡
 </div>
@@ -117,8 +104,7 @@ EletroGestão
 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Sistema Integrado de Manutenção Elétrica</p>
 </div>
 </div>
-
-<nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
+​<nav id="desktopNav" class="hidden md:flex items-center gap-1 bg-slate-200/60 dark:bg-slate-950/60 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800/80" aria-label="Navegação Principal">
 <button onclick="window.switchTab('map')" id="nav-map" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 justify-center">
 🗺️ Mapa Interativo
 </button>
@@ -132,33 +118,27 @@ EletroGestão
 ➕ Nova Ordem
 </button>
 </nav>
-
-<div class="flex items-center gap-2 sm:gap-3">
+​<div class="flex items-center gap-2 sm:gap-3">
 <button onclick="window.toggleTheme()" id="themeToggleBtn" aria-label="Alternar tema" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200/70 hover:bg-slate-300/70 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-amber-400 border border-slate-300/80 dark:border-slate-700/80 transition-all flex items-center gap-1.5 shadow-sm" title="Alternar Modo Noturno / Claro">
 <span id="themeToggleIcon">🌙</span> <span id="themeToggleText" class="hidden sm:inline">Modo Escuro</span>
 </button>
-
-<div id="userInfoArea" class="flex items-center gap-2">
+​<div id="userInfoArea" class="flex items-center gap-2">
 <button onclick="window.handleAuthAction()" id="userAuthBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all flex items-center gap-2 shadow-sm hover:shadow-amber-500/20 justify-center">
 <span>🔑</span> <span id="userAuthBtnText">Entrar com Google</span>
 </button>
 </div>
 </div>
-
+​</div>
 </div>
-</div>
-
-<div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
+​<div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 px-2 py-1.5 justify-around text-xs font-semibold backdrop-blur-md">
 <button onclick="window.switchTab('map')" id="mnav-map" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">🗺️ Mapa</button>
 <button onclick="window.switchTab('list')" id="mnav-list" class="py-1.5 px-3 text-amber-600 dark:text-amber-400 font-bold rounded-xl bg-slate-100 dark:bg-slate-900 text-center">📋 Lista</button>
 <button onclick="window.switchTab('dashboard')" id="mnav-dashboard" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">📊 Dashboard</button>
 <button onclick="window.switchTab('new')" id="mnav-new" class="py-1.5 px-3 text-slate-600 dark:text-slate-400 rounded-xl text-center">➕ Criar</button>
 </div>
 </header>
-
-<main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
-
-<div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
+​<main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 flex flex-col justify-center">
+​<div id="loggedOutView" class="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 space-y-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm my-auto">
 <div class="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-4xl shadow-inner">
 🔒
 </div>
@@ -172,8 +152,7 @@ Para visualizar o mapa interativo, gerenciar demandas, acessar o dashboard e cri
 <span>🔑</span> <span>Entrar com Conta Google</span>
 </button>
 </div>
-
-<!-- TAB 1: MAPA INTERATIVO -->
+​<!-- TAB 1: MAPA INTERATIVO -->
 <div id="tab-map" class="tab-content hidden space-y-4">
 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -195,14 +174,12 @@ Para visualizar o mapa interativo, gerenciar demandas, acessar o dashboard e cri
 <option value="PROGRAMADO">PROGRAMADO</option>
 <option value="PARCIAL">PARCIAL</option>
 </select>
-
-<label class="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 ml-2 cursor-pointer bg-slate-100 dark:bg-slate-950 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-800">
+​<label class="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 ml-2 cursor-pointer bg-slate-100 dark:bg-slate-950 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-800">
 <input type="checkbox" id="mapShowArchivedToggle" onchange="window.renderMap()" class="w-4 h-4 accent-amber-500 rounded">
 <span>Ver Concluídas no Mapa</span>
 </label>
 </div>
-
-<div class="flex items-center gap-3 text-xs">
+​<div class="flex items-center gap-3 text-xs">
 <span class="text-slate-500 dark:text-slate-400 font-medium">
 Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bold">0</span> pontos
 </span>
@@ -211,32 +188,26 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 </button>
 </div>
 </div>
-
-<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-2 rounded-2xl shadow-sm relative min-h-[500px] h-[calc(100vh-230px)]">
+​<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-2 rounded-2xl shadow-sm relative min-h-[500px] h-[calc(100vh-230px)]">
 <div id="map" class="w-full h-full min-h-[480px]"></div>
 </div>
 </div>
-
-<!-- TAB 2: DEMANDAS -->
+​<!-- TAB 2: DEMANDAS -->
 <div id="tab-list" class="tab-content hidden space-y-4">
 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-4 transition-colors">
-
-<!-- Active Filters Chips Bar -->
+​<!-- Active Filters Chips Bar -->
 <div id="activeFiltersBar" class="hidden flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
 <span class="text-slate-400 font-bold uppercase text-[10px]">Filtro Ativo:</span>
 <div id="activeFiltersChips" class="flex flex-wrap gap-1.5 items-center"></div>
 <button onclick="window.clearDashboardFilters()" class="text-amber-600 hover:underline font-bold text-[11px] ml-2">Limpar Filtros</button>
 </div>
-
-<div class="flex flex-col md:flex-row items-center justify-between gap-4">
-
-<div class="relative w-full md:w-72">
+​<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+​<div class="relative w-full md:w-72">
 <label for="searchInput" class="sr-only">Buscar por OS</label>
 <input type="text" id="searchInput" oninput="window.onSearchInput()" placeholder="Buscar OS, Ponto..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs rounded-xl pl-9 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
 </div>
-
-<div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+​<div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
 <select id="listFilterCategory" aria-label="Filtrar por Categoria" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <option value="">Categorias</option>
 <option value="POSTE">POSTE</option>
@@ -248,15 +219,13 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 <option value="BYPASS">BYPASS</option>
 <option value="OUTROS">OUTROS</option>
 </select>
-
-<select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+​<select id="listFilterStatus" aria-label="Filtrar por Status" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <option value="">Status</option>
 <option value="PENDENTE">PENDENTE</option>
 <option value="PROGRAMADO">PROGRAMADO</option>
 <option value="PARCIAL">PARCIAL</option>
 </select>
-
-<select id="listFilterUrgency" aria-label="Filtrar por Criticidade" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+​<select id="listFilterUrgency" aria-label="Filtrar por Criticidade" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <option value="">Criticidade (Todas)</option>
 <option value="Emergência">Emergência</option>
 <option value="Alta">Alta</option>
@@ -264,14 +233,12 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 <option value="Baixa">Baixa</option>
 <option value="Não Avaliada">Não Avaliada</option>
 </select>
-
-<select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+​<select id="listSortOrder" aria-label="Ordenar ordens" onchange="window.onFilterChange()" class="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-amber-500">
 <option value="recent">Mais Recentes</option>
 <option value="oldest">Mais Antigos (Aging)</option>
 <option value="urgency">Maior Criticidade</option>
 </select>
-
-<div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
+​<div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800">
 <button onclick="window.setListViewMode('cards')" id="viewModeCardsBtn" aria-label="Visualização em Cards" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center">
 📇 Cards
 </button>
@@ -280,8 +247,7 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 </button>
 </div>
 </div>
-
-<div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+​<div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
 <button onclick="window.openArchivedModal()" class="px-3 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 justify-center">
 📂 Arquivo Concluídas (<span id="archivedCountBadge">0</span>)
 </button>
@@ -292,14 +258,11 @@ Exibindo <span id="mapCounter" class="text-amber-600 dark:text-amber-400 font-bo
 Traçar Rota (<span id="selectedCountBadge">0</span>)
 </button>
 </div>
-
+​</div>
 </div>
-</div>
-
-<div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+​<div id="ordersListCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
 <div id="ordersListRowContainer" class="space-y-3"></div>
-
-<!-- Pagination Container -->
+​<!-- Pagination Container -->
 <div id="paginationContainer" class="flex items-center justify-between pt-4 pb-2 px-2 text-xs">
 <span id="paginationInfo" class="text-slate-500">Mostrando 0 de 0</span>
 <div class="flex gap-2">
@@ -308,8 +271,7 @@ Traçar Rota (<span id="selectedCountBadge">0</span>)
 </div>
 </div>
 </div>
-
-<!-- TAB 3: DASHBOARD EXECUTIVO -->
+​<!-- TAB 3: DASHBOARD EXECUTIVO -->
 <div id="tab-dashboard" class="tab-content hidden space-y-6">
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-slate-200/80 dark:border-slate-800">
 <div>
@@ -322,49 +284,40 @@ Traçar Rota (<span id="selectedCountBadge">0</span>)
 Sincronizado Ao Vivo
 </div>
 </div>
-
-<!-- KPI Cards Row (Interactive) -->
+​<!-- KPI Cards Row (Interactive) -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-
-<div onclick="window.filterByDashboard('total')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
+​<div onclick="window.filterByDashboard('total')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
 <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-700 dark:text-slate-300 mb-2 group-hover:scale-110 transition-transform shadow-inner">📊</div>
 <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Ativas</span>
 <div id="dashTotal" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</div>
 </div>
-
-<div onclick="window.filterByDashboard('pendentes')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
+​<div onclick="window.filterByDashboard('pendentes')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-amber-500">
 <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-amber-500/20">⏳</div>
 <span class="text-[11px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-1">Pendentes</span>
 <div id="dashPendentes" class="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tight">0</div>
 </div>
-
-<div onclick="window.filterByDashboard('concluidas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-emerald-500">
+​<div onclick="window.filterByDashboard('concluidas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center cursor-pointer hover:border-emerald-500">
 <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">✅</div>
 <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Concluídas</span>
 <div id="dashConcluidas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0</div>
 </div>
-
-<div onclick="window.filterByDashboard('fiscalizadas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-emerald-500 cursor-pointer hover:border-emerald-600">
+​<div onclick="window.filterByDashboard('fiscalizadas')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-emerald-500 cursor-pointer hover:border-emerald-600">
 <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-emerald-500/20">🔍</div>
 <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Fiscalizadas</span>
 <div id="dashFiscalizadas" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0%</div>
 </div>
-
-<div onclick="window.filterByDashboard('emergencias')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-red-500 cursor-pointer hover:border-red-600">
+​<div onclick="window.filterByDashboard('emergencias')" class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center border-t-4 border-t-red-500 cursor-pointer hover:border-red-600">
 <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-red-500/20">🚨</div>
 <span class="text-[11px] font-bold text-red-600 dark:text-red-500 uppercase tracking-widest mb-1">Emergências</span>
 <div id="dashEmergencias" class="text-3xl font-black text-red-600 dark:text-red-400 tracking-tight">0</div>
 </div>
-
-<div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
+​<div class="group relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1">
 <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400 mb-2 group-hover:scale-110 transition-transform shadow-inner border border-sky-500/20">⏱️</div>
 <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Idade média (abertas)</span>
 <div id="dashMediaDias" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0d</div>
 </div>
-
-</div>
-
-<!-- Analytics Charts Grid -->
+​</div>
+​<!-- Analytics Charts Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <!-- Chart 1: Status -->
 <div onclick="window.openChartFocusModal('status')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
@@ -374,8 +327,7 @@ Sincronizado Ao Vivo
 </div>
 <div class="h-64 relative flex items-center justify-center"><canvas id="statusChart"></canvas></div>
 </div>
-
-<!-- Chart 2: Urgência / Criticidade -->
+​<!-- Chart 2: Urgência / Criticidade -->
 <div onclick="window.openChartFocusModal('urgencia')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
 <div class="flex items-center justify-between">
 <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>📊</span> Nível de Criticidade (Urgência)</h3>
@@ -383,8 +335,7 @@ Sincronizado Ao Vivo
 </div>
 <div class="h-64 relative flex items-center justify-center"><canvas id="urgenciaChart"></canvas></div>
 </div>
-
-<!-- Chart 3: Categoria -->
+​<!-- Chart 3: Categoria -->
 <div onclick="window.openChartFocusModal('category')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
 <div class="flex items-center justify-between">
 <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>⚡</span> Distribuição por Categoria</h3>
@@ -392,8 +343,7 @@ Sincronizado Ao Vivo
 </div>
 <div class="h-64 relative flex items-center justify-center"><canvas id="categoryChart"></canvas></div>
 </div>
-
-<!-- Chart 4: Visão Executiva Geral -->
+​<!-- Chart 4: Visão Executiva Geral -->
 <div onclick="window.openChartFocusModal('executive')" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all space-y-4 cursor-pointer group">
 <div class="flex items-center justify-between">
 <h3 class="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2"><span>📈</span> Visão Consolidada da Operação</h3>
@@ -402,10 +352,8 @@ Sincronizado Ao Vivo
 <div class="h-64 relative flex items-center justify-center"><canvas id="executiveChart"></canvas></div>
 </div>
 </div>
-
-</div>
-
-<!-- TAB 4: NOVA ORDEM DE SERVIÇO & IMPORTAÇÃO -->
+​</div>
+​<!-- TAB 4: NOVA ORDEM DE SERVIÇO & IMPORTAÇÃO -->
 <div id="tab-new" class="tab-content hidden max-w-2xl mx-auto space-y-6">
 <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
 <div class="border-b border-slate-200/80 dark:border-slate-800 pb-3 flex items-center justify-between">
@@ -421,21 +369,18 @@ Sincronizado Ao Vivo
 </label>
 </div>
 </div>
-
-<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6">
+​<div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6">
 <div class="border-b border-slate-200/80 dark:border-slate-800 pb-4">
 <h2 class="text-lg font-black text-amber-600 dark:text-amber-500">➕ Cadastrar Nova Ordem de Manutenção</h2>
 <p class="text-xs text-slate-500 dark:text-slate-400">Preencha os campos abaixo para registrar a demanda no sistema.</p>
 </div>
-
-<form onsubmit="window.handleCreateOrder(event)" class="space-y-4">
+​<form onsubmit="window.handleCreateOrder(event)" class="space-y-4">
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <div>
 <label for="osProject" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nº OS / Projeto *</label>
 <input type="text" id="osProject" required placeholder="Ex: OS-2026-99" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
-
-<div>
+​<div>
 <label for="origem" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Origem *</label>
 <select id="origem" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 <option value="OSM">OSM (Ordem de Serviço)</option>
@@ -445,8 +390,7 @@ Sincronizado Ao Vivo
 <option value="PEDIDO INTERNO">Pedido Interno</option>
 </select>
 </div>
-
-<div>
+​<div>
 <label for="category" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Categoria *</label>
 <select id="category" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 <option value="POSTE">POSTE</option>
@@ -459,8 +403,7 @@ Sincronizado Ao Vivo
 <option value="OUTROS">OUTROS</option>
 </select>
 </div>
-
-<div>
+​<div>
 <label for="equipeSugerida" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Equipe Sugerida</label>
 <select id="equipeSugerida" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 <option value="Não definida">Não definida</option>
@@ -468,23 +411,19 @@ Sincronizado Ao Vivo
 <option value="Linha Morta">Linha Morta</option>
 </select>
 </div>
-
-<div>
+​<div>
 <label for="alimentador" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Alimentador</label>
 <input type="text" id="alimentador" placeholder="Ex: SUB-01" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
-
-<div>
+​<div>
 <label for="pontoEletrico" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Ponto Elétrico</label>
 <input type="text" id="pontoEletrico" placeholder="Ex: PT-4421" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
-
-<div>
+​<div>
 <label for="orderDate" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Data da Ordem *</label>
 <input type="date" id="orderDate" required class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
-
-<div>
+​<div>
 <label for="status" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Status Inicial</label>
 <select id="status" onchange="window.toggleCreateScheduledFields()" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 <option value="PENDENTE">PENDENTE</option>
@@ -494,8 +433,7 @@ Sincronizado Ao Vivo
 </select>
 </div>
 </div>
-
-<!-- Scheduled Fields & Checklist (Visible only if PROGRAMADO) -->
+​<!-- Scheduled Fields & Checklist (Visible only if PROGRAMADO) -->
 <div id="createScheduledSection" class="hidden space-y-4 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20">
 <div>
 <label for="scheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
@@ -519,8 +457,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+​<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <div>
 <label for="lat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
 <input type="number" step="any" id="lat" min="-90" max="90" placeholder="-23.5505" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
@@ -530,17 +467,14 @@ Sincronizado Ao Vivo
 <input type="number" step="any" id="lng" min="-180" max="180" placeholder="-46.6333" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
 </div>
-
-<button type="button" onclick="window.useCurrentLocation()" class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
+​<button type="button" onclick="window.useCurrentLocation()" class="w-full text-center py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
 📍 Usar minha localização GPS atual
 </button>
-
-<div>
+​<div>
 <label for="description" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Descrição Detalhada</label>
 <textarea id="description" rows="3" placeholder="Descreva o problema encontrado no local..." class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
 </div>
-
-<div class="pt-4 flex gap-3">
+​<div class="pt-4 flex gap-3">
 <button type="submit" id="submitCreateBtn" class="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md hover:shadow-amber-500/20 transition-all uppercase flex items-center justify-center gap-2">
 <span>💾 Salvar Ordem de Serviço</span>
 </button>
@@ -548,10 +482,8 @@ Sincronizado Ao Vivo
 </form>
 </div>
 </div>
-
-</main>
-
-<!-- MODAL: GRÁFICO EM FOCO (TELA CHEIA INTERATIVA) -->
+​</main>
+​<!-- MODAL: GRÁFICO EM FOCO (TELA CHEIA INTERATIVA) -->
 <div id="chartFocusModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
 <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -561,21 +493,18 @@ Sincronizado Ao Vivo
 </div>
 <button onclick="window.closeChartFocusModal()" aria-label="Fechar" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl font-bold p-2">✕</button>
 </div>
-
-<div class="p-6 space-y-4 flex-1 overflow-y-auto">
+​<div class="p-6 space-y-4 flex-1 overflow-y-auto">
 <div id="chartFocusToolbar" class="flex flex-wrap gap-2 items-center pb-3 border-b border-slate-100 dark:border-slate-800 text-xs"></div>
 <div class="h-80 sm:h-96 relative flex items-center justify-center w-full">
 <canvas id="focusedChartCanvas"></canvas>
 </div>
 </div>
-
-<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
+​<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950">
 <button onclick="window.closeChartFocusModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs">Fechar Painel</button>
 </div>
 </div>
 </div>
-
-<!-- MODAL: ARQUIVO DE CONCLUÍDAS -->
+​<!-- MODAL: ARQUIVO DE CONCLUÍDAS -->
 <div id="archivedModal" role="dialog" aria-modal="true" aria-labelledby="archivedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -588,8 +517,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- MODAL: ORDENS SEM GPS -->
+​<!-- MODAL: ORDENS SEM GPS -->
 <div id="unmappedModal" role="dialog" aria-modal="true" aria-labelledby="unmappedModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -602,8 +530,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- MODAL: FISCALIZAR -->
+​<!-- MODAL: FISCALIZAR -->
 <div id="fiscalizarModal" role="dialog" aria-modal="true" aria-labelledby="fiscalizarModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -620,8 +547,7 @@ Sincronizado Ao Vivo
 <option value="CONCLUÍDO">CONCLUÍDO (Arquivar)</option>
 </select>
 </div>
-
-<!-- Scheduled Fields & Checklist in Fiscalizar -->
+​<!-- Scheduled Fields & Checklist in Fiscalizar -->
 <div id="fiscalizarScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
 <div>
 <label for="fiscalizarScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
@@ -645,8 +571,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<div>
+​<div>
 <label for="fiscalizarUrgenciaSelect" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nível de Criticidade (Urgência)</label>
 <select id="fiscalizarUrgenciaSelect" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs font-medium outline-none focus:ring-2 focus:ring-amber-500">
 <option value="Não Avaliada">Não Avaliada</option>
@@ -657,7 +582,7 @@ Sincronizado Ao Vivo
 </select>
 </div>
 <div>
-<label for="fiscalizarPhotoInput" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Foto da Vistoria (Opcional - Compactada &lt; 50KB)</label>
+<label for="fiscalizarPhotoInput" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Foto da Vistoria (Opcional - Compactada < 50KB)</label>
 <input type="file" id="fiscalizarPhotoInput" accept="image/*" onchange="window.processFiscalizarPhoto(event)" class="w-full text-slate-500 dark:text-slate-400 text-xs file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500/10 file:text-amber-600 dark:file:text-amber-400 cursor-pointer">
 <div id="photoCompressStatus" class="text-[10px] text-amber-600 dark:text-amber-400 mt-1 font-semibold hidden">⌛ Processando e otimizando imagem...</div>
 </div>
@@ -674,8 +599,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- MODAL: EDITAR ORDEM -->
+​<!-- MODAL: EDITAR ORDEM -->
 <div id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -742,8 +666,7 @@ Sincronizado Ao Vivo
 </select>
 </div>
 </div>
-
-<!-- Edit Scheduled Fields & Checklist -->
+​<!-- Edit Scheduled Fields & Checklist -->
 <div id="editScheduledSection" class="hidden space-y-3 bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
 <div>
 <label for="editScheduledDate" class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Data da Programação *</label>
@@ -767,8 +690,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+​<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 <div>
 <label for="editLat" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Latitude</label>
 <input type="number" step="any" id="editLat" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
@@ -778,12 +700,10 @@ Sincronizado Ao Vivo
 <input type="number" step="any" id="editLng" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-amber-500">
 </div>
 </div>
-
-<button type="button" onclick="window.useCurrentLocationEdit()" class="w-full text-center py-2 px-3 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
+​<button type="button" onclick="window.useCurrentLocationEdit()" class="w-full text-center py-2 px-3 rounded-xl text-xs font-bold bg-slate-200/80 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-amber-400 transition-all border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
 📍 Usar minha localização GPS atual
 </button>
-
-<div>
+​<div>
 <label for="editDescription" class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Descrição</label>
 <textarea id="editDescription" rows="3" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-amber-500"></textarea>
 </div>
@@ -794,8 +714,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- MODAL: DETALHES -->
+​<!-- MODAL: DETALHES -->
 <div id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detOsTitle" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
@@ -821,8 +740,7 @@ Sincronizado Ao Vivo
 <span id="detEquipe" class="font-semibold text-slate-800 dark:text-slate-200">N/D</span>
 </div>
 </div>
-
-<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+​<div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
 <p><strong class="text-slate-500 dark:text-slate-400">Ponto Elétrico:</strong> <span id="detPonto" class="text-slate-800 dark:text-slate-200">N/D</span></p>
 <p><strong class="text-slate-500 dark:text-slate-400">Alimentador:</strong> <span id="detAlimentador" class="text-slate-800 dark:text-slate-200">N/D</span></p>
 <p><strong class="text-slate-500 dark:text-slate-400">Data Abertura:</strong> <span id="detDate" class="text-slate-800 dark:text-slate-200">N/D</span> (<span id="detDaysOpen" class="text-amber-600 dark:text-amber-400 font-bold">0</span> dias decorridos)</p>
@@ -835,24 +753,20 @@ Sincronizado Ao Vivo
 </div>
 <p class="pt-1"><strong class="text-slate-500 dark:text-slate-400">Coordenadas:</strong> <span id="detCoords" class="text-slate-800 dark:text-slate-200">N/D</span></p>
 </div>
-
-<div>
+​<div>
 <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descrição</span>
 <p id="detDescription" class="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed break-words"></p>
 </div>
-
-<div id="detPhotoContainer" class="hidden">
+​<div id="detPhotoContainer" class="hidden">
 <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Foto da Vistoria</span>
 <img id="detPhoto" src="" alt="Evidência da vistoria" class="w-full h-auto max-h-52 object-cover rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950">
 </div>
-
-<div>
+​<div>
 <span class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Histórico de Alterações</span>
 <div id="detHistoryList" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
 </div>
 </div>
-
-<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+​<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
 <div class="flex gap-2">
 <button id="detEditBtn" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
 ✏️ Editar
@@ -865,8 +779,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- MODAL: CONFIRMAÇÃO -->
+​<!-- MODAL: CONFIRMAÇÃO -->
 <div id="confirmModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
 <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center text-xl mx-auto font-black">⚠️</div>
@@ -878,8 +791,7 @@ Sincronizado Ao Vivo
 </div>
 </div>
 </div>
-
-<!-- GLOBAL NOTICE MODAL (Text) -->
+​<!-- GLOBAL NOTICE MODAL (Text) -->
 <div id="appModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
 <h3 id="appModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
@@ -887,8 +799,7 @@ Sincronizado Ao Vivo
 <button onclick="window.closeAppModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Entendido</button>
 </div>
 </div>
-
-<!-- GLOBAL HTML MODAL (For HTML content like Route Links) -->
+​<!-- GLOBAL HTML MODAL (For HTML content like Route Links) -->
 <div id="appHtmlModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
 <h3 id="appHtmlModalTitle" class="text-base font-black text-amber-600 dark:text-amber-500">Aviso</h3>
@@ -896,149 +807,129 @@ Sincronizado Ao Vivo
 <button onclick="window.closeAppHtmlModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">Fechar</button>
 </div>
 </div>
-
-<!-- JAVASCRIPT LOGIC -->
+​<!-- JAVASCRIPT LOGIC -->
 <script>
 window.getLocalTodayDate = function() {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+const d = new Date();
+const year = d.getFullYear();
+const month = String(d.getMonth() + 1).padStart(2, '0');
+const day = String(d.getDate()).padStart(2, '0');
+return ${year}-${month}-${day};
 };
-
-window.toggleTheme = function() {
-  const html = document.documentElement;
-  const isDark = html.classList.contains('dark');
-  if (isDark) {
-    html.classList.remove('dark');
-    localStorage.setItem('eletrogestao_theme', 'light');
-    updateThemeUI(false);
-  } else {
-    html.classList.add('dark');
-    localStorage.setItem('eletrogestao_theme', 'dark');
-    updateThemeUI(true);
-  }
-};
-
-function updateThemeUI(isDark) {
-  const btnText = document.getElementById('themeToggleText');
-  const btnIcon = document.getElementById('themeToggleIcon');
-  if (btnText) btnText.innerText = isDark ? 'Modo Escuro' : 'Modo Claro';
-  if (btnIcon) btnIcon.innerText = isDark ? '🌙' : '☀️';
-
-  if (typeof Chart !== 'undefined' && typeof chartInstances !== 'undefined') {
-    const textColor = isDark ? '#94a3b8' : '#475569';
-    Object.values(chartInstances).forEach(chart => {
-      if (chart && chart.options) {
-        if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
-          chart.options.plugins.legend.labels.color = textColor;
-        }
-        if (chart.options.scales) {
-          if (chart.options.scales.x && chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
-          if (chart.options.scales.y && chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
-        }
-        chart.update();
-      }
-    });
-  }
+​window.toggleTheme = function() {
+const html = document.documentElement;
+const isDark = html.classList.contains('dark');
+if (isDark) {
+html.classList.remove('dark');
+localStorage.setItem('eletrogestao_theme', 'light');
+updateThemeUI(false);
+} else {
+html.classList.add('dark');
+localStorage.setItem('eletrogestao_theme', 'dark');
+updateThemeUI(true);
 }
-
-(function initTheme() {
-  const savedTheme = localStorage.getItem('eletrogestao_theme');
-  if (savedTheme === 'light') {
-    document.documentElement.classList.remove('dark');
-    setTimeout(() => updateThemeUI(false), 50);
-  } else {
-    document.documentElement.classList.add('dark');
-    setTimeout(() => updateThemeUI(true), 50);
-  }
+};
+​function updateThemeUI(isDark) {
+const btnText = document.getElementById('themeToggleText');
+const btnIcon = document.getElementById('themeToggleIcon');
+if (btnText) btnText.innerText = isDark ? 'Modo Escuro' : 'Modo Claro';
+if (btnIcon) btnIcon.innerText = isDark ? '🌙' : '☀️';
+​if (typeof Chart !== 'undefined' && typeof chartInstances !== 'undefined') {
+const textColor = isDark ? '#94a3b8' : '#475569';
+Object.values(chartInstances).forEach(chart => {
+if (chart && chart.options) {
+if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+chart.options.plugins.legend.labels.color = textColor;
+}
+if (chart.options.scales) {
+if (chart.options.scales.x && chart.options.scales.x.ticks) chart.options.scales.x.ticks.color = textColor;
+if (chart.options.scales.y && chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = textColor;
+}
+chart.update();
+}
+});
+}
+}
+​(function initTheme() {
+const savedTheme = localStorage.getItem('eletrogestao_theme');
+if (savedTheme === 'light') {
+document.documentElement.classList.remove('dark');
+setTimeout(() => updateThemeUI(false), 50);
+} else {
+document.documentElement.classList.add('dark');
+setTimeout(() => updateThemeUI(true), 50);
+}
 })();
-
-window.escapeHtml = function(str) {
-  if (str === null || str === undefined) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+​window.escapeHtml = function(str) {
+if (str === null || str === undefined) return '';
+return String(str)
+.replace(/&/g, '&')
+.replace(/</g, '<')
+.replace(/>/g, '>')
+.replace(/"/g, '"')
+.replace(/'/g, ''');
 };
-
-window.calculateDaysOpen = function(dateString, status, completionDate) {
-  if (!dateString) return 0;
-  const parts = String(dateString).split('-');
-  if (parts.length !== 3) return 0;
-  const start = new Date(parts[0], parts[1] - 1, parts[2]);
-
-  let end = new Date();
-  if (status === 'CONCLUÍDO' && completionDate) {
-    const cParts = String(completionDate).split('-');
-    if (cParts.length === 3) {
-      end = new Date(cParts[0], cParts[1] - 1, cParts[2]);
-    }
-  }
-
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
-
-  if (end < start) return 0;
-  const diffTime = end - start;
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+​window.calculateDaysOpen = function(dateString, status, completionDate) {
+if (!dateString) return 0;
+const parts = String(dateString).split('-');
+if (parts.length !== 3) return 0;
+const start = new Date(parts[0], parts[1] - 1, parts[2]);
+​let end = new Date();
+if (status === 'CONCLUÍDO' && completionDate) {
+const cParts = String(completionDate).split('-');
+if (cParts.length === 3) {
+end = new Date(cParts[0], cParts[1] - 1, cParts[2]);
+}
+}
+​start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+​if (end < start) return 0;
+const diffTime = end - start;
+return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 };
-
-let lastFocusedElement = null;
-
-window.showModal = function(title, body) {
-  lastFocusedElement = document.activeElement;
-  document.getElementById('appModalTitle').innerText = title;
-  document.getElementById('appModalBody').innerText = body;
-  document.getElementById('appModal').classList.remove('hidden');
+​let lastFocusedElement = null;
+​window.showModal = function(title, body) {
+lastFocusedElement = document.activeElement;
+document.getElementById('appModalTitle').innerText = title;
+document.getElementById('appModalBody').innerText = body;
+document.getElementById('appModal').classList.remove('hidden');
 };
-
-window.closeAppModal = function() {
-  document.getElementById('appModal').classList.add('hidden');
-  if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
+​window.closeAppModal = function() {
+document.getElementById('appModal').classList.add('hidden');
+if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
 };
-
-window.showHtmlModal = function(title, htmlBody) {
-  lastFocusedElement = document.activeElement;
-  document.getElementById('appHtmlModalTitle').innerText = title;
-  document.getElementById('appHtmlModalBody').innerHTML = htmlBody;
-  document.getElementById('appHtmlModal').classList.remove('hidden');
+​window.showHtmlModal = function(title, htmlBody) {
+lastFocusedElement = document.activeElement;
+document.getElementById('appHtmlModalTitle').innerText = title;
+document.getElementById('appHtmlModalBody').innerHTML = htmlBody;
+document.getElementById('appHtmlModal').classList.remove('hidden');
 };
-
-window.closeAppHtmlModal = function() {
-  document.getElementById('appHtmlModal').classList.add('hidden');
-  if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
+​window.closeAppHtmlModal = function() {
+document.getElementById('appHtmlModal').classList.add('hidden');
+if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
 };
-
-window.showConfirmModal = function(title, body) {
-  lastFocusedElement = document.activeElement;
-  return new Promise((resolve) => {
-    document.getElementById('confirmModalTitle').innerText = title;
-    document.getElementById('confirmModalBody').innerText = body;
-    const modal = document.getElementById('confirmModal');
-    const okBtn = document.getElementById('confirmOkBtn');
-    const cancelBtn = document.getElementById('confirmCancelBtn');
-
-    const cleanup = () => {
-      modal.classList.add('hidden');
-      okBtn.removeEventListener('click', onOk);
-      cancelBtn.removeEventListener('click', onCancel);
-      if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
-    };
-
-    const onOk = () => { cleanup(); resolve(true); };
-    const onCancel = () => { cleanup(); resolve(false); };
-
-    okBtn.addEventListener('click', onOk);
-    cancelBtn.addEventListener('click', onCancel);
-    modal.classList.remove('hidden');
-  });
+​window.showConfirmModal = function(title, body) {
+lastFocusedElement = document.activeElement;
+return new Promise((resolve) => {
+document.getElementById('confirmModalTitle').innerText = title;
+document.getElementById('confirmModalBody').innerText = body;
+const modal = document.getElementById('confirmModal');
+const okBtn = document.getElementById('confirmOkBtn');
+const cancelBtn = document.getElementById('confirmCancelBtn');
+​const cleanup = () => {
+modal.classList.add('hidden');
+okBtn.removeEventListener('click', onOk);
+cancelBtn.removeEventListener('click', onCancel);
+if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
 };
-
-let ordersData = [];
+​const onOk = () => { cleanup(); resolve(true); };
+const onCancel = () => { cleanup(); resolve(false); };
+​okBtn.addEventListener('click', onOk);
+cancelBtn.addEventListener('click', onCancel);
+modal.classList.remove('hidden');
+});
+};
+​let ordersData = [];
 let selectedRouteIds = [];
 let map = null;
 let markersClusterGroup = null;
@@ -1049,666 +940,1427 @@ let authUser = null;
 let isCompressingPhoto = false;
 let unsubscribeSnapshot = null;
 let currentListViewMode = 'rowlist';
-
-let activeFilterState = {
-  urgency: null,
-  fiscalizada: null,
-  equipe: null,
-  label: null
+​let activeFilterState = {
+urgency: null,
+fiscalizada: null,
+equipe: null,
+label: null
 };
-
-let currentPage = 1;
+​let currentPage = 1;
 const pageSize = 50;
-
-const appId = 'eletrogestao_v2';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
-  authDomain: "eletrogestao-38596.firebaseapp.com",
-  databaseURL: "https://eletrogestao-38596-default-rtdb.firebaseio.com",
-  projectId: "eletrogestao-38596",
-  storageBucket: "eletrogestao-38596.firebasestorage.app",
-  messagingSenderId: "505140333342",
-  appId: "1:505140333342:web:7b24bd715fc8417e98570f",
-  measurementId: "G-B7ZDW50Y4X"
+​const appId = 'eletrogestao_v2';
+​const firebaseConfig = {
+apiKey: "AIzaSyCkKkq9A74MMY6MrfWiLYjAyWkDkKR8a1M",
+authDomain: "eletrogestao-38596.firebaseapp.com",
+databaseURL: "https://eletrogestao-38596-default-rtdb.firebaseio.com",
+projectId: "eletrogestao-38596",
+storageBucket: "eletrogestao-38596.firebasestorage.app",
+messagingSenderId: "505140333342",
+appId: "1:505140333342:web:7b24bd715fc8417e98570f",
+measurementId: "G-B7ZDW50Y4X"
 };
-
-let db = null;
+​let db = null;
 let auth = null;
-
-try {
-  if (typeof firebase !== 'undefined') {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-      console.warn("Firestore offline persistence notice:", err.code);
-    });
-    auth = firebase.auth();
-  }
-} catch(e) {
-  console.warn("Firebase offline.", e);
-}
-
-window.normalizeDate = function(val) {
-  if (!val) return window.getLocalTodayDate();
-  if (typeof val === 'number') {
-    const dateInfo = XLSX.SSF.parse_date_code(val);
-    if (dateInfo) {
-      const y = dateInfo.y;
-      const m = String(dateInfo.m).padStart(2, '0');
-      const d = String(dateInfo.d).padStart(2, '0');
-      return `${y}-${m}-${d}`;
-    }
-  }
-  const str = String(val).trim();
-  if (str.match(/^\d{4}-\d{2}-\d{2}$/)) return str;
-  if (str.includes('/')) {
-    const parts = str.split('/');
-    if (parts.length === 3) {
-      if (parts[2].length === 4) {
-        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-      } else if (parts[0].length === 4) {
-        return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
-      }
-    }
-  }
-  return window.getLocalTodayDate();
-};
-
-window.normalizeOrder = function(data) {
-  let rawLatVal = data.lat !== undefined ? data.lat : data.Latitude;
-  let rawLngVal = data.lng !== undefined ? data.lng : data.Longitude;
-
-  if (typeof rawLatVal === 'string') rawLatVal = rawLatVal.replace(',', '.');
-  if (typeof rawLngVal === 'string') rawLngVal = rawLngVal.replace(',', '.');
-
-  const rawLat = parseFloat(rawLatVal);
-  const rawLng = parseFloat(rawLngVal);
-
-  const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
-  const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
-
-  const validCategories = ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'EQUIPAMENTO', 'CHAVE', 'BYPASS', 'OUTROS'];
-  let rawCat = String(data.category || data.Categoria || '').toUpperCase();
-  if (rawCat === 'TRANSFORMADOR') rawCat = 'EQUIPAMENTO';
-  const category = validCategories.includes(rawCat) ? rawCat : 'OUTROS';
-
-  const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
-  let rawStatus = String(data.status || data.Status || '').toUpperCase();
-  const status = validStatuses.includes(rawStatus) ? rawStatus : 'PENDENTE';
-
-  const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
-  const rawUrg = data.urgencia || data.Urgência;
-  const urgencia = validUrgencies.includes(rawUrg) ? rawUrg : 'Não Avaliada';
-
-  const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
-  const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : (status === 'CONCLUÍDO' ? window.getLocalTodayDate() : null);
-
-  const scheduledDate = data.scheduledDate ? window.normalizeDate(data.scheduledDate) : null;
-  const checklist = data.checklist || { croqui: false, apr: false, sgm: false };
-
-  const historyArr = Array.isArray(data.history) ? data.history : [];
-
-  let isFiscalizada = false;
-  const rawFisc = data.fiscalizada !== undefined ? data.fiscalizada : data.Fiscalizada;
-  if (typeof rawFisc === 'string') {
-    isFiscalizada = rawFisc.toLowerCase() === 'sim' || rawFisc.toLowerCase() === 'true';
-  } else {
-    isFiscalizada = Boolean(rawFisc);
-  }
-  if (!isFiscalizada && historyArr.length > 1) {
-    for (let h of historyArr) {
-      if (h.message && h.message.includes('Fiscalizada')) {
-        isFiscalizada = true;
-        break;
-      }
-    }
-  }
-
-  return {
-    id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
-    osProject: String(data.osProject || data.os || data.OS || data['OS / Projeto'] || 'SEM-OS').trim(),
-    origem: String(data.origem || data.Origem || 'OSM'),
-    category: category,
-    status: status,
-    urgencia: urgencia,
-    fiscalizada: isFiscalizada,
-    equipeSugerida: String(data.equipeSugerida || data['Equipe Sugerida'] || 'Não definida'),
-    alimentador: String(data.alimentador || data.Alimentador || ''),
-    pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
-    orderDate: formattedDate,
-    completionDate: formattedCompDate,
-    scheduledDate: scheduledDate,
-    checklist: checklist,
-    description: String(data.description || data.Descrição || ''),
-    lat: lat,
-    lng: lng,
-    photo: data.photo || null,
-    history: historyArr
-  };
-};
-
-/* ==========================================================================
-   CORREÇÃO 3: alerta de programação / atraso
-   - Não altera o objeto local nem re-renderiza: o onSnapshot atualiza a tela.
-   - Cada OS vencida é tentada uma única vez por sessão (evita loop de escrita).
-   - A gravação usa transação: com vários dispositivos abertos, só o primeiro
-     efetivamente muda o status.
-   - O aviso "programada para hoje" aparece 1x por dia por sessão.
-   ========================================================================== */
-window._overdueAttempted = window._overdueAttempted || new Set();
-
-window.checkScheduledAlertsAndOverdue = async function() {
-  if (!ordersData || ordersData.length === 0) return;
-  if (!(auth && auth.currentUser && db)) return;
-
-  const todayStr = window.getLocalTodayDate();
-  const alertMessages = [];
-  const overdue = [];
-
-  ordersData.forEach(o => {
-    if (o.status !== 'PROGRAMADO' || !o.scheduledDate) return;
-    if (o.scheduledDate === todayStr) {
-      alertMessages.push(`⚠️ A OS <strong>${window.escapeHtml(o.osProject)}</strong> está programada para <strong>hoje</strong> (${todayStr}). Verifique se a programação foi cumprida!`);
-    } else if (o.scheduledDate < todayStr && !o.fiscalizada && !window._overdueAttempted.has(o.id + '|' + o.scheduledDate)) {
-      overdue.push(o);
-    }
-  });
-
-  const userId = auth.currentUser.uid;
-  const col = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders');
-
-  for (const o of overdue) {
-    window._overdueAttempted.add(o.id + '|' + o.scheduledDate);
-    try {
-      const ref = col.doc(o.id);
-      const changed = await db.runTransaction(async tx => {
-        const snap = await tx.get(ref);
-        if (!snap.exists) return false;
-        const cur = snap.data();
-        // Outro dispositivo (ou o usuário) já mudou? Então não faz nada.
-        if (cur.status !== 'PROGRAMADO' || cur.scheduledDate !== o.scheduledDate) return false;
-        const history = Array.isArray(cur.history) ? cur.history.slice() : [];
-        history.unshift({
-          date: new Date().toLocaleString('pt-BR'),
-          message: `Status alterado automaticamente de PROGRAMADO para PENDENTE por atraso na data programada (${o.scheduledDate}).`
-        });
-        tx.update(ref, { status: 'PENDENTE', history: history });
-        return true;
-      });
-      if (changed) {
-        alertMessages.push(`🚨 A OS <strong>${window.escapeHtml(o.osProject)}</strong> estava programada para ${window.escapeHtml(o.scheduledDate)} e o prazo venceu! Status alterado para PENDENTE.`);
-      }
-    } catch (err) {
-      // Offline ou sem permissão: libera nova tentativa na próxima sessão.
-      window._overdueAttempted.delete(o.id + '|' + o.scheduledDate);
-      console.warn('Falha ao atualizar OS vencida:', o.osProject, err.code || err.message);
-    }
-  }
-
-  if (alertMessages.length > 0 && window._alertedDate !== todayStr) {
-    window._alertedDate = todayStr;
-    window.showHtmlModal('🔔 Alerta de Programação de OS', `<div class="space-y-2">${alertMessages.join('<br><br>')}</div>`);
-  }
-};
-
-window.switchTab = function(tabName) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
-    btn.classList.add('text-slate-600', 'dark:text-slate-400');
-  });
-  document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
-    btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
-    btn.classList.add('text-slate-600', 'dark:text-slate-400');
-  });
-
-  const targetTab = document.getElementById(`tab-${tabName}`);
-  if (targetTab) targetTab.classList.remove('hidden');
-
-  const navBtn = document.getElementById(`nav-${tabName}`);
-  if (navBtn) {
-    navBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-    navBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
-  }
-
-  const mNavBtn = document.getElementById(`mnav-${tabName}`);
-  if (mNavBtn) {
-    mNavBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-    mNavBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
-  }
-
-  if (tabName === 'map') {
-    setTimeout(() => {
-      if (!map) window.renderMap();
-      else { map.invalidateSize(); window.renderMap(); }
-    }, 150);
-  } else if (tabName === 'list') {
-    window.renderListView();
-  } else if (tabName === 'dashboard') {
-    window.renderDashboard();
-  }
-};
-
-window.renderMap = function() {
-  const mapContainer = document.getElementById('map');
-  if (!mapContainer) return;
-
-  if (!map) {
-    map = L.map('map').setView([-23.5505, -46.6333], 12);
-
-    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 });
-    const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 18 });
-    const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 });
-
-    osmLayer.addTo(map);
-    L.control.layers({ "OpenStreetMap": osmLayer, "Esri Satélite": esriSat, "Esri Escuro": esriDark }).addTo(map);
-
-    markersClusterGroup = L.markerClusterGroup();
-    map.addLayer(markersClusterGroup);
-  }
-
-  if (markersClusterGroup) markersClusterGroup.clearLayers();
-
-  const fCat = document.getElementById('mapFilterCategory')?.value || '';
-  const fStatus = document.getElementById('mapFilterStatus')?.value || '';
-  const showArchived = document.getElementById('mapShowArchivedToggle')?.checked || false;
-
-  const targetOrders = showArchived ? ordersData : ordersData.filter(o => o.status !== 'CONCLUÍDO');
-
-  const mappedOrders = targetOrders.filter(o => {
-    if (o.lat === null || o.lng === null) return false;
-    if (fCat && o.category !== fCat) return false;
-    if (fStatus && o.status !== fStatus) return false;
-    return true;
-  });
-
-  const unmappedOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
-  const unmappedBtn = document.getElementById('unmappedBtn');
-  if (unmappedBtn) {
-    if (unmappedOrders.length > 0) {
-      unmappedBtn.classList.remove('hidden');
-      document.getElementById('unmappedCountBadge').innerText = unmappedOrders.length;
-    } else {
-      unmappedBtn.classList.add('hidden');
-    }
-  }
-
-  document.getElementById('mapCounter').innerText = mappedOrders.length;
-
-  const latLngs = [];
-  mappedOrders.forEach(order => {
-    let color = '#f59e0b';
-    if (order.status === 'PROGRAMADO') color = '#3b82f6';
-    else if (order.status === 'PARCIAL') color = '#ec4899';
-    else if (order.status === 'CONCLUÍDO') color = '#10b981';
-
-    const htmlIcon = L.divIcon({
-      className: 'custom-map-marker',
-      html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 900; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 2px solid #ffffff;">⚡</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
-
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${order.lat},${order.lng}`;
-
-    const popupHtml = `<div style="font-family: inherit; font-size: 12px; min-width: 200px; line-height: 1.5;">
-      <a href="javascript:void(0)" class="map-os-link font-bold text-amber-600 underline" data-id="${window.escapeHtml(order.id)}" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br>
-      <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br>
-      <strong>Status:</strong> ${window.escapeHtml(order.status)}<br>
-      <strong>Criticidade:</strong> ${window.escapeHtml(order.urgencia)}<br>
-      <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br>
-      <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br>
-      <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-        <a href="${mapsUrl}" target="_blank" rel="noopener" class="inline-block w-full py-1.5 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-center font-black rounded-xl text-xs shadow-sm">🗺️ Rotear no Google Maps</a>
-      </div>
-    </div>`;
-
-    const marker = L.marker([order.lat, order.lng], { icon: htmlIcon }).bindPopup(popupHtml);
-    markersClusterGroup.addLayer(marker);
-    latLngs.push([order.lat, order.lng]);
-  });
-
-  if (latLngs.length > 0 && !window._initialBoundsSet) {
-    map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
-    window._initialBoundsSet = true;
-  }
-};
-
-document.addEventListener('click', function(e) {
-  const target = e.target.closest('.map-os-link');
-  if (target) {
-    const id = target.getAttribute('data-id');
-    if (id) window.openDetailsModal(id);
-  }
-  const unmapTarget = e.target.closest('.unmapped-os-link');
-  if (unmapTarget) {
-    const id = unmapTarget.getAttribute('data-id');
-    if (id) {
-      window.closeUnmappedModal();
-      window.openDetailsModal(id);
-    }
-  }
+​try {
+if (typeof firebase !== 'undefined') {
+firebase.initializeApp(firebaseConfig);
+db = firebase.firestore();
+db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+console.warn("Firestore offline persistence notice:", err.code);
 });
-
-window.openUnmappedModal = function() {
-  const unmapped = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
-  const container = document.getElementById('unmappedModalList');
-  container.innerHTML = '';
-
-  if (unmapped.length === 0) {
-    container.innerHTML = `<p class="text-xs text-slate-500">Nenhuma ordem ativa sem GPS.</p>`;
-  } else {
-    unmapped.forEach(o => {
-      const item = document.createElement('div');
-      item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
-      item.innerHTML = `
-        <div>
-          <a href="javascript:void(0)" class="unmapped-os-link font-bold text-amber-600 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a>
-          <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span>
-        </div>
-        <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>
-      `;
-      container.appendChild(item);
-    });
-
-    container.querySelectorAll('.unmapped-os-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        window.closeUnmappedModal();
-        window.openDetailsModal(id);
-      });
-    });
-  }
-  document.getElementById('unmappedModal').classList.remove('hidden');
+auth = firebase.auth();
+}
+} catch(e) {
+console.warn("Firebase offline.", e);
+}
+​window.normalizeDate = function(val) {
+if (!val) return window.getLocalTodayDate();
+if (typeof val === 'number') {
+const dateInfo = XLSX.SSF.parse_date_code(val);
+if (dateInfo) {
+const y = dateInfo.y;
+const m = String(dateInfo.m).padStart(2, '0');
+const d = String(dateInfo.d).padStart(2, '0');
+return ${y}-${m}-${d};
+}
+}
+const str = String(val).trim();
+if (str.match(/^\d{4}-\d{2}-\d{2}$/)) return str;
+if (str.includes('/')) {
+const parts = str.split('/');
+if (parts.length === 3) {
+if (parts[2].length === 4) {
+return ${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')};
+} else if (parts[0].length === 4) {
+return ${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')};
+}
+}
+}
+return window.getLocalTodayDate();
 };
-
-window.closeUnmappedModal = function() {
-  document.getElementById('unmappedModal').classList.add('hidden');
+​window.normalizeOrder = function(data) {
+let rawLatVal = data.lat !== undefined ? data.lat : data.Latitude;
+let rawLngVal = data.lng !== undefined ? data.lng : data.Longitude;
+​if (typeof rawLatVal === 'string') rawLatVal = rawLatVal.replace(',', '.');
+if (typeof rawLngVal === 'string') rawLngVal = rawLngVal.replace(',', '.');
+​const rawLat = parseFloat(rawLatVal);
+const rawLng = parseFloat(rawLngVal);
+​const lat = (!isNaN(rawLat) && rawLat >= -90 && rawLat <= 90 && rawLat !== 0) ? rawLat : null;
+const lng = (!isNaN(rawLng) && rawLng >= -180 && rawLng <= 180 && rawLng !== 0) ? rawLng : null;
+​const validCategories = ['POSTE', 'PODA', 'CABO', 'ESTRUTURA', 'EQUIPAMENTO', 'CHAVE', 'BYPASS', 'OUTROS'];
+let rawCat = String(data.category || data.Categoria || '').toUpperCase();
+if (rawCat === 'TRANSFORMADOR') rawCat = 'EQUIPAMENTO';
+const category = validCategories.includes(rawCat) ? rawCat : 'OUTROS';
+​const validStatuses = ['PENDENTE', 'PROGRAMADO', 'PARCIAL', 'CONCLUÍDO'];
+let rawStatus = String(data.status || data.Status || '').toUpperCase();
+const status = validStatuses.includes(rawStatus) ? rawStatus : 'PENDENTE';
+​const validUrgencies = ['Emergência', 'Alta', 'Média', 'Baixa', 'Não Avaliada'];
+const rawUrg = data.urgencia || data.Urgência;
+const urgencia = validUrgencies.includes(rawUrg) ? rawUrg : 'Não Avaliada';
+​const formattedDate = window.normalizeDate(data.orderDate || data['Data da Ordem'] || data.Data);
+const formattedCompDate = data.completionDate ? window.normalizeDate(data.completionDate) : (status === 'CONCLUÍDO' ? window.getLocalTodayDate() : null);
+​const scheduledDate = data.scheduledDate ? window.normalizeDate(data.scheduledDate) : null;
+const checklist = data.checklist || { croqui: false, apr: false, sgm: false };
+​const historyArr = Array.isArray(data.history) ? data.history : [];
+​let isFiscalizada = false;
+const rawFisc = data.fiscalizada !== undefined ? data.fiscalizada : data.Fiscalizada;
+if (typeof rawFisc === 'string') {
+isFiscalizada = rawFisc.toLowerCase() === 'sim' || rawFisc.toLowerCase() === 'true';
+} else {
+isFiscalizada = Boolean(rawFisc);
+}
+if (!isFiscalizada && historyArr.length > 1) {
+for (let h of historyArr) {
+if (h.message && h.message.includes('Fiscalizada')) {
+isFiscalizada = true;
+break;
+}
+}
+}
+​return {
+id: String(data.id || 'ord_' + Math.random().toString(36).substr(2, 9)),
+osProject: String(data.osProject || data.os || data.OS || data['OS / Projeto'] || 'SEM-OS').trim(),
+origem: String(data.origem || data.Origem || 'OSM'),
+category: category,
+status: status,
+urgencia: urgencia,
+fiscalizada: isFiscalizada,
+equipeSugerida: String(data.equipeSugerida || data['Equipe Sugerida'] || 'Não definida'),
+alimentador: String(data.alimentador || data.Alimentador || ''),
+pontoEletrico: String(data.pontoEletrico || data['Ponto Elétrico'] || ''),
+orderDate: formattedDate,
+completionDate: formattedCompDate,
+scheduledDate: scheduledDate,
+checklist: checklist,
+description: String(data.description || data.Descrição || ''),
+lat: lat,
+lng: lng,
+photo: data.photo || null,
+history: historyArr
 };
-
-window.openArchivedModal = function() {
-  const archived = ordersData.filter(o => o.status === 'CONCLUÍDO');
-  const container = document.getElementById('archivedModalList');
-  container.innerHTML = '';
-
-  if (archived.length === 0) {
-    container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada no momento.</p>`;
-  } else {
-    archived.forEach(o => {
-      const item = document.createElement('div');
-      item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center gap-2";
-      item.innerHTML = `
-        <div>
-          <a href="javascript:void(0)" class="archived-os-link font-bold text-emerald-600 dark:text-emerald-400 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a>
-          <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span>
-        </div>
-        <div class="flex gap-2">
-          <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg flex items-center justify-center">Detalhes</button>
-        </div>
-      `;
-      container.appendChild(item);
-    });
-
-    container.querySelectorAll('.archived-view-btn, .archived-os-link').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        window.closeArchivedModal();
-        window.openDetailsModal(id);
-      });
-    });
-  }
-  document.getElementById('archivedModal').classList.remove('hidden');
 };
-
-window.closeArchivedModal = function() {
-  document.getElementById('archivedModal').classList.add('hidden');
+​window._overdueAttempted = window._overdueAttempted || new Set();
+​window.checkScheduledAlertsAndOverdue = async function() {
+if (!ordersData || ordersData.length === 0) return;
+if (!(auth && auth.currentUser && db)) return;
+​const todayStr = window.getLocalTodayDate();
+const alertMessages = [];
+const overdue = [];
+​ordersData.forEach(o => {
+if (o.status !== 'PROGRAMADO' || !o.scheduledDate) return;
+if (o.scheduledDate === todayStr) {
+alertMessages.push(⚠️ A OS <strong>${window.escapeHtml(o.osProject)}</strong> está programada para <strong>hoje</strong> (${todayStr}). Verifique se a programação foi cumprida!);
+} else if (o.scheduledDate < todayStr && !o.fiscalizada && !window._overdueAttempted.has(o.id + '|' + o.scheduledDate)) {
+overdue.push(o);
+}
+});
+​const userId = auth.currentUser.uid;
+const col = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders');
+​for (const o of overdue) {
+window._overdueAttempted.add(o.id + '|' + o.scheduledDate);
+try {
+const ref = col.doc(o.id);
+const changed = await db.runTransaction(async tx => {
+const snap = await tx.get(ref);
+if (!snap.exists) return false;
+const cur = snap.data();
+if (cur.status !== 'PROGRAMADO' || cur.scheduledDate !== o.scheduledDate) return false;
+const history = Array.isArray(cur.history) ? cur.history.slice() : [];
+history.unshift({
+date: new Date().toLocaleString('pt-BR'),
+message: Status alterado automaticamente de PROGRAMADO para PENDENTE por atraso na data programada (${o.scheduledDate}).
+});
+tx.update(ref, { status: 'PENDENTE', history: history });
+return true;
+});
+if (changed) {
+alertMessages.push(🚨 A OS <strong>${window.escapeHtml(o.osProject)}</strong> estava programada para ${window.escapeHtml(o.scheduledDate)} e o prazo venceu! Status alterado para PENDENTE.);
+}
+} catch (err) {
+window._overdueAttempted.delete(o.id + '|' + o.scheduledDate);
+console.warn('Falha ao atualizar OS vencida:', o.osProject, err.code || err.message);
+}
+}
+​if (alertMessages.length > 0 && window._alertedDate !== todayStr) {
+window._alertedDate = todayStr;
+window.showHtmlModal('🔔 Alerta de Programação de OS', <div class="space-y-2">${alertMessages.join('<br><br>')}</div>);
+}
 };
-
-window.setListViewMode = function(mode) {
-  currentListViewMode = mode;
-  const cardsContainer = document.getElementById('ordersListCards');
-  const rowContainer = document.getElementById('ordersListRowContainer');
-  const cardsBtn = document.getElementById('viewModeCardsBtn');
-  const rowListBtn = document.getElementById('viewModeRowListBtn');
-
-  if (mode === 'cards') {
-    cardsContainer.classList.remove('hidden');
-    rowContainer.classList.add('hidden');
-    cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-    rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
-  } else {
-    cardsContainer.classList.add('hidden');
-    rowContainer.classList.remove('hidden');
-    rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
-    cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
-  }
-  window.renderListView();
+​window.switchTab = function(tabName) {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+​document.querySelectorAll('.nav-btn').forEach(btn => {
+btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
+btn.classList.add('text-slate-600', 'dark:text-slate-400');
+});
+document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
+btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
+btn.classList.add('text-slate-600', 'dark:text-slate-400');
+});
+​const targetTab = document.getElementById(tab-${tabName});
+if (targetTab) targetTab.classList.remove('hidden');
+​const navBtn = document.getElementById(nav-${tabName});
+if (navBtn) {
+navBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+navBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
+}
+​const mNavBtn = document.getElementById(mnav-${tabName});
+if (mNavBtn) {
+mNavBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+mNavBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-slate-100', 'dark:bg-slate-900', 'font-bold');
+}
+​if (tabName === 'map') {
+setTimeout(() => {
+if (!map) window.renderMap();
+else { map.invalidateSize(); window.renderMap(); }
+}, 150);
+} else if (tabName === 'list') {
+window.renderListView();
+} else if (tabName === 'dashboard') {
+window.renderDashboard();
+}
 };
-
-window.toggleRouteSelection = function(id) {
-  const index = selectedRouteIds.indexOf(id);
-  if (index > -1) selectedRouteIds.splice(index, 1);
-  else selectedRouteIds.push(id);
-
-  document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
-  window.renderListView();
+​window.renderMap = function() {
+const mapContainer = document.getElementById('map');
+if (!mapContainer) return;
+​if (!map) {
+map = L.map('map').setView([-23.5505, -46.6333], 12);
+​const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 });
+const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 18 });
+const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 });
+​osmLayer.addTo(map);
+L.control.layers({ "OpenStreetMap": osmLayer, "Esri Satélite": esriSat, "Esri Escuro": esriDark }).addTo(map);
+​markersClusterGroup = L.markerClusterGroup();
+map.addLayer(markersClusterGroup);
+}
+​if (markersClusterGroup) markersClusterGroup.clearLayers();
+​const fCat = document.getElementById('mapFilterCategory')?.value || '';
+const fStatus = document.getElementById('mapFilterStatus')?.value || '';
+const showArchived = document.getElementById('mapShowArchivedToggle')?.checked || false;
+​const targetOrders = showArchived ? ordersData : ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​const mappedOrders = targetOrders.filter(o => {
+if (o.lat === null || o.lng === null) return false;
+if (fCat && o.category !== fCat) return false;
+if (fStatus && o.status !== fStatus) return false;
+return true;
+});
+​const unmappedOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
+const unmappedBtn = document.getElementById('unmappedBtn');
+if (unmappedBtn) {
+if (unmappedOrders.length > 0) {
+unmappedBtn.classList.remove('hidden');
+document.getElementById('unmappedCountBadge').innerText = unmappedOrders.length;
+} else {
+unmappedBtn.classList.add('hidden');
+}
+}
+​document.getElementById('mapCounter').innerText = mappedOrders.length;
+​const latLngs = [];
+mappedOrders.forEach(order => {
+let color = '#f59e0b';
+if (order.status === 'PROGRAMADO') color = '#3b82f6';
+else if (order.status === 'PARCIAL') color = '#ec4899';
+else if (order.status === 'CONCLUÍDO') color = '#10b981';
+​const htmlIcon = L.divIcon({
+className: 'custom-map-marker',
+html: <div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 900; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 2px solid #ffffff;">⚡</div>,
+iconSize: [28, 28],
+iconAnchor: [14, 14]
+});
+​const mapsUrl = https://www.google.com/maps/dir/?api=1&destination=${order.lat},${order.lng};
+​const popupHtml = <div style="font-family: inherit; font-size: 12px; min-width: 200px; line-height: 1.5;"> <a href="javascript:void(0)" class="map-os-link font-bold text-amber-600 underline" data-id="${window.escapeHtml(order.id)}" style="font-size: 14px; font-weight: bold; color: #f59e0b; text-decoration: underline;">${window.escapeHtml(order.osProject)}</a><br> <strong>Categoria:</strong> ${window.escapeHtml(order.category)}<br> <strong>Status:</strong> ${window.escapeHtml(order.status)}<br> <strong>Criticidade:</strong> ${window.escapeHtml(order.urgencia)}<br> <strong>Fiscalizada:</strong> ${order.fiscalizada ? 'Sim 🔍' : 'Não'}<br> <strong>Alimentador:</strong> ${window.escapeHtml(order.alimentador || 'N/D')}<br> <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800"> <a href="${mapsUrl}" target="_blank" rel="noopener" class="inline-block w-full py-1.5 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-center font-black rounded-xl text-xs shadow-sm">🗺️ Rotear no Google Maps</a> </div> </div>;
+​const marker = L.marker([order.lat, order.lng], { icon: htmlIcon }).bindPopup(popupHtml);
+markersClusterGroup.addLayer(marker);
+latLngs.push([order.lat, order.lng]);
+});
+​if (latLngs.length > 0 && !window._initialBoundsSet) {
+map.fitBounds(latLngs, { padding: [50, 50], maxZoom: 16 });
+window._initialBoundsSet = true;
+}
 };
-
-window.onSearchInput = function() {
-  currentPage = 1;
-  window.renderListView();
+​document.addEventListener('click', function(e) {
+const target = e.target.closest('.map-os-link');
+if (target) {
+const id = target.getAttribute('data-id');
+if (id) window.openDetailsModal(id);
+}
+const unmapTarget = e.target.closest('.unmapped-os-link');
+if (unmapTarget) {
+const id = unmapTarget.getAttribute('data-id');
+if (id) {
+window.closeUnmappedModal();
+window.openDetailsModal(id);
+}
+}
+});
+​window.openUnmappedModal = function() {
+const unmapped = ordersData.filter(o => o.status !== 'CONCLUÍDO' && (o.lat === null || o.lng === null));
+const container = document.getElementById('unmappedModalList');
+container.innerHTML = '';
+​if (unmapped.length === 0) {
+container.innerHTML = <p class="text-xs text-slate-500">Nenhuma ordem ativa sem GPS.</p>;
+} else {
+unmapped.forEach(o => {
+const item = document.createElement('div');
+item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center";
+item.innerHTML = <div> <a href="javascript:void(0)" class="unmapped-os-link font-bold text-amber-600 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Alimentador: ${window.escapeHtml(o.alimentador || 'N/D')}</span> </div> <button type="button" data-id="${window.escapeHtml(o.id)}" class="unmapped-os-btn px-2.5 py-1 bg-amber-500/10 text-amber-600 font-bold rounded-lg flex items-center justify-center">Ver</button>;
+container.appendChild(item);
+});
+​container.querySelectorAll('.unmapped-os-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+const id = btn.getAttribute('data-id');
+window.closeUnmappedModal();
+window.openDetailsModal(id);
+});
+});
+}
+document.getElementById('unmappedModal').classList.remove('hidden');
 };
-
-window.onFilterChange = function() {
-  currentPage = 1;
-  window.renderListView();
+​window.closeUnmappedModal = function() {
+document.getElementById('unmappedModal').classList.add('hidden');
 };
-
-window.changePage = function(direction) {
-  currentPage += direction;
-  window.renderListView();
+​window.openArchivedModal = function() {
+const archived = ordersData.filter(o => o.status === 'CONCLUÍDO');
+const container = document.getElementById('archivedModalList');
+container.innerHTML = '';
+​if (archived.length === 0) {
+container.innerHTML = <p class="text-xs text-slate-500 text-center py-6">Nenhuma ordem concluída / arquivada no momento.</p>;
+} else {
+archived.forEach(o => {
+const item = document.createElement('div');
+item.className = "bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs flex justify-between items-center gap-2";
+item.innerHTML = <div> <a href="javascript:void(0)" class="archived-os-link font-bold text-emerald-600 dark:text-emerald-400 hover:underline" data-id="${window.escapeHtml(o.id)}">${window.escapeHtml(o.osProject)}</a> <span class="text-slate-500 block">Cat: ${window.escapeHtml(o.category)} | Concluída em: ${window.escapeHtml(o.completionDate || o.orderDate)}</span> </div> <div class="flex gap-2"> <button type="button" data-id="${window.escapeHtml(o.id)}" class="archived-view-btn px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold rounded-lg flex items-center justify-center">Detalhes</button> </div>;
+container.appendChild(item);
+});
+​container.querySelectorAll('.archived-view-btn, .archived-os-link').forEach(btn => {
+btn.addEventListener('click', () => {
+const id = btn.getAttribute('data-id');
+window.closeArchivedModal();
+window.openDetailsModal(id);
+});
+});
+}
+document.getElementById('archivedModal').classList.remove('hidden');
 };
-
-window.renderListView = function() {
-  const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-  const fCat = document.getElementById('listFilterCategory')?.value || '';
-  const fStatus = document.getElementById('listFilterStatus')?.value || '';
-  const fUrgency = document.getElementById('listFilterUrgency')?.value || '';
-  const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
-
-  const archivedCount = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
-  const archivedBadge = document.getElementById('archivedCountBadge');
-  if (archivedBadge) archivedBadge.innerText = archivedCount;
-
-  const activeBar = document.getElementById('activeFiltersBar');
-  const chipsContainer = document.getElementById('activeFiltersChips');
-  if (activeFilterState.label) {
-    activeBar.classList.remove('hidden');
-    chipsContainer.innerHTML = `<span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-bold flex items-center gap-1">${window.escapeHtml(activeFilterState.label)} <button onclick="window.clearDashboardFilters()" class="ml-1 hover:text-red-500">✕</button></span>`;
-  } else {
-    activeBar.classList.add('hidden');
-    chipsContainer.innerHTML = '';
-  }
-
-  const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
-
-  const filtered = activeOrders.filter(o => {
-    if (fCat && o.category !== fCat) return false;
-    if (fStatus && o.status !== fStatus) return false;
-    if (fUrgency && o.urgencia !== fUrgency) return false;
-
-    if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
-    if (activeFilterState.fiscalizada !== null && o.fiscalizada !== activeFilterState.fiscalizada) return false;
-    if (activeFilterState.equipe && o.equipeSugerida !== activeFilterState.equipe) return false;
-
-    if (!searchVal) return true;
-    const osp = o.osProject.toLowerCase();
-    const alt = o.alimentador.toLowerCase();
-    const d = o.description.toLowerCase();
-    const p = o.pontoEletrico.toLowerCase();
-
-    return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
-  });
-
-  filtered.sort((a, b) => {
-    if (sortOrder === 'urgency') {
-      const urgWeights = { 'Emergência': 4, 'Alta': 3, 'Média': 2, 'Baixa': 1, 'Não Avaliada': 0 };
-      const wA = urgWeights[a.urgencia] !== undefined ? urgWeights[a.urgencia] : 0;
-      const wB = urgWeights[b.urgencia] !== undefined ? urgWeights[b.urgencia] : 0;
-      if (wA !== wB) return wB - wA;
-    }
-    const dateA = new Date(a.orderDate || '2025-01-01');
-    const dateB = new Date(b.orderDate || '2025-01-01');
-    if (sortOrder === 'oldest') return dateA - dateB;
-    return dateB - dateA;
-  });
-
-  const navBadge = document.getElementById('navDemandCount');
-  if (navBadge) navBadge.innerText = activeOrders.length;
-
-  const totalItems = filtered.length;
-  const totalPages = Math.ceil(totalItems / pageSize) || 1;
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
-
-  document.getElementById('paginationInfo').innerText = `Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens ativas`;
-  document.getElementById('prevPageBtn').disabled = currentPage <= 1;
-  document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
-
-  if (currentListViewMode === 'cards') {
-    const container = document.getElementById('ordersListCards');
-    if (!container) return;
-    container.innerHTML = '';
-
-    if (paginatedItems.length === 0) {
-      container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>`;
-      return;
-    }
-
-    paginatedItems.forEach(order => {
-      const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-      const isSelected = selectedRouteIds.includes(order.id);
-
-      const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada'
-        ? `<span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 Criticidade: ${window.escapeHtml(order.urgencia)}</span>`
-        : `<span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Criticidade: Não Avaliada</span>`;
-
-      const fiscalizadaBadge = order.fiscalizada
-        ? `<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">🔍 Fiscalizada</span>`
-        : `<span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>`;
-
-      let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-      if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
-      else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
-
-      let scheduledInfoHtml = '';
-      if (order.status === 'PROGRAMADO' && order.scheduledDate) {
-        const chk = order.checklist || {};
-        scheduledInfoHtml = `<div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-2 text-[11px] space-y-1">
-          <p class="font-bold text-sky-600 dark:text-sky-400">📅 Prog: ${window.escapeHtml(order.scheduledDate)}</p>
-          <div class="flex gap-2 text-[10px] text-slate-600 dark:text-slate-300">
-            <span>Croqui: ${chk.croqui ? '✅' : '❌'}</span>
-            <span>APR: ${chk.apr ? '✅' : '❌'}</span>
-            <span>SGM: ${chk.sgm ? '✅' : '❌'}</span>
-          </div>
-        </div>`;
-      }
-
-      const card = document.createElement('div');
-      card.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3`;
-
-      card.innerHTML = `
-        <div class="space-y-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <input type="checkbox" ${isSelected ? 'checked' : ''} data-id="${window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
-              <a href="javascript:void(0)" class="details-os-link font-black text-xs text-amber-600 dark:text-amber-400 hover:underline" data-id="${window.escapeHtml(order.id)}">${window.escapeHtml(order.osProject)}</a>
-            </div>
-            <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">${window.escapeHtml(order.status)}</span>
-          </div>
-
-          <div class="flex flex-wrap gap-1.5 items-center">
-            <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
-            ${urgencyBadge}
-            ${fiscalizadaBadge}
-          </div>
-
-          ${scheduledInfoHtml}
-
-          <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
-
-          <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 pt-1">
-            <p>⚡ Ponto: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong> | Alimentador: <strong class="text-slate-800 dark:text-slate-200">${window.escapeHtml(order.alimentador || 'N/D')}</strong></p>
-            <p>📅 Abertura: ${window.escapeHtml(order.orderDate)} (<span class="text-amber-600 dark:text-amber-400 font-bold">${daysOpen} dias</span>)</p>
-          </div>
-        </div>
-
-        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-          <button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
-          <div class="flex gap-1.5">
-            <button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
-            <button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir">🗑️</button>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  } else {
-    const rowContainer = document.getElementById('ordersListRowContainer');
-    if (!rowContainer) return;
-    rowContainer.innerHTML = '';
-
-    if (paginatedItems.length === 0) {
-      rowContainer.innerHTML = `<div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>`;
-      return;
-    }
-
-    paginatedItems.forEach(order => {
-      const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
-      const isSelected = selectedRouteIds.includes(order.id);
-
-      let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
-      if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
-      else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
-
-      let scheduledRowBadge = '';
-      if (order.status === 'PROGRAMADO' && order.scheduledDate) {
-        const chk = order.checklist || {};
-        scheduledRowBadge = `<span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-500/20">📅 Prog: ${window.escapeHtml(order.scheduledDate)} (Croqui: ${chk.croqui?'✅':'❌'} | APR: ${chk.apr?'✅':'❌'} | SGM: ${chk.sgm?'✅':'❌'})</span>`;
-      }
-
-      const cardRow = document.createElement('div');
-      cardRow.className = `bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3`;
-
-      cardRow.innerHTML = `
-        <div class="flex items-center gap-3 flex-wrap">
-          <input type="checkbox" ${isSelected ? 'checked' : ''} data-id="${window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <a href="javascript:void(0)" class="details-os-link font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400 hover:underline tracking-tight" data-id="${window.escapeHtml(order.id)}">${window.escapeHtml(order.osProject)}</a>
-              <span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-amber-500/20 uppercase">${window.escapeHtml(order.category)}</span>
-              <span class="bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-red-500/20 uppercase">CRITICIDADE: ${window.escapeHtml(order.urgencia || 'Não Avaliada')}</span>
-              <span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: ${window.escapeHtml(order.origem || 'OSM')}</span>
-              <span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">${window.escapeHtml(order.status)}</span>
-              ${order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
-              ${scheduledRowBadge}
-            </div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-              <span>PT: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
-              <span>|</span>
-              <span>Alt: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
-              <span>|</span>
-              <span class="flex items-center gap-1">📅 ${window.escapeHtml(order.orderDate)} (<strong class="text-amber-600 dark:text-amber-400">${daysOpen} dias em aberto</strong>)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
-          <button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
-          <button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
-          <button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-ce
+​window.closeArchivedModal = function() {
+document.getElementById('archivedModal').classList.add('hidden');
+};
+​window.setListViewMode = function(mode) {
+currentListViewMode = mode;
+const cardsContainer = document.getElementById('ordersListCards');
+const rowContainer = document.getElementById('ordersListRowContainer');
+const cardsBtn = document.getElementById('viewModeCardsBtn');
+const rowListBtn = document.getElementById('viewModeRowListBtn');
+​if (mode === 'cards') {
+cardsContainer.classList.remove('hidden');
+rowContainer.classList.add('hidden');
+cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
+rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+} else {
+cardsContainer.classList.add('hidden');
+rowContainer.classList.remove('hidden');
+rowListBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition-all shadow-sm flex items-center justify-center';
+cardsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center';
+}
+window.renderListView();
+};
+​window.toggleRouteSelection = function(id) {
+const index = selectedRouteIds.indexOf(id);
+if (index > -1) selectedRouteIds.splice(index, 1);
+else selectedRouteIds.push(id);
+​document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+window.renderListView();
+};
+​window.onSearchInput = function() {
+currentPage = 1;
+window.renderListView();
+};
+​window.onFilterChange = function() {
+currentPage = 1;
+window.renderListView();
+};
+​window.changePage = function(direction) {
+currentPage += direction;
+window.renderListView();
+};
+​window.renderListView = function() {
+const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+const fCat = document.getElementById('listFilterCategory')?.value || '';
+const fStatus = document.getElementById('listFilterStatus')?.value || '';
+const fUrgency = document.getElementById('listFilterUrgency')?.value || '';
+const sortOrder = document.getElementById('listSortOrder')?.value || 'recent';
+​const archivedCount = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
+const archivedBadge = document.getElementById('archivedCountBadge');
+if (archivedBadge) archivedBadge.innerText = archivedCount;
+​const activeBar = document.getElementById('activeFiltersBar');
+const chipsContainer = document.getElementById('activeFiltersChips');
+if (activeFilterState.label) {
+activeBar.classList.remove('hidden');
+chipsContainer.innerHTML = <span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-bold flex items-center gap-1">${window.escapeHtml(activeFilterState.label)} <button onclick="window.clearDashboardFilters()" class="ml-1 hover:text-red-500">✕</button></span>;
+} else {
+activeBar.classList.add('hidden');
+chipsContainer.innerHTML = '';
+}
+​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​const filtered = activeOrders.filter(o => {
+if (fCat && o.category !== fCat) return false;
+if (fStatus && o.status !== fStatus) return false;
+if (fUrgency && o.urgencia !== fUrgency) return false;
+​if (activeFilterState.urgency && o.urgencia !== activeFilterState.urgency) return false;
+if (activeFilterState.fiscalizada !== null && o.fiscalizada !== activeFilterState.fiscalizada) return false;
+if (activeFilterState.equipe && o.equipeSugerida !== activeFilterState.equipe) return false;
+​if (!searchVal) return true;
+const osp = o.osProject.toLowerCase();
+const alt = o.alimentador.toLowerCase();
+const d = o.description.toLowerCase();
+const p = o.pontoEletrico.toLowerCase();
+​return osp.includes(searchVal) || alt.includes(searchVal) || d.includes(searchVal) || p.includes(searchVal);
+});
+​filtered.sort((a, b) => {
+if (sortOrder === 'urgency') {
+const urgWeights = { 'Emergência': 4, 'Alta': 3, 'Média': 2, 'Baixa': 1, 'Não Avaliada': 0 };
+const wA = urgWeights[a.urgencia] !== undefined ? urgWeights[a.urgencia] : 0;
+const wB = urgWeights[b.urgencia] !== undefined ? urgWeights[b.urgencia] : 0;
+if (wA !== wB) return wB - wA;
+}
+const dateA = new Date(a.orderDate || '2025-01-01');
+const dateB = new Date(b.orderDate || '2025-01-01');
+if (sortOrder === 'oldest') return dateA - dateB;
+return dateB - dateA;
+});
+​const navBadge = document.getElementById('navDemandCount');
+if (navBadge) navBadge.innerText = activeOrders.length;
+​const totalItems = filtered.length;
+const totalPages = Math.ceil(totalItems / pageSize) || 1;
+if (currentPage > totalPages) currentPage = totalPages;
+if (currentPage < 1) currentPage = 1;
+​const startIndex = (currentPage - 1) * pageSize;
+const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
+​document.getElementById('paginationInfo').innerText = Mostrando ${totalItems > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + pageSize, totalItems)} de ${totalItems} ordens ativas;
+document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+​if (currentListViewMode === 'cards') {
+const container = document.getElementById('ordersListCards');
+if (!container) return;
+container.innerHTML = '';
+​if (paginatedItems.length === 0) {
+container.innerHTML = <div class="col-span-full text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>;
+return;
+}
+​paginatedItems.forEach(order => {
+const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
+const isSelected = selectedRouteIds.includes(order.id);
+​const urgencyBadge = order.urgencia && order.urgencia !== 'Não Avaliada'
+? <span class="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full">🚨 Criticidade: ${window.escapeHtml(order.urgencia)}</span>
+: <span class="bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium px-2 py-0.5 rounded-full">Criticidade: Não Avaliada</span>;
+​const fiscalizadaBadge = order.fiscalizada
+? <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">🔍 Fiscalizada</span>
+: <span class="bg-slate-200/60 dark:bg-slate-800/80 text-slate-500 text-[10px] font-medium px-2 py-0.5 rounded-full">Pendente Vistoria</span>;
+​let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
+if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
+​let scheduledInfoHtml = '';
+if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+const chk = order.checklist || {};
+scheduledInfoHtml = <div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-2 text-[11px] space-y-1"> <p class="font-bold text-sky-600 dark:text-sky-400">📅 Prog: ${window.escapeHtml(order.scheduledDate)}</p> <div class="flex gap-2 text-[10px] text-slate-600 dark:text-slate-300"> <span>Croqui: ${chk.croqui ? '✅' : '❌'}</span> <span>APR: ${chk.apr ? '✅' : '❌'}</span> <span>SGM: ${chk.sgm ? '✅' : '❌'}</span> </div> </div>;
+}
+​const card = document.createElement('div');
+card.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/40 dark:border-emerald-500/30 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3;
+​card.innerHTML = `
+<div class="space-y-2.5">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
+<a href="javascript:void(0)" class="details-os-link font-black text-xs text-amber-600 dark:text-amber-400 hover:underline" data-id="${window.escapeHtml(order.id)}">{window.escapeHtml(order.osProject)}</a>
+</div>
+<span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${statusColor}">{window.escapeHtml(order.status)}</span>
+</div>
+​<div class="flex flex-wrap gap-1.5 items-center">
+<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-amber-500/20">${window.escapeHtml(order.category)}</span>
+${urgencyBadge}
+${fiscalizadaBadge}
+</div>
+​${scheduledInfoHtml}
+​<p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">${window.escapeHtml(order.description || 'Sem descrição cadastrada.')}</p>
+​<div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 pt-1">
+<p>⚡ Ponto: <strong class="text-slate-800 dark:text-slate-200">{window.escapeHtml(order.pontoEletrico || 'N/D')}</strong> | Alimentador: <strong class="text-slate-800 dark:text-slate-200">{window.escapeHtml(order.alimentador || 'N/D')}</strong></p>
+<p>📅 Abertura: {window.escapeHtml(order.orderDate)} (<span class="text-amber-600 dark:text-amber-400 font-bold">{daysOpen} dias</span>)</p>
+</div>
+</div>
+​<div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center">ℹ️ Detalhes</button>
+<div class="flex gap-1.5">
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-black rounded-xl transition-all shadow-sm flex items-center justify-center">🔍 Fiscalizar</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn px-2.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center" title="Excluir">🗑️</button>
+</div>
+</div>
+`;
+container.appendChild(card);
+});
+} else {
+const rowContainer = document.getElementById('ordersListRowContainer');
+if (!rowContainer) return;
+rowContainer.innerHTML = '';
+​if (paginatedItems.length === 0) {
+rowContainer.innerHTML = <div class="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-medium">Nenhuma ordem ativa encontrada.</div>;
+return;
+}
+​paginatedItems.forEach(order => {
+const daysOpen = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
+const isSelected = selectedRouteIds.includes(order.id);
+​let statusColor = 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20';
+if (order.status === 'PROGRAMADO') statusColor = 'text-sky-700 dark:text-sky-400 bg-sky-500/10 border border-sky-500/20';
+else if (order.status === 'PARCIAL') statusColor = 'text-pink-700 dark:text-pink-400 bg-pink-500/10 border border-pink-500/20';
+​let scheduledRowBadge = '';
+if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+const chk = order.checklist || {};
+scheduledRowBadge = <span class="bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-500/20">📅 Prog: ${window.escapeHtml(order.scheduledDate)} (Croqui: ${chk.croqui?'✅':'❌'} | APR: ${chk.apr?'✅':'❌'} | SGM: ${chk.sgm?'✅':'❌'})</span>;
+}
+​const cardRow = document.createElement('div');
+cardRow.className = bg-white dark:bg-slate-900 border ${order.fiscalizada ? 'border-emerald-500/50 dark:border-emerald-500/40 shadow-emerald-500/5' : 'border-slate-200/80 dark:border-slate-800'} rounded-2xl p-3 sm:px-4 sm:py-3 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3;
+​cardRow.innerHTML = `
+<div class="flex items-center gap-3 flex-wrap">
+<input type="checkbox" {isSelected ? 'checked' : ''} data-id="{window.escapeHtml(order.id)}" class="select-route-chk w-4 h-4 accent-amber-500 rounded cursor-pointer" aria-label="Selecionar rota">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<a href="javascript:void(0)" class="details-os-link font-black text-xs sm:text-sm text-amber-600 dark:text-amber-400 hover:underline tracking-tight" data-id="${window.escapeHtml(order.id)}">{window.escapeHtml(order.osProject)}</a>
+<span class="bg-amber-500/10 text-amber-700 dark:text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-amber-500/20 uppercase">{window.escapeHtml(order.category)}</span>
+<span class="bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold text-[10px] px-2 py-0.5 rounded-md border border-red-500/20 uppercase">CRITICIDADE: ${window.escapeHtml(order.urgencia || 'Não Avaliada')}</span>
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded-md uppercase">ORIGEM: {window.escapeHtml(order.origem || 'OSM')}</span>
+<span class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] ${statusColor}">{window.escapeHtml(order.status)}</span>
+{order.fiscalizada ? '<span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">🔍 Fiscalizada</span>' : ''}
+${scheduledRowBadge}
+</div>
+<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+<span>PT: <strong class="text-slate-700 dark:text-slate-300">${window.escapeHtml(order.pontoEletrico || 'N/D')}</strong></span>
+<span>|</span>
+<span>Alt: <strong class="text-slate-700 dark:text-slate-300">{window.escapeHtml(order.alimentador || 'N/D')}</strong></span>
+<span>|</span>
+<span class="flex items-center gap-1">📅 {window.escapeHtml(order.orderDate)} (<strong class="text-amber-600 dark:text-amber-400">{daysOpen} dias em aberto</strong>)</span>
+</div>
+</div>
+</div>
+​<div class="flex items-center gap-1.5 self-end md:self-center flex-wrap">
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="map-focus-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Ver no Mapa">📍</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="details-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Detalhes">👁️</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="share-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs transition-all shadow-sm" title="Compartilhar">🔗</button>
+​<button type="button" data-id="${window.escapeHtml(order.id)}" class="fiscalizar-btn px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs shadow-sm transition-all flex items-center gap-1">
+🔍 Fiscalizar
+</button>
+<button type="button" data-id="${window.escapeHtml(order.id)}" class="delete-btn w-8 h-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-xs transition-all" title="Excluir">🗑️</button>
+</div>
+`;
+rowContainer.appendChild(cardRow);
+});
+}
+​const listContainerElem = currentListViewMode === 'cards' ? document.getElementById('ordersListCards') : document.getElementById('ordersListRowContainer');
+if (listContainerElem) {
+listContainerElem.querySelectorAll('.select-route-chk').forEach(chk => {
+chk.addEventListener('change', () => window.toggleRouteSelection(chk.getAttribute('data-id')));
+});
+listContainerElem.querySelectorAll('.details-os-link, .details-btn').forEach(btn => {
+btn.addEventListener('click', () => window.openDetailsModal(btn.getAttribute('data-id')));
+});
+listContainerElem.querySelectorAll('.fiscalizar-btn').forEach(btn => {
+btn.addEventListener('click', () => window.openFiscalizarModal(btn.getAttribute('data-id')));
+});
+listContainerElem.querySelectorAll('.delete-btn').forEach(btn => {
+btn.addEventListener('click', () => window.deleteOrder(btn.getAttribute('data-id')));
+});
+listContainerElem.querySelectorAll('.map-focus-btn').forEach(btn => {
+btn.addEventListener('click', () => window.focusOrderOnMap(btn.getAttribute('data-id')));
+});
+listContainerElem.querySelectorAll('.share-btn').forEach(btn => {
+btn.addEventListener('click', () => window.shareOrderWhatsApp(btn.getAttribute('data-id')));
+});
+}
+};
+​window.focusOrderOnMap = function(id) {
+const order = ordersData.find(o => o.id === id);
+if (!order || order.lat === null || order.lng === null) {
+window.showModal('Aviso', 'Esta ordem não possui coordenadas GPS cadastradas para exibição no mapa.');
+return;
+}
+window.switchTab('map');
+if (map) map.setView([order.lat, order.lng], 16);
+};
+​window.shareOrderWhatsApp = function(id) {
+const order = ordersData.find(o => o.id === id);
+if (!order) return;
+const text = *Ordem de Serviço: ${order.osProject}* +
+\n• Categoria: ${order.category} +
+\n• Status: ${order.status} +
+\n• Criticidade: ${order.urgencia} +
+\n• Alimentador: ${order.alimentador || 'N/D'} +
+\n• Ponto Elétrico: ${order.pontoEletrico || 'N/D'} +
+\n• Descrição: ${order.description || 'N/D'};
+const url = https://api.whatsapp.com/send?text=${encodeURIComponent(text)};
+window.open(url, '_blank');
+};
+​window.filterByDashboard = function(type, param) {
+activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
+document.getElementById('listFilterStatus').value = '';
+document.getElementById('listFilterCategory').value = '';
+document.getElementById('listFilterUrgency').value = '';
+document.getElementById('searchInput').value = '';
+​if (type === 'total') {
+activeFilterState.label = 'Todas as Ativas';
+} else if (type === 'pendentes') {
+document.getElementById('listFilterStatus').value = 'PENDENTE';
+activeFilterState.label = 'Status: PENDENTE';
+} else if (type === 'concluidas') {
+window.openArchivedModal();
+return;
+} else if (type === 'fiscalizadas') {
+activeFilterState.fiscalizada = true;
+activeFilterState.label = 'Fiscalizadas';
+} else if (type === 'emergencias') {
+activeFilterState.urgency = 'Emergência';
+activeFilterState.label = 'Criticidade: Emergência';
+} else if (type === 'urgencia') {
+activeFilterState.urgency = param;
+activeFilterState.label = Criticidade: ${param};
+} else if (type === 'equipe') {
+activeFilterState.equipe = param;
+activeFilterState.label = Equipe: ${param};
+}
+​currentPage = 1;
+window.switchTab('list');
+};
+​window.clearDashboardFilters = function() {
+activeFilterState = { urgency: null, fiscalizada: null, equipe: null, label: null };
+document.getElementById('listFilterStatus').value = '';
+document.getElementById('listFilterCategory').value = '';
+document.getElementById('listFilterUrgency').value = '';
+document.getElementById('searchInput').value = '';
+currentPage = 1;
+window.renderListView();
+};
+​let chartInstances = {};
+let focusedChartInstance = null;
+​window.renderDashboard = function() {
+const isDark = document.documentElement.classList.contains('dark');
+const textColor = isDark ? '#94a3b8' : '#475569';
+​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+const total = activeOrders.length;
+const pendentesList = activeOrders.filter(o => o.status === 'PENDENTE');
+const pendentes = pendentesList.length;
+const concluidas = ordersData.filter(o => o.status === 'CONCLUÍDO').length;
+const emergencias = activeOrders.filter(o => o.urgencia === 'Emergência').length;
+​const fiscalizadasCount = ordersData.filter(o => o.fiscalizada).length;
+const totalAll = ordersData.length;
+const fiscalizadasPercent = totalAll > 0 ? Math.round((fiscalizadasCount / totalAll) * 100) : 0;
+​let totalDaysOpen = 0;
+activeOrders.forEach(o => totalDaysOpen += window.calculateDaysOpen(o.orderDate, o.status, o.completionDate));
+const avgDays = total > 0 ? Math.round(totalDaysOpen / total) : 0;
+​document.getElementById('dashTotal').innerText = total;
+document.getElementById('dashPendentes').innerText = pendentes;
+document.getElementById('dashConcluidas').innerText = concluidas;
+document.getElementById('dashFiscalizadas').innerText = ${fiscalizadasPercent}%;
+document.getElementById('dashEmergencias').innerText = emergencias;
+document.getElementById('dashMediaDias').innerText = ${avgDays}d;
+​const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
+activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
+​if (chartInstances.status) chartInstances.status.destroy();
+chartInstances.status = new Chart(document.getElementById('statusChart'), {
+type: 'doughnut',
+data: {
+labels: Object.keys(statusCounts),
+datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 0 }]
+},
+options: {
+responsive: true, maintainAspectRatio: false,
+plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } } }
+}
+});
+​const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
+activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
+​if (chartInstances.urgencia) chartInstances.urgencia.destroy();
+chartInstances.urgencia = new Chart(document.getElementById('urgenciaChart'), {
+type: 'bar',
+data: {
+labels: Object.keys(urgCounts),
+datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'], borderRadius: 6 }]
+},
+options: {
+responsive: true, maintainAspectRatio: false,
+plugins: { legend: { display: false } },
+scales: { x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } }
+}
+});
+​const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'EQUIPAMENTO': 0, 'CHAVE': 0, 'BYPASS': 0, 'OUTROS': 0 };
+activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
+​if (chartInstances.category) chartInstances.category.destroy();
+chartInstances.category = new Chart(document.getElementById('categoryChart'), {
+type: 'polarArea',
+data: {
+labels: Object.keys(catCounts),
+datasets: [{ data: Object.values(catCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'], borderWidth: 0 }]
+},
+options: {
+responsive: true, maintainAspectRatio: false,
+plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } } },
+scales: { r: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { display: false } } }
+}
+});
+​const execCounts = {
+'Total': ordersData.length,
+'Fiscalizadas': ordersData.filter(o => o.fiscalizada).length,
+'Pendentes': ordersData.filter(o => o.status === 'PENDENTE').length,
+'Programadas': ordersData.filter(o => o.status === 'PROGRAMADO').length,
+'Executadas (Concluídas)': ordersData.filter(o => o.status === 'CONCLUÍDO').length
+};
+​if (chartInstances.executive) chartInstances.executive.destroy();
+chartInstances.executive = new Chart(document.getElementById('executiveChart'), {
+type: 'bar',
+data: {
+labels: Object.keys(execCounts),
+datasets: [{ label: 'Volume', data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#3b82f6', '#059669'], borderRadius: 6 }]
+},
+options: {
+responsive: true, maintainAspectRatio: false,
+plugins: { legend: { display: false } },
+scales: { x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } } }
+}
+});
+};
+​window.openChartFocusModal = function(chartKey) {
+const modal = document.getElementById('chartFocusModal');
+const titleEl = document.getElementById('chartFocusTitle');
+const toolbar = document.getElementById('chartFocusToolbar');
+modal.classList.remove('hidden');
+​const isDark = document.documentElement.classList.contains('dark');
+const textColor = isDark ? '#94a3b8' : '#475569';
+​toolbar.innerHTML = '';
+let chartTitle = '';
+let chartConfig = null;
+​const activeOrders = ordersData.filter(o => o.status !== 'CONCLUÍDO');
+​if (chartKey === 'status') {
+chartTitle = 'Painel Interativo: Status das Demandas';
+const statusCounts = { 'PENDENTE': 0, 'PROGRAMADO': 0, 'PARCIAL': 0 };
+activeOrders.forEach(o => { if (statusCounts[o.status] !== undefined) statusCounts[o.status]++; });
+​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Filtrar Status:</span> <button onclick="window.filterByDashboard('pendentes'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-amber-500/10 text-amber-600 font-bold rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all">Pendentes</button> <button onclick="window.filterByDashboard('total'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-lg hover:bg-slate-200 transition-all">Ver Todas Ativas</button>;
+​chartConfig = {
+type: 'doughnut',
+data: {
+labels: Object.keys(statusCounts),
+datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 2 }]
+},
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+};
+} else if (chartKey === 'urgencia') {
+chartTitle = 'Painel Interativo: Criticidade (Urgência)';
+const urgCounts = { 'Emergência': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Avaliada': 0 };
+activeOrders.forEach(o => { if (urgCounts[o.urgencia] !== undefined) urgCounts[o.urgencia]++; });
+​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Ações Rápidas:</span> <button onclick="window.filterByDashboard('emergencias'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-red-500/10 text-red-600 font-bold rounded-lg hover:bg-red-500 hover:text-white transition-all">Filtrar Emergências</button>;
+​chartConfig = {
+type: 'bar',
+data: {
+labels: Object.keys(urgCounts),
+datasets: [{ label: 'Qtd de OS', data: Object.values(urgCounts), backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#64748b'], borderRadius: 8 }]
+},
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+};
+} else if (chartKey === 'category') {
+chartTitle = 'Painel Interativo: Distribuição por Categoria';
+const catCounts = { 'POSTE': 0, 'PODA': 0, 'CABO': 0, 'ESTRUTURA': 0, 'EQUIPAMENTO': 0, 'CHAVE': 0, 'BYPASS': 0, 'OUTROS': 0 };
+activeOrders.forEach(o => { if (catCounts[o.category] !== undefined) catCounts[o.category]++; });
+​chartConfig = {
+type: 'bar',
+data: {
+labels: Object.keys(catCounts),
+datasets: [{ label: 'Qtd por Categoria', data: Object.values(catCounts), backgroundColor: '#f59e0b', borderRadius: 8 }]
+},
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+};
+} else if (chartKey === 'executive') {
+chartTitle = 'Painel Interativo: Visão Consolidada da Operação';
+const execCounts = {
+'Total': ordersData.length,
+'Fiscalizadas': ordersData.filter(o => o.fiscalizada).length,
+'Pendentes': ordersData.filter(o => o.status === 'PENDENTE').length,
+'Programadas': ordersData.filter(o => o.status === 'PROGRAMADO').length,
+'Executadas': ordersData.filter(o => o.status === 'CONCLUÍDO').length
+};
+​toolbar.innerHTML = <span class="text-slate-400 font-bold uppercase text-[10px]">Ações:</span> <button onclick="window.filterByDashboard('fiscalizadas'); window.closeChartFocusModal();" class="px-3 py-1.5 bg-emerald-500/10 text-emerald-600 font-bold rounded-lg hover:bg-emerald-500 hover:text-white transition-all">Ver Fiscalizadas</button> <button onclick="window.openArchivedModal(); window.closeChartFocusModal();" class="px-3 py-1.5 bg-sky-500/10 text-sky-600 font-bold rounded-lg hover:bg-sky-500 hover:text-white transition-all">Ver Concluídas</button>;
+​chartConfig = {
+type: 'bar',
+data: {
+labels: Object.keys(execCounts),
+datasets: [{ label: 'Volume Geral', data: Object.values(execCounts), backgroundColor: ['#64748b', '#10b981', '#f59e0b', '#3b82f6', '#059669'], borderRadius: 8 }]
+},
+options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+};
+}
+​titleEl.innerText = chartTitle;
+if (focusedChartInstance) focusedChartInstance.destroy();
+focusedChartInstance = new Chart(document.getElementById('focusedChartCanvas'), chartConfig);
+};
+​window.closeChartFocusModal = function() {
+document.getElementById('chartFocusModal').classList.add('hidden');
+if (focusedChartInstance) {
+focusedChartInstance.destroy();
+focusedChartInstance = null;
+}
+};
+​window.downloadExcel = function() {
+if (ordersData.length === 0) {
+window.showModal('Aviso', 'Não há demandas cadastradas para exportação.');
+return;
+}
+​const dataToExport = ordersData.map(o => ({
+'id': o.id,
+'osProject': o.osProject,
+'origem': o.origem,
+'category': o.category,
+'status': o.status,
+'urgencia': o.urgencia,
+'fiscalizada': o.fiscalizada ? 'Sim' : 'Não',
+'equipeSugerida': o.equipeSugerida,
+'alimentador': o.alimentador,
+'pontoEletrico': o.pontoEletrico,
+'orderDate': o.orderDate,
+'completionDate': o.completionDate || '',
+'scheduledDate': o.scheduledDate || '',
+'croqui': o.checklist?.croqui ? 'Sim' : 'Não',
+'apr': o.checklist?.apr ? 'Sim' : 'Não',
+'sgm': o.checklist?.sgm ? 'Sim' : 'Não',
+'lat': o.lat !== null ? o.lat : '',
+'lng': o.lng !== null ? o.lng : '',
+'description': o.description
+}));
+​const ws = XLSX.utils.json_to_sheet(dataToExport);
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, "Demandas");
+XLSX.writeFile(wb, "EletroGestao_Relatorio.xlsx");
+};
+​function calculateDistance(lat1, lon1, lat2, lon2) {
+const R = 6371;
+const dLat = (lat2 - lat1) * Math.PI / 180;
+const dLon = (lon2 - lon1) * Math.PI / 180;
+const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+Math.sin(dLon/2) * Math.sin(dLon/2);
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+return R * c;
+}
+​window.generateRoute = function() {
+if (selectedRouteIds.length < 2) {
+window.showModal('Aviso', 'Selecione pelo menos 2 ordens ativas com localização na lista para traçar a rota.');
+return;
+}
+​const routeOrders = ordersData.filter(o => selectedRouteIds.includes(o.id) && o.lat !== null && o.lng !== null);
+if (routeOrders.length < 2) {
+window.showModal('Aviso', 'As ordens selecionadas não possuem coordenadas de GPS válidas.');
+return;
+}
+​let unvisited = [...routeOrders];
+let current = unvisited.shift();
+let orderedRoute = [current];
+let totalDistanceKm = 0;
+​while (unvisited.length > 0) {
+let nearestIdx = 0;
+let minDst = Infinity;
+for (let i = 0; i < unvisited.length; i++) {
+const dst = calculateDistance(current.lat, current.lng, unvisited[i].lat, unvisited[i].lng);
+if (dst < minDst) {
+minDst = dst;
+nearestIdx = i;
+}
+}
+totalDistanceKm += minDst;
+current = unvisited.splice(nearestIdx, 1)[0];
+orderedRoute.push(current);
+}
+​window.switchTab('map');
+const coords = orderedRoute.map(o => [o.lat, o.lng]);
+​if (routeLayer) map.removeLayer(routeLayer);
+routeLayer = L.polyline(coords, { color: '#0284c7', weight: 4, dashArray: '8, 8' }).addTo(map);
+map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
+​const chunks = [];
+for (let i = 0; i < orderedRoute.length; i += 10) {
+chunks.push(orderedRoute.slice(i, i + 10));
+}
+​let mapsLinksHtml = '';
+chunks.forEach((chunk, index) => {
+const waypoints = chunk.map(o => ${o.lat},${o.lng}).join('/');
+const linkUrl = https://www.google.com/maps/dir/${waypoints};
+mapsLinksHtml += <a href="${linkUrl}" target="_blank" rel="noopener" class="block py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs text-center border border-amber-500/30">🗺️ Abrir Parte ${index + 1} no Google Maps (${chunk.length} pontos)</a>;
+});
+​const modalHtml = <div class="space-y-3"> <p class="text-xs text-slate-600 dark:text-slate-300">Rota otimizada calculada (Vizinho Mais Próximo). Distância total estimada: <strong class="text-amber-600">${totalDistanceKm.toFixed(2)} km</strong>.</p> <div class="space-y-2 max-h-48 overflow-y-auto">${mapsLinksHtml}</div> </div>;
+window.showHtmlModal('Rota Otimizada Gerada', modalHtml);
+};
+​window.toggleCreateScheduledFields = function() {
+const status = document.getElementById('status').value;
+const section = document.getElementById('createScheduledSection');
+if (status === 'PROGRAMADO') {
+section.classList.remove('hidden');
+document.getElementById('scheduledDate').value = window.getLocalTodayDate();
+} else {
+section.classList.add('hidden');
+}
+};
+​window.toggleEditScheduledFields = function() {
+const status = document.getElementById('editStatus').value;
+const section = document.getElementById('editScheduledSection');
+if (status === 'PROGRAMADO') {
+section.classList.remove('hidden');
+if (!document.getElementById('editScheduledDate').value) {
+document.getElementById('editScheduledDate').value = window.getLocalTodayDate();
+}
+} else {
+section.classList.add('hidden');
+}
+};
+​window.toggleFiscalizarScheduledFields = function() {
+const status = document.getElementById('fiscalizarStatusSelect').value;
+const section = document.getElementById('fiscalizarScheduledSection');
+if (status === 'PROGRAMADO') {
+section.classList.remove('hidden');
+if (!document.getElementById('fiscalizarScheduledDate').value) {
+document.getElementById('fiscalizarScheduledDate').value = window.getLocalTodayDate();
+}
+} else {
+section.classList.add('hidden');
+}
+};
+​window.handleCreateOrder = async function(e) {
+e.preventDefault();
+​const osProjVal = document.getElementById('osProject').value.trim();
+if (ordersData.some(o => o.osProject.toLowerCase() === osProjVal.toLowerCase())) {
+window.showModal('Erro de Duplicidade', Já existe uma ordem cadastrada com o número de projeto/OS "${osProjVal}".);
+return;
+}
+​const latVal = document.getElementById('lat').value.trim();
+const lngVal = document.getElementById('lng').value.trim();
+​let parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
+let parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
+​const initialStatus = document.getElementById('status').value;
+const scheduledDate = initialStatus === 'PROGRAMADO' ? document.getElementById('scheduledDate').value : null;
+const checklist = {
+croqui: document.getElementById('chkCroqui').checked,
+apr: document.getElementById('chkApr').checked,
+sgm: document.getElementById('chkSgm').checked
+};
+​const rawOrder = {
+id: 'ord_' + Math.random().toString(36).substr(2, 9),
+osProject: osProjVal,
+origem: document.getElementById('origem').value,
+category: document.getElementById('category').value,
+status: initialStatus,
+urgencia: 'Não Avaliada',
+fiscalizada: false,
+equipeSugerida: document.getElementById('equipeSugerida').value,
+alimentador: document.getElementById('alimentador').value.trim().toUpperCase(),
+pontoEletrico: document.getElementById('pontoEletrico').value.trim().toUpperCase(),
+orderDate: document.getElementById('orderDate').value,
+completionDate: initialStatus === 'CONCLUÍDO' ? window.getLocalTodayDate() : null,
+scheduledDate: scheduledDate,
+checklist: checklist,
+description: document.getElementById('description').value.trim(),
+lat: parsedLat,
+lng: parsedLng,
+history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem registrada no sistema.' }]
+};
+​const newOrder = window.normalizeOrder(rawOrder);
+​const submitBtn = document.getElementById('submitCreateBtn');
+submitBtn.disabled = true;
+submitBtn.innerHTML = <span>⏳ Salvando...</span>;
+​try {
+await window.saveToCloud(newOrder);
+e.target.reset();
+document.getElementById('orderDate').value = window.getLocalTodayDate();
+document.getElementById('createScheduledSection').classList.add('hidden');
+window.showModal('Sucesso', 'Ordem cadastrada com sucesso!');
+window.switchTab('list');
+} catch (err) {
+window.showModal('Erro', 'Não foi possível salvar: ' + err.message);
+} finally {
+submitBtn.disabled = false;
+submitBtn.innerHTML = <span>💾 Salvar Ordem de Serviço</span>;
+}
+};
+​window.useCurrentLocation = function() {
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(pos => {
+document.getElementById('lat').value = pos.coords.latitude.toFixed(6);
+document.getElementById('lng').value = pos.coords.longitude.toFixed(6);
+}, () => window.showModal('Erro GPS', 'Não foi possível capturar sua localização.'));
+} else {
+window.showModal('Erro GPS', 'Geolocalização não suportada.');
+}
+};
+​window.useCurrentLocationEdit = function() {
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(pos => {
+document.getElementById('editLat').value = pos.coords.latitude.toFixed(6);
+document.getElementById('editLng').value = pos.coords.longitude.toFixed(6);
+}, () => window.showModal('Erro GPS', 'Não foi possível capturar sua localização.'));
+} else {
+window.showModal('Erro GPS', 'Geolocalização não suportada.');
+}
+};
+​window.processExcelImport = async function(e) {
+const file = e.target.files[0];
+if (!file) return;
+​const importBtn = document.getElementById('importBtn');
+const originalHtml = importBtn.innerHTML;
+importBtn.innerHTML = '<span>⏳ Processando arquivo...</span>';
+​const reader = new FileReader();
+reader.onload = async function(evt) {
+try {
+const data = evt.target.result;
+const workbook = XLSX.read(data, { type: 'array' });
+const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+​if (json.length === 0) {
+window.showModal('Aviso', 'O arquivo está vazio.');
+return;
+}
+​let importedCount = 0;
+let skippedCount = 0;
+const newOrders = [];
+const userId = auth?.currentUser?.uid || 'local_user';
+​json.forEach(row => {
+const rawOs = row['osProject'] || row['OS / Projeto'] || row['OS'] || ('OS-' + Math.floor(Math.random() * 90000 + 10000));
+const osStr = String(rawOs).trim();
+​const existsInMemory = ordersData.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
+const existsInBatch = newOrders.some(o => o.osProject.toLowerCase() === osStr.toLowerCase());
+​if (existsInMemory || existsInBatch) {
+skippedCount++;
+return;
+}
+​const statusVal = row['status'] || row['Status'] || 'PENDENTE';
+const schedDate = row['scheduledDate'] || row['Data da Programação'] || null;
+const isCroqui = String(row['croqui'] || '').toLowerCase() === 'sim' || Boolean(row['croqui']);
+const isApr = String(row['apr'] || '').toLowerCase() === 'sim' || Boolean(row['apr']);
+const isSgm = String(row['sgm'] || '').toLowerCase() === 'sim' || Boolean(row['sgm']);
+​const rawOrder = {
+id: row['id'] || ('ord_' + Math.random().toString(36).substr(2, 9)),
+osProject: osStr,
+origem: row['origem'] || row['Origem'] || 'OSM',
+category: row['category'] || row['Categoria'] || 'OUTROS',
+status: statusVal,
+urgencia: row['urgencia'] || row['Urgência'] || 'Não Avaliada',
+fiscalizada: row['fiscalizada'] || row['Fiscalizada'] || false,
+equipeSugerida: row['equipeSugerida'] || row['Equipe Sugerida'] || 'Não definida',
+alimentador: row['alimentador'] || row['Alimentador'] || '',
+pontoEletrico: row['pontoEletrico'] || row['Ponto Elétrico'] || '',
+orderDate: window.normalizeDate(row['orderDate'] || row['Data da Ordem'] || row['Data']),
+completionDate: row['completionDate'] ? window.normalizeDate(row['completionDate']) : null,
+scheduledDate: schedDate ? window.normalizeDate(schedDate) : null,
+checklist: { croqui: isCroqui, apr: isApr, sgm: isSgm },
+description: row['description'] || row['Descrição'] || '',
+lat: row['lat'] !== undefined && row['lat'] !== '' ? row['lat'] : (row['Latitude'] !== undefined ? row['Latitude'] : null),
+lng: row['lng'] !== undefined && row['lng'] !== '' ? row['lng'] : (row['Longitude'] !== undefined ? row['Longitude'] : null),
+history: [{ date: new Date().toLocaleString('pt-BR'), message: 'Ordem importada via planilha.' }]
+};
+​const normalized = window.normalizeOrder(rawOrder);
+newOrders.push(normalized);
+importedCount++;
+});
+​if (importedCount > 0) {
+if (db && auth && auth.currentUser) {
+const chunkSize = 450;
+for (let i = 0; i < newOrders.length; i += chunkSize) {
+const chunk = newOrders.slice(i, i + chunkSize);
+const batch = db.batch();
+chunk.forEach(normalized => {
+const docRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(normalized.id);
+batch.set(docRef, normalized);
+});
+await batch.commit();
+}
+}
+window.showModal('Sucesso', Foram importadas ${importedCount} ordens. ${skippedCount} duplicadas foram ignoradas.);
+window.switchTab('list');
+} else {
+window.showModal('Aviso', Nenhuma ordem nova. ${skippedCount} ordens duplicadas ignoradas.);
+}
+} catch (err) {
+window.showModal('Erro', 'Erro ao processar: ' + err.message);
+} finally {
+e.target.value = '';
+importBtn.innerHTML = originalHtml;
+}
+};
+reader.readAsArrayBuffer(file);
+};
+​window.openFiscalizarModal = function(id) {
+currentFiscalizarId = id;
+currentFiscalizarPhotoBase64 = null;
+document.getElementById('fiscalizarPhotoInput').value = '';
+document.getElementById('photoCompressStatus').classList.add('hidden');
+​const order = ordersData.find(o => o.id === id);
+if (!order) return;
+​document.getElementById('fiscalizarModalTitle').innerText = Fiscalizar: ${order.osProject};
+document.getElementById('fiscalizarStatusSelect').value = order.status;
+document.getElementById('fiscalizarUrgenciaSelect').value = order.urgencia;
+document.getElementById('fiscalizarObsInput').value = '';
+​const section = document.getElementById('fiscalizarScheduledSection');
+if (order.status === 'PROGRAMADO') {
+section.classList.remove('hidden');
+document.getElementById('fiscalizarScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
+document.getElementById('fiscChkCroqui').checked = Boolean(order.checklist?.croqui);
+document.getElementById('fiscChkApr').checked = Boolean(order.checklist?.apr);
+document.getElementById('fiscChkSgm').checked = Boolean(order.checklist?.sgm);
+} else {
+section.classList.add('hidden');
+}
+​document.getElementById('fiscalizarModal').classList.remove('hidden');
+};
+​window.closeFiscalizarModal = function() {
+document.getElementById('fiscalizarModal').classList.add('hidden');
+};
+​window.processFiscalizarPhoto = function(e) {
+const file = e.target.files[0];
+if (!file) return;
+​isCompressingPhoto = true;
+const saveBtn = document.getElementById('saveFiscalizarBtn');
+saveBtn.disabled = true;
+document.getElementById('photoCompressStatus').classList.remove('hidden');
+​const reader = new FileReader();
+reader.onload = function(evt) {
+const img = new Image();
+img.onload = function() {
+const canvas = document.createElement('canvas');
+const MAX_DIM = 320;
+let width = img.width;
+let height = img.height;
+​if (width > height) {
+if (width > MAX_DIM) { height *= MAX_DIM / width; width = MAX_DIM; }
+} else {
+if (height > MAX_DIM) { width *= MAX_DIM / height; height = MAX_DIM; }
+}
+​canvas.width = width;
+canvas.height = height;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(img, 0, 0, width, height);
+​currentFiscalizarPhotoBase64 = canvas.toDataURL('image/jpeg', 0.5);
+isCompressingPhoto = false;
+saveBtn.disabled = false;
+document.getElementById('photoCompressStatus').classList.add('hidden');
+};
+img.src = evt.target.result;
+};
+reader.readAsDataURL(file);
+};
+​window.saveFiscalizarChanges = async function() {
+if (!currentFiscalizarId || isCompressingPhoto) return;
+​const order = ordersData.find(o => o.id === currentFiscalizarId);
+if (!order) return;
+​const orderCopy = JSON.parse(JSON.stringify(order));
+​const newStatus = document.getElementById('fiscalizarStatusSelect').value;
+const newUrgencia = document.getElementById('fiscalizarUrgenciaSelect').value;
+const obs = document.getElementById('fiscalizarObsInput').value.trim();
+​const oldStatus = orderCopy.status;
+orderCopy.status = newStatus;
+orderCopy.urgencia = newUrgencia;
+orderCopy.fiscalizada = true;
+​if (newStatus === 'PROGRAMADO') {
+orderCopy.scheduledDate = document.getElementById('fiscalizarScheduledDate').value || window.getLocalTodayDate();
+orderCopy.checklist = {
+croqui: document.getElementById('fiscChkCroqui').checked,
+apr: document.getElementById('fiscChkApr').checked,
+sgm: document.getElementById('fiscChkSgm').checked
+};
+} else {
+orderCopy.scheduledDate = null;
+orderCopy.checklist = { croqui: false, apr: false, sgm: false };
+}
+​if (currentFiscalizarPhotoBase64) orderCopy.photo = currentFiscalizarPhotoBase64;
+​if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
+orderCopy.completionDate = window.getLocalTodayDate();
+} else if (newStatus !== 'CONCLUÍDO') {
+orderCopy.completionDate = null;
+}
+​if (!orderCopy.history) orderCopy.history = [];
+let logMsg = Fiscalizada com sucesso. Status: ${newStatus}. Criticidade: ${newUrgencia}.;
+if (newStatus === 'PROGRAMADO') logMsg +=  [Data Prog: ${orderCopy.scheduledDate}, Croqui: ${orderCopy.checklist.croqui}, APR: ${orderCopy.checklist.apr}, SGM: ${orderCopy.checklist.sgm}];
+if (obs) logMsg +=  Obs: ${obs};
+if (currentFiscalizarPhotoBase64) logMsg +=  [Foto Anexada];
+​orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: logMsg });
+​const saveBtn = document.getElementById('saveFiscalizarBtn');
+saveBtn.disabled = true;
+​try {
+await window.saveToCloud(orderCopy);
+window.closeFiscalizarModal();
+window.showModal('Sucesso', 'Vistoria e fiscalização registradas com sucesso!');
+} catch(err) {
+window.showModal('Erro', 'Falha ao salvar: ' + err.message);
+} finally {
+saveBtn.disabled = false;
+}
+};
+​window.openEditModal = function(id) {
+const order = ordersData.find(o => o.id === id);
+if (!order) return;
+​document.getElementById('editInternalId').value = order.id;
+document.getElementById('editOsProject').value = order.osProject;
+document.getElementById('editOrigem').value = order.origem;
+document.getElementById('editCategory').value = order.category;
+document.getElementById('editEquipe').value = order.equipeSugerida;
+document.getElementById('editAlimentador').value = order.alimentador || '';
+document.getElementById('editPonto').value = order.pontoEletrico || '';
+document.getElementById('editDate').value = order.orderDate;
+document.getElementById('editStatus').value = order.status;
+document.getElementById('editLat').value = order.lat !== null ? order.lat : '';
+document.getElementById('editLng').value = order.lng !== null ? order.lng : '';
+document.getElementById('editDescription').value = order.description || '';
+​const section = document.getElementById('editScheduledSection');
+if (order.status === 'PROGRAMADO') {
+section.classList.remove('hidden');
+document.getElementById('editScheduledDate').value = order.scheduledDate || window.getLocalTodayDate();
+document.getElementById('editChkCroqui').checked = Boolean(order.checklist?.croqui);
+document.getElementById('editChkApr').checked = Boolean(order.checklist?.apr);
+document.getElementById('editChkSgm').checked = Boolean(order.checklist?.sgm);
+} else {
+section.classList.add('hidden');
+}
+​document.getElementById('editModal').classList.remove('hidden');
+};
+​window.closeEditModal = function() {
+document.getElementById('editModal').classList.add('hidden');
+};
+​window.saveEditedOrder = async function() {
+const id = document.getElementById('editInternalId').value;
+const order = ordersData.find(o => o.id === id);
+if (!order) return;
+​const orderCopy = JSON.parse(JSON.stringify(order));
+​const newOsProj = document.getElementById('editOsProject').value.trim();
+if (ordersData.some(o => o.osProject.toLowerCase() === newOsProj.toLowerCase() && o.id !== id)) {
+window.showModal('Erro de Duplicidade', Já existe outra ordem com o número "${newOsProj}".);
+return;
+}
+​const latVal = document.getElementById('editLat').value.trim();
+const lngVal = document.getElementById('editLng').value.trim();
+const parsedLat = latVal !== '' ? parseFloat(latVal.replace(',', '.')) : null;
+const parsedLng = lngVal !== '' ? parseFloat(lngVal.replace(',', '.')) : null;
+​orderCopy.osProject = newOsProj;
+orderCopy.origem = document.getElementById('editOrigem').value;
+orderCopy.category = document.getElementById('editCategory').value;
+orderCopy.equipeSugerida = document.getElementById('editEquipe').value;
+orderCopy.alimentador = document.getElementById('editAlimentador').value.trim().toUpperCase();
+orderCopy.pontoEletrico = document.getElementById('editPonto').value.trim().toUpperCase();
+orderCopy.orderDate = document.getElementById('editDate').value;
+​const newStatus = document.getElementById('editStatus').value;
+const oldStatus = orderCopy.status;
+orderCopy.status = newStatus;
+​if (newStatus === 'PROGRAMADO') {
+orderCopy.scheduledDate = document.getElementById('editScheduledDate').value || window.getLocalTodayDate();
+orderCopy.checklist = {
+croqui: document.getElementById('editChkCroqui').checked,
+apr: document.getElementById('editChkApr').checked,
+sgm: document.getElementById('editChkSgm').checked
+};
+} else {
+orderCopy.scheduledDate = null;
+orderCopy.checklist = { croqui: false, apr: false, sgm: false };
+}
+​if (newStatus === 'CONCLUÍDO' && oldStatus !== 'CONCLUÍDO') {
+orderCopy.completionDate = window.getLocalTodayDate();
+} else if (newStatus !== 'CONCLUÍDO') {
+orderCopy.completionDate = null;
+}
+​orderCopy.lat = parsedLat;
+orderCopy.lng = parsedLng;
+orderCopy.description = document.getElementById('editDescription').value.trim();
+​if (!orderCopy.history) orderCopy.history = [];
+orderCopy.history.unshift({ date: new Date().toLocaleString('pt-BR'), message: 'Ordem editada no sistema.' });
+​try {
+await window.saveToCloud(orderCopy);
+window.closeEditModal();
+window.showModal('Sucesso', 'Ordem atualizada com sucesso!');
+} catch(err) {
+window.showModal('Erro', 'Falha ao salvar edições: ' + err.message);
+}
+};
+​window.openDetailsModal = function(id) {
+const order = ordersData.find(o => o.id === id);
+if (!order) return;
+​document.getElementById('detOsTitle').innerText = order.osProject;
+document.getElementById('detOrigem').innerText = order.origem;
+document.getElementById('detUrgencia').innerText = order.urgencia;
+document.getElementById('detStatus').innerText = order.status;
+document.getElementById('detEquipe').innerText = order.equipeSugerida;
+document.getElementById('detPonto').innerText = order.pontoEletrico || 'N/D';
+document.getElementById('detAlimentador').innerText = order.alimentador || 'N/D';
+document.getElementById('detDate').innerText = order.orderDate;
+document.getElementById('detDaysOpen').innerText = window.calculateDaysOpen(order.orderDate, order.status, order.completionDate);
+document.getElementById('detCoords').innerText = (order.lat !== null && order.lng !== null) ? ${order.lat}, ${order.lng} : 'Não georreferenciado';
+document.getElementById('detDescription').innerText = order.description || 'Sem descrição cadastrada.';
+​const schedInfo = document.getElementById('detScheduledInfo');
+if (order.status === 'PROGRAMADO' && order.scheduledDate) {
+schedInfo.classList.remove('hidden');
+document.getElementById('detScheduledDate').innerText = order.scheduledDate;
+const chk = order.checklist || {};
+document.getElementById('detChecklist').innerHTML = <li>Croqui realizado: ${chk.croqui ? '✅ Sim' : '❌ Não'}</li> <li>Pré-APR emitida: ${chk.apr ? '✅ Sim' : '❌ Não'}</li> <li>Anexo SGM anexado: ${chk.sgm ? '✅ Sim' : '❌ Não'}</li>;
+} else {
+schedInfo.classList.add('hidden');
+}
+​const photoContainer = document.getElementById('detPhotoContainer');
+if (order.photo) {
+document.getElementById('detPhoto').src = order.photo;
+photoContainer.classList.remove('hidden');
+} else {
+photoContainer.classList.add('hidden');
+}
+​const historyList = document.getElementById('detHistoryList');
+historyList.innerHTML = '';
+(order.history || []).forEach(item => {
+const h = document.createElement('div');
+h.className = "bg-slate-100 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]";
+h.innerHTML = <span class="text-amber-600 dark:text-amber-400 font-bold">${window.escapeHtml(item.date)}:</span> <span class="text-slate-700 dark:text-slate-300">${window.escapeHtml(item.message)}</span>;
+historyList.appendChild(h);
+});
+​const editBtn = document.getElementById('detEditBtn');
+const fiscalizarBtn = document.getElementById('detFiscalizarBtn');
+​editBtn.onclick = () => {
+window.closeDetailsModal();
+window.openEditModal(order.id);
+};
+fiscalizarBtn.onclick = () => {
+window.closeDetailsModal();
+window.openFiscalizarModal(order.id);
+};
+​document.getElementById('detailsModal').classList.remove('hidden');
+};
+​window.closeDetailsModal = function() {
+document.getElementById('detailsModal').classList.add('hidden');
+};
+​window.deleteOrder = async function(id) {
+const confirmed = await window.showConfirmModal('Confirmar Exclusão', 'Tem certeza de que deseja excluir esta ordem?');
+if (!confirmed) return;
+​try {
+await window.deleteFromCloud(id);
+selectedRouteIds = selectedRouteIds.filter(selectedId => selectedId !== id);
+document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+window.showModal('Sucesso', 'Ordem excluída.');
+} catch(err) {
+window.showModal('Erro', 'Falha ao excluir: ' + err.message);
+}
+};
+​window.updateSyncBadge = function(statusText, styleClass) {
+const badge = document.getElementById('syncStatusBadge');
+if (!badge) return;
+badge.innerText = statusText;
+badge.className = text-[10px] font-bold px-2.5 py-0.5 rounded-full ${styleClass};
+};
+​window.saveToCloud = function(order) {
+return new Promise((resolve, reject) => {
+if (auth && auth.currentUser && db) {
+window.updateSyncBadge('🔄 Sincronizando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
+const userId = auth.currentUser.uid;
+db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(order.id).set(order)
+.then(() => {
+window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
+resolve();
+})
+.catch(err => {
+window.updateSyncBadge('🔴 Erro na Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
+reject(err);
+});
+} else {
+reject(new Error("Usuário não autenticado no Firestore."));
+}
+});
+};
+​window.deleteFromCloud = function(id) {
+return new Promise((resolve, reject) => {
+if (auth && auth.currentUser && db) {
+const userId = auth.currentUser.uid;
+db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders').doc(id).delete()
+.then(() => resolve())
+.catch(err => reject(err));
+} else {
+reject(new Error("Usuário não autenticado."));
+}
+});
+};
+​window.handleAuthAction = function() {
+if (auth) {
+if (auth.currentUser) auth.signOut();
+else {
+const provider = new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider).catch(e => window.showModal('Erro no Login', e.message));
+}
+}
+};
+​window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') {
+document.querySelectorAll('[role="dialog"]').forEach(modal => modal.classList.add('hidden'));
+}
+});
+​const dateInp = document.getElementById('orderDate');
+if (dateInp) dateInp.value = window.getLocalTodayDate();
+​if (auth) {
+auth.onAuthStateChanged(user => {
+authUser = user;
+const btnText = document.getElementById('userAuthBtnText');
+const desktopNav = document.getElementById('desktopNav');
+const mobileNav = document.getElementById('mobileNav');
+const loggedOutView = document.getElementById('loggedOutView');
+​if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+​if (user) {
+btnText.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
+if (desktopNav) desktopNav.classList.remove('hidden');
+if (mobileNav) mobileNav.classList.remove('hidden');
+if (loggedOutView) loggedOutView.classList.add('hidden');
+​window.updateSyncBadge('🔄 Conectando...', 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20');
+​const userId = user.uid;
+unsubscribeSnapshot = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('electrical_orders')
+.onSnapshot((snapshot) => {
+const cloudOrders = [];
+snapshot.forEach(doc => cloudOrders.push(window.normalizeOrder(doc.data())));
+ordersData = cloudOrders;
+​const validIds = new Set(ordersData.map(o => o.id));
+selectedRouteIds = selectedRouteIds.filter(id => validIds.has(id));
+document.getElementById('selectedCountBadge').innerText = selectedRouteIds.length;
+​window.updateSyncBadge('🟢 Sincronizado', 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20');
+​window.renderListView();
+if (map) window.renderMap();
+if (!document.getElementById('tab-dashboard').classList.contains('hidden')) {
+window.renderDashboard();
+}
+window.checkScheduledAlertsAndOverdue();
+}, (error) => {
+console.error("Firestore onSnapshot error:", error);
+window.updateSyncBadge('🔴 Erro de Sincronização', 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20');
+window.showModal('Aviso de Rede', 'Houve uma falha na sincronização ao vivo com o Firestore. Verifique sua conexão.');
+});
+window.switchTab('list');
+} else {
+btnText.innerText = 'Entrar com Google';
+window.updateSyncBadge('🔒 Acesso Restrito', 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20');
+if (desktopNav) desktopNav.classList.add('hidden');
+if (mobileNav) mobileNav.classList.add('hidden');
+if (loggedOutView) loggedOutView.classList.remove('hidden');
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+ordersData = [];
+if (markersClusterGroup) markersClusterGroup.clearLayers();
+}
+});
+}
+});
+</script>
+</body>
+</html>
